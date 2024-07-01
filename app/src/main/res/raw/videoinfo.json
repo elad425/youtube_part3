@@ -1,0 +1,295 @@
+[
+  {
+    "video_name": "video player test",
+    "creator":{
+      "name": "elad cohen",
+      "subs_count": "100M",
+      "profile_pic": "thumbnail2"
+      },
+    "date_of_release": "20 hours ago",
+    "video_path": "android.resource://com.example.youtube/raw/video3",
+    "thumbnail": "thumbnail1",
+    "video_length": "10:10",
+    "views": "1M views",
+    "likes": "333k",
+    "comments": [
+      {
+        "comment": "what an amazing video!!",
+        "user": {
+          "name" :"mark zuckerberg" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail3"
+        },
+        "date": "one month ago"
+      },
+      {
+        "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
+        "user":{
+          "name" :"ilan brownfield" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail1"
+        },
+        "date": "1 minute ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "2000 years ago"
+      }
+    ]
+  },
+  {
+    "video_name": "video player test to see if each video play different file",
+    "creator": {
+      "name": "yossef israeli",
+      "subs_count": "20K",
+      "profile_pic": "thumbnail4"
+    },
+    "date_of_release": "3 weeks ago",
+    "video_path": "android.resource://com.example.youtube/raw/video2",
+    "thumbnail": "thumbnail2",
+    "video_length": "12:45",
+    "views": "245K views",
+    "likes": "2M",
+    "comments": [
+      {
+      "comment": "what an amazing video!!",
+      "user": {
+        "name" :"mark zuckerberg" ,
+        "email" :"a@" ,
+        "password" :"12345678" ,
+        "profile_pic" :"thumbnail3"
+      },
+      "date": "one month ago"
+    },
+      {
+        "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
+        "user":{
+          "name" :"ilan brownfield" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "1 minute ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail2"
+        },
+        "date": "2000 years ago"
+      }
+    ]
+  },
+  {
+    "video_name": "video player test to check if list is scrollable",
+    "creator": {
+      "name": "elon musk",
+      "subs_count": "10M",
+      "profile_pic": "thumbnail6"
+    },
+    "date_of_release": "5 days ago",
+    "video_path": "android.resource://com.example.youtube/raw/video1",
+    "thumbnail": "thumbnail3",
+    "video_length": "10:01",
+    "views": "10M views",
+    "likes": "10M",
+    "comments": [
+      {
+        "comment": "what an amazing video!!",
+        "user": {
+          "name" :"mark zuckerberg" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail3"
+        },
+        "date": "one month ago"
+      },
+      {
+        "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
+        "user":{
+          "name" :"ilan brownfield" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail4"
+        },
+        "date": "1 minute ago"
+      },
+      {
+        "comment": "this video is do bad:(",
+        "user":{
+          "name" :"moshe rabino" ,
+          "email" :"a@" ,
+          "password" :"12345678" ,
+          "profile_pic" :"thumbnail9"
+        },
+        "date": "2000 years ago"
+      }
+    ]
+  },
+  {
+    "video_name": "Inside Out 2 Trailer (2024)",
+    "creator":{
+      "name": "rotten tomato",
+      "subs_count": "990K",
+      "profile_pic": "thumbnail8"
+    },
+    "date_of_release": "3 months ago",
+    "video_path": "android.resource://com.example.youtube/raw/video4",
+    "thumbnail": "thumbnail4",
+    "video_length": "2:34",
+    "views": "998K views",
+    "likes": "8M",
+    "comments": []
+  },
+  {
+    "video_name": "Kung Fu Panda 4 | Official Trailer (Universal Pictures)",
+    "creator":{
+      "name": "Universal pictures",
+      "subs_count": "8M",
+      "profile_pic": "thumbnail9"
+    },
+    "date_of_release": "5 months ago",
+    "video_path": "android.resource://com.example.youtube/raw/video5",
+    "thumbnail": "thumbnail5",
+    "video_length": "1:15",
+    "views": "2.1M views",
+    "likes": "1M",
+    "comments": []
+  },
+  {
+    "video_name": "HOW TO TRAIN YOUR DRAGON: THE HIDDEN WORLD - Official Trailer",
+    "creator":{
+      "name": "Universal pictures",
+      "subs_count": "8M",
+      "profile_pic": "thumbnail5"
+    },
+    "date_of_release": "5 years ago",
+    "video_path": "android.resource://com.example.youtube/raw/video6",
+    "thumbnail": "thumbnail6",
+    "video_length": "3:00",
+    "views": "6M views",
+    "likes": "999K",
+    "comments": []
+  },
+  {
+    "video_name": "OpenAI Plays Hide and Seek",
+    "creator":{
+      "name": "motato motati",
+      "subs_count": "55.3K",
+      "profile_pic": "thumbnail7"
+    },
+    "date_of_release": "today",
+    "video_path": "android.resource://com.example.youtube/raw/video7",
+    "thumbnail": "thumbnail7",
+    "video_length": "1:15:16",
+    "views": "1B views",
+    "likes": "3",
+    "comments": []
+  },
+  {
+    "video_name": "World's Fastest Camera Drone Vs F1 Car",
+    "creator":{
+      "name": "red bull",
+      "subs_count": "12M",
+      "profile_pic": "thumbnail3"
+    },
+    "date_of_release": "5 days ago",
+    "video_path": "android.resource://com.example.youtube/raw/video8",
+    "thumbnail": "thumbnail8",
+    "video_length": "9:22",
+    "views": "220K views",
+    "likes": "100K",
+    "comments": []
+  },
+  {
+    "video_name": "FULL FILM: McLaren Speedtail vs F35 Fighter Jet",
+    "creator":{
+      "name": "top gear",
+      "subs_count": "3M",
+      "profile_pic": "thumbnail6"
+    },
+    "date_of_release": "6 days ago",
+    "video_path": "android.resource://com.example.youtube/raw/video9",
+    "thumbnail": "thumbnail9",
+    "video_length": "12:12",
+    "views": "333K views",
+    "likes": "100K",
+    "comments": []
+  },
+  {
+    "video_name": "I Jumped From Space",
+    "creator":{
+      "name": "red bull",
+      "subs_count": "12M",
+      "profile_pic": "thumbnail4"
+    },
+    "date_of_release": "3 years ago",
+    "video_path": "android.resource://com.example.youtube/raw/video10",
+    "thumbnail": "thumbnail10",
+    "video_length": "8:08",
+    "views": "880K views",
+    "likes": "100K",
+    "comments": []
+  }
+]
