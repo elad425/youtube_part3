@@ -24,7 +24,7 @@
                 <VideoView
                     android:id="@+id/tv_video_view"
                     android:layout_width="match_parent"
-                    android:layout_height="230dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/video_player" />
 

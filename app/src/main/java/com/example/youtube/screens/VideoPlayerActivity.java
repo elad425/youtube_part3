@@ -116,11 +116,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         TextView creatorSubCount = findViewById(R.id.tv_creator_subs);
         ShapeableImageView creatorPic = findViewById(R.id.creator_pic);
 
+        String formatViews = GeneralUtils.getViews(videoItem.getViews()) + " views";
         tvVideoName.setText(videoItem.getVideo_name());
-        tvVideoViews.setText(videoItem.getViews());
+        tvVideoViews.setText(formatViews);
         tvCreator.setText(videoItem.getCreator().getName());
-        tvPublishDate.setText(videoItem.getDate_of_release());
-        creatorSubCount.setText(videoItem.getCreator().getSubs_count());
+        tvPublishDate.setText(GeneralUtils.timeAgo(videoItem.getDate_of_release()));
+        creatorSubCount.setText(GeneralUtils.getViews(videoItem.getCreator().getSubs_count()));
 
         String creatorPicPath = videoItem.getCreator().getProfile_pic();
         int creatorPicId = getResources().getIdentifier(creatorPicPath, "drawable", getPackageName());
@@ -240,7 +241,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", (dialog, which) -> {
             String commentText = input.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                comment newComment = new comment(commentText, user, "now");
+                comment newComment = new comment(commentText, user, GeneralUtils.getTheDate());
                 commentList.add(newComment);
                 videos.get(videoPosition).setComments(commentList);
                 commentsAdapter.notifyDataSetChanged();
@@ -272,7 +273,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             String editedCommentText = input.getText().toString().trim();
             if (!editedCommentText.isEmpty()) {
                 commentList.get(position).setComment(editedCommentText);
-                commentList.get(position).setDate("now (edited)");
+                commentList.get(position).setDate(GeneralUtils.getTheDate());
                 videos.get(videoPosition).setComments(commentList);
                 commentsAdapter.notifyDataSetChanged();
             }

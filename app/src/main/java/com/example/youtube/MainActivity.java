@@ -122,14 +122,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkPermissions() {
+        int resultCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (Build.VERSION.SDK_INT >= 33) {
             int resultVideo = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO);
             int resultImages = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
             return resultVideo == PackageManager.PERMISSION_GRANTED &&
-                    resultImages == PackageManager.PERMISSION_GRANTED;
+                    resultImages == PackageManager.PERMISSION_GRANTED &&
+                    resultCamera == PackageManager.PERMISSION_GRANTED;
         } else{
             int resultStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            return resultStorage == PackageManager.PERMISSION_GRANTED;
+            return resultStorage == PackageManager.PERMISSION_GRANTED &&
+                    resultCamera == PackageManager.PERMISSION_GRANTED;
         }
     }
 
@@ -138,9 +141,11 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{
                     Manifest.permission.READ_MEDIA_VIDEO,
                     Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.CAMERA
             }, 1);
         } else {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA}, 1);
         }
     }
 
@@ -150,14 +155,16 @@ public class MainActivity extends AppCompatActivity {
         if (grantResults.length > 0 && Build.VERSION.SDK_INT >= 33) {
             boolean videoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             boolean imagesPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-            if (videoPermission && imagesPermission) {
+            boolean cameraPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+            if (videoPermission && imagesPermission && cameraPermission) {
                 lunchApp();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
         } else if (grantResults.length > 0) {
             boolean storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            if (storagePermission) {
+            boolean cameraPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+            if (storagePermission && cameraPermission) {
                 lunchApp();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();

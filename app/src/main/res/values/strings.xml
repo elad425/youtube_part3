@@ -85,4 +85,5 @@
     <string name="about_youtube_clone">About youtube clone</string>
     <string name="select_thumbnail">Select Thumbnail</string>
     <string name="select_video">Select Video</string>
+    <string name="camera">camera</string>
 </resources>

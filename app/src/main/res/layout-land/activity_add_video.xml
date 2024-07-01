@@ -107,6 +107,17 @@
         android:orientation="horizontal"
         android:layout_above="@id/bottom_navigation">
 
+        <ImageButton
+            android:id="@+id/record_video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_camera"
+            android:backgroundTint="@color/transparent"
+            android:text="@string/camera"
+            android:textColor="@color/white"
+            android:contentDescription="@string/camera" />
+
         <EditText
             android:id="@+id/et_video_title"
             android:layout_width="match_parent"

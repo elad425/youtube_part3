@@ -20,6 +20,7 @@ import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
+import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         comment currentComment = commentList.get(position);
         holder.tvCommentUser.setText(currentComment.getUser().getName());
         holder.tvCommentText.setText(currentComment.getComment());
-        holder.tvCommentDate.setText(currentComment.getDate());
+        holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
         String userPic = currentComment.getUser().getProfile_pic();
         int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());

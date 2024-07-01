@@ -90,6 +90,19 @@
         android:autofillHints="name"
         android:inputType="text" />
 
+    <ImageButton
+        android:id="@+id/record_video_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation"
+        android:layout_alignStart="@id/bottom_navigation"
+        android:layout_margin="17dp"
+        android:src="@drawable/ic_camera"
+        android:backgroundTint="@color/transparent"
+        android:text="@string/camera"
+        android:textColor="@color/white"
+        android:contentDescription="@string/camera" />
+
     <Button
         android:id="@+id/btn_add_video"
         android:layout_width="wrap_content"

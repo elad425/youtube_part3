@@ -1,17 +1,18 @@
 [
   {
+    "id" : "0",
     "video_name": "video player test",
     "creator":{
       "name": "elad cohen",
-      "subs_count": "100M",
+      "subs_count": "100000000",
       "profile_pic": "thumbnail2"
       },
-    "date_of_release": "20 hours ago",
+    "date_of_release": "13/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video3",
     "thumbnail": "thumbnail1",
     "video_length": "10:10",
-    "views": "1M views",
-    "likes": "333k",
+    "views": "1000000",
+    "likes": "333K",
     "comments": [
       {
         "comment": "what an amazing video!!",
@@ -21,7 +22,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail3"
         },
-        "date": "one month ago"
+        "date": "13/06/2024 11:19:06"
       },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
@@ -31,7 +32,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail1"
         },
-        "date": "1 minute ago"
+        "date": "13/06/2024 11:29:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -41,7 +42,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "13/06/2024 11:39:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -51,7 +52,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "13/05/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -61,7 +62,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "13/04/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -71,7 +72,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "13/06/2023 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -81,7 +82,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "12/06/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -91,22 +92,23 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "2000 years ago"
+        "date": "06/06/2024 11:09:06"
       }
     ]
   },
   {
+    "id" : "1",
     "video_name": "video player test to see if each video play different file",
     "creator": {
       "name": "yossef israeli",
-      "subs_count": "20K",
+      "subs_count": "20000",
       "profile_pic": "thumbnail4"
     },
-    "date_of_release": "3 weeks ago",
+    "date_of_release": "13/06/2024 10:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video2",
     "thumbnail": "thumbnail2",
     "video_length": "12:45",
-    "views": "245K views",
+    "views": "245000",
     "likes": "2M",
     "comments": [
       {
@@ -117,7 +119,7 @@
         "password" :"12345678" ,
         "profile_pic" :"thumbnail3"
       },
-      "date": "one month ago"
+      "date": "06/06/2024 11:09:06"
     },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
@@ -127,7 +129,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "1 minute ago"
+        "date": "03/06/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -137,22 +139,23 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail2"
         },
-        "date": "2000 years ago"
+        "date": "13/03/2024 11:09:06"
       }
     ]
   },
   {
+    "id" : "2",
     "video_name": "video player test to check if list is scrollable",
     "creator": {
       "name": "elon musk",
-      "subs_count": "10M",
+      "subs_count": "100000000",
       "profile_pic": "thumbnail6"
     },
-    "date_of_release": "5 days ago",
+    "date_of_release": "12/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video1",
     "thumbnail": "thumbnail3",
     "video_length": "10:01",
-    "views": "10M views",
+    "views": "10000000",
     "likes": "10M",
     "comments": [
       {
@@ -163,7 +166,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail3"
         },
-        "date": "one month ago"
+        "date": "10/06/2024 11:09:06"
       },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
@@ -173,7 +176,7 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail4"
         },
-        "date": "1 minute ago"
+        "date": "13/01/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
@@ -183,112 +186,119 @@
           "password" :"12345678" ,
           "profile_pic" :"thumbnail9"
         },
-        "date": "2000 years ago"
+        "date": "13/06/2022 11:09:06"
       }
     ]
   },
   {
+    "id" : "3",
     "video_name": "Inside Out 2 Trailer (2024)",
     "creator":{
       "name": "rotten tomato",
-      "subs_count": "990K",
+      "subs_count": "990000",
       "profile_pic": "thumbnail8"
     },
-    "date_of_release": "3 months ago",
+    "date_of_release": "13/05/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video4",
     "thumbnail": "thumbnail4",
     "video_length": "2:34",
-    "views": "998K views",
+    "views": "998000",
     "likes": "8M",
     "comments": []
   },
   {
+    "id" : "4",
     "video_name": "Kung Fu Panda 4 | Official Trailer (Universal Pictures)",
     "creator":{
       "name": "Universal pictures",
-      "subs_count": "8M",
+      "subs_count": "8250000",
       "profile_pic": "thumbnail9"
     },
-    "date_of_release": "5 months ago",
+    "date_of_release": "13/06/2023 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video5",
     "thumbnail": "thumbnail5",
     "video_length": "1:15",
-    "views": "2.1M views",
+    "views": "2100000",
     "likes": "1M",
     "comments": []
   },
   {
+    "id" : "5",
     "video_name": "HOW TO TRAIN YOUR DRAGON: THE HIDDEN WORLD - Official Trailer",
     "creator":{
       "name": "Universal pictures",
-      "subs_count": "8M",
+      "subs_count": "8250000",
       "profile_pic": "thumbnail5"
     },
-    "date_of_release": "5 years ago",
+    "date_of_release": "13/06/2024 09:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video6",
     "thumbnail": "thumbnail6",
     "video_length": "3:00",
-    "views": "6M views",
+    "views": "6578755",
     "likes": "999K",
     "comments": []
   },
   {
+    "id" : "6",
     "video_name": "OpenAI Plays Hide and Seek",
     "creator":{
       "name": "motato motati",
-      "subs_count": "55.3K",
+      "subs_count": "55300",
       "profile_pic": "thumbnail7"
     },
-    "date_of_release": "today",
+    "date_of_release": "11/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video7",
     "thumbnail": "thumbnail7",
     "video_length": "1:15:16",
-    "views": "1B views",
+    "views": "14572475",
     "likes": "3",
     "comments": []
   },
   {
+    "id" : "7",
     "video_name": "World's Fastest Camera Drone Vs F1 Car",
     "creator":{
       "name": "red bull",
-      "subs_count": "12M",
+      "subs_count": "1200000",
       "profile_pic": "thumbnail3"
     },
-    "date_of_release": "5 days ago",
+    "date_of_release": "13/04/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video8",
     "thumbnail": "thumbnail8",
     "video_length": "9:22",
-    "views": "220K views",
+    "views": "666",
     "likes": "100K",
     "comments": []
   },
   {
+    "id" : "8",
     "video_name": "FULL FILM: McLaren Speedtail vs F35 Fighter Jet",
     "creator":{
       "name": "top gear",
-      "subs_count": "3M",
+      "subs_count": "45645324",
       "profile_pic": "thumbnail6"
     },
-    "date_of_release": "6 days ago",
+    "date_of_release": "13/06/2022 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video9",
     "thumbnail": "thumbnail9",
     "video_length": "12:12",
-    "views": "333K views",
+    "views": "333600",
     "likes": "100K",
     "comments": []
   },
   {
+    "id" : "9",
     "video_name": "I Jumped From Space",
     "creator":{
       "name": "red bull",
-      "subs_count": "12M",
+      "subs_count": "1200000",
       "profile_pic": "thumbnail4"
     },
-    "date_of_release": "3 years ago",
+    "date_of_release": "06/03/2020 07:12:06",
     "video_path": "android.resource://com.example.youtube/raw/video10",
     "thumbnail": "thumbnail10",
     "video_length": "8:08",
-    "views": "880K views",
+    "views": "889999",
     "likes": "100K",
     "comments": []
   }

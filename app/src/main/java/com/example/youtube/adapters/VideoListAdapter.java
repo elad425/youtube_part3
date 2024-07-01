@@ -21,6 +21,7 @@ import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
+import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -86,10 +87,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         if (filteredVideos != null) {
             final video current = filteredVideos.get(position);
+            String formatViews = GeneralUtils.getViews(current.getViews()) + " views";
             holder.video_name.setText(current.getVideo_name());
             holder.creator.setText(current.getCreator().getName());
-            holder.views.setText(current.getViews());
-            holder.publish_date.setText(current.getDate_of_release());
+            holder.views.setText(formatViews);
+            holder.publish_date.setText(GeneralUtils.timeAgo(current.getDate_of_release()));
             holder.video_length.setText(current.getVideo_length());
 
             // Load thumbnail
@@ -113,6 +115,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideos.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
+            // add one view per click
+            int videoViews = Integer.parseInt(clickedVideoItem.getViews()) + 1;
+            clickedVideoItem.setViews(Integer.toString(videoViews));
+
             i.putExtra("video_item", clickedVideoItem);
             i.putExtra("user", user);
             i.putParcelableArrayListExtra("video_list", new ArrayList<>(videos));

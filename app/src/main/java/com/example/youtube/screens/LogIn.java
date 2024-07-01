@@ -103,17 +103,19 @@ public class LogIn extends AppCompatActivity {
         }
 
         // Check if the email and password match any user in the users list
-        for (user u : users) {
-            if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
-                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LogIn.this, MainActivity.class);
-                intent.putExtra("user", u);
-                intent.putParcelableArrayListExtra("video_list", videos);
-                intent.putParcelableArrayListExtra("users", users);
-                resetFields();
-                startActivity(intent);
-                finish();
-                return;
+        if (users != null) {
+            for (user u : users) {
+                if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
+                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LogIn.this, MainActivity.class);
+                    intent.putExtra("user", u);
+                    intent.putParcelableArrayListExtra("video_list", videos);
+                    intent.putParcelableArrayListExtra("users", users);
+                    resetFields();
+                    startActivity(intent);
+                    finish();
+                    return;
+                }
             }
         }
         // If no match is found, show an error message
