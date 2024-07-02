@@ -16,9 +16,10 @@ public class user implements Parcelable {
     private String profile_pic;
     private ArrayList<String> likedVideos;
     private ArrayList<String> dislikedVideos;
-    private ArrayList<creator> subs;
+    private ArrayList<user> subs;
+    private String subs_count;
 
-    public user(String name, String email, String password, String profile_pic) {
+    public user(String name, String email, String password, String profile_pic, String subs_count) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -26,6 +27,7 @@ public class user implements Parcelable {
         likedVideos = new ArrayList<>();
         dislikedVideos = new ArrayList<>();
         subs = new ArrayList<>();
+        this.subs_count = subs_count;
     }
 
     protected user(Parcel in) {
@@ -35,7 +37,8 @@ public class user implements Parcelable {
         profile_pic = in.readString();
         likedVideos = in.createStringArrayList();
         dislikedVideos = in.createStringArrayList();
-        subs = in.createTypedArrayList(creator.CREATOR);
+        subs = in.createTypedArrayList(user.CREATOR);
+        subs_count = in.readString();
     }
 
     public static final Creator<user> CREATOR = new Creator<user>() {
@@ -98,12 +101,20 @@ public class user implements Parcelable {
         this.dislikedVideos = dislikedVideos;
     }
 
-    public ArrayList<creator> getSubs() {
+    public ArrayList<user> getSubs() {
         return subs;
     }
 
-    public void setSubs(ArrayList<creator> subs) {
+    public void setSubs(ArrayList<user> subs) {
         this.subs = subs;
+    }
+
+    public String getSubs_count() {
+        return subs_count;
+    }
+
+    public void setSubs_count(String subs_count) {
+        this.subs_count = subs_count;
     }
 
     public void addToLiked(video video) {
@@ -132,11 +143,11 @@ public class user implements Parcelable {
         dislikedVideos.removeIf(s -> s.equals(video.getVideo_name()));
     }
 
-    public void addToSubs(creator creator) {
+    public void addToSubs(user creator) {
         this.subs.add(creator);
     }
 
-    public void removeFromSubs(creator creator) {
+    public void removeFromSubs(user creator) {
         subs.removeIf(c -> Objects.equals(c.getName(), creator.getName()));
     }
 
@@ -158,8 +169,8 @@ public class user implements Parcelable {
         return false;
     }
 
-    public boolean isSubs(creator creator) {
-        for (creator c : subs) {
+    public boolean isSubs(user creator) {
+        for (user c : subs) {
             if (Objects.equals(c.getName(), creator.getName())) {
                 return true;
             }
@@ -181,5 +192,6 @@ public class user implements Parcelable {
         dest.writeStringList(likedVideos);
         dest.writeStringList(dislikedVideos);
         dest.writeTypedList(subs);
+        dest.writeString(subs_count);
     }
 }

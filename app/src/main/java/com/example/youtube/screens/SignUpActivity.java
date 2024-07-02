@@ -145,7 +145,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        user new_user = new user(username,email,password,imageUri.toString());
+        user new_user = new user(username,email,password,imageUri.toString(), "0");
         if (users==null){
             users=new ArrayList<>();
         }

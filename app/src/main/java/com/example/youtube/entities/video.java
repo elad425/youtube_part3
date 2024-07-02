@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class video implements Parcelable {
     private String video_name;
-    private creator creator;
+    private user creator;
     private String date_of_release;
     private String views;
     private String likes;
@@ -16,7 +16,7 @@ public class video implements Parcelable {
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, creator creator, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
+    public video(String video_name, user creator, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
         this.video_name = video_name;
         this.creator = creator;
         this.date_of_release = date_of_release;
@@ -30,7 +30,7 @@ public class video implements Parcelable {
 
     protected video(Parcel in) {
         video_name = in.readString();
-        creator = in.readParcelable(creator.class.getClassLoader());
+        creator = in.readParcelable(user.class.getClassLoader());
         date_of_release = in.readString();
         views = in.readString();
         likes = in.readString();
@@ -60,11 +60,11 @@ public class video implements Parcelable {
         this.video_name = video_name;
     }
 
-    public creator getCreator() {
+    public user getCreator() {
         return creator;
     }
 
-    public void setCreator(creator creator) {
+    public void setCreator(user creator) {
         this.creator = creator;
     }
 
@@ -138,6 +138,5 @@ public class video implements Parcelable {
         dest.writeString(video_path);
         dest.writeString(thumbnail);
         dest.writeString(video_length);
-
     }
 }
