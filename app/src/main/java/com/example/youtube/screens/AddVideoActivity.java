@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.entities.creator;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
@@ -174,8 +173,7 @@ public class AddVideoActivity extends AppCompatActivity {
             return;
         }
 
-        creator newCreator = new creator(user.getName(), "0", user.getProfile_pic());
-        video newVideo = new video(videoName, newCreator, GeneralUtils.getTheDate(), videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
+        video newVideo = new video(videoName, user, GeneralUtils.getTheDate(), videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
 
         videos.add(newVideo);
         Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();

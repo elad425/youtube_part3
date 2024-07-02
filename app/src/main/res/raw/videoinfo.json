@@ -4,9 +4,11 @@
     "video_name": "video player test",
     "creator":{
       "name": "elad cohen",
-      "subs_count": "100000000",
-      "profile_pic": "thumbnail2"
-      },
+      "email" :"elad@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail2",
+      "subs_count": "100000000"
+    },
     "date_of_release": "13/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video3",
     "thumbnail": "thumbnail1",
@@ -20,7 +22,8 @@
           "name" :"mark zuckerberg" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail3"
+          "profile_pic" :"thumbnail3",
+          "subs_count": "0"
         },
         "date": "13/06/2024 11:19:06"
       },
@@ -30,7 +33,8 @@
           "name" :"ilan brownfield" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail1"
+          "profile_pic" :"thumbnail1",
+          "subs_count": "0"
         },
         "date": "13/06/2024 11:29:06"
       },
@@ -40,7 +44,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "13/06/2024 11:39:06"
       },
@@ -50,7 +55,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "13/05/2024 11:09:06"
       },
@@ -60,7 +66,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "13/04/2024 11:09:06"
       },
@@ -70,7 +77,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "13/06/2023 11:09:06"
       },
@@ -80,7 +88,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "12/06/2024 11:09:06"
       },
@@ -90,7 +99,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "06/06/2024 11:09:06"
       }
@@ -101,8 +111,10 @@
     "video_name": "video player test to see if each video play different file",
     "creator": {
       "name": "yossef israeli",
-      "subs_count": "20000",
-      "profile_pic": "thumbnail4"
+      "email" :"yossef@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail4",
+      "subs_count": "19999"
     },
     "date_of_release": "13/06/2024 10:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video2",
@@ -117,7 +129,8 @@
         "name" :"mark zuckerberg" ,
         "email" :"a@" ,
         "password" :"12345678" ,
-        "profile_pic" :"thumbnail3"
+        "profile_pic" :"thumbnail3",
+        "subs_count": "0"
       },
       "date": "06/06/2024 11:09:06"
     },
@@ -127,7 +140,8 @@
           "name" :"ilan brownfield" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "03/06/2024 11:09:06"
       },
@@ -137,7 +151,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail2"
+          "profile_pic" :"thumbnail2",
+          "subs_count": "0"
         },
         "date": "13/03/2024 11:09:06"
       }
@@ -148,8 +163,10 @@
     "video_name": "video player test to check if list is scrollable",
     "creator": {
       "name": "elon musk",
-      "subs_count": "100000000",
-      "profile_pic": "thumbnail6"
+      "email" :"elon@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail6",
+      "subs_count": "100000000"
     },
     "date_of_release": "12/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video1",
@@ -164,7 +181,8 @@
           "name" :"mark zuckerberg" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail3"
+          "profile_pic" :"thumbnail3",
+          "subs_count": "0"
         },
         "date": "10/06/2024 11:09:06"
       },
@@ -174,7 +192,8 @@
           "name" :"ilan brownfield" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail4"
+          "profile_pic" :"thumbnail4",
+          "subs_count": "0"
         },
         "date": "13/01/2024 11:09:06"
       },
@@ -184,7 +203,8 @@
           "name" :"moshe rabino" ,
           "email" :"a@" ,
           "password" :"12345678" ,
-          "profile_pic" :"thumbnail9"
+          "profile_pic" :"thumbnail9",
+          "subs_count": "0"
         },
         "date": "13/06/2022 11:09:06"
       }
@@ -195,8 +215,10 @@
     "video_name": "Inside Out 2 Trailer (2024)",
     "creator":{
       "name": "rotten tomato",
-      "subs_count": "990000",
-      "profile_pic": "thumbnail8"
+      "email" :"rotten@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail8",
+      "subs_count": "990000"
     },
     "date_of_release": "13/05/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video4",
@@ -211,8 +233,10 @@
     "video_name": "Kung Fu Panda 4 | Official Trailer (Universal Pictures)",
     "creator":{
       "name": "Universal pictures",
-      "subs_count": "8250000",
-      "profile_pic": "thumbnail9"
+      "email" :"Universal@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail9",
+      "subs_count": "8250000"
     },
     "date_of_release": "13/06/2023 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video5",
@@ -227,8 +251,10 @@
     "video_name": "HOW TO TRAIN YOUR DRAGON: THE HIDDEN WORLD - Official Trailer",
     "creator":{
       "name": "Universal pictures",
-      "subs_count": "8250000",
-      "profile_pic": "thumbnail5"
+      "email" :"Universal@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail9",
+      "subs_count": "8250000"
     },
     "date_of_release": "13/06/2024 09:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video6",
@@ -243,8 +269,10 @@
     "video_name": "OpenAI Plays Hide and Seek",
     "creator":{
       "name": "motato motati",
-      "subs_count": "55300",
-      "profile_pic": "thumbnail7"
+      "email" :"motato@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail7",
+      "subs_count": "55300"
     },
     "date_of_release": "11/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video7",
@@ -259,8 +287,10 @@
     "video_name": "World's Fastest Camera Drone Vs F1 Car",
     "creator":{
       "name": "red bull",
-      "subs_count": "1200000",
-      "profile_pic": "thumbnail3"
+      "email" :"red@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail3",
+      "subs_count": "1200000"
     },
     "date_of_release": "13/04/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video8",
@@ -275,8 +305,10 @@
     "video_name": "FULL FILM: McLaren Speedtail vs F35 Fighter Jet",
     "creator":{
       "name": "top gear",
-      "subs_count": "45645324",
-      "profile_pic": "thumbnail6"
+      "email" :"top@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail6",
+      "subs_count": "45645324"
     },
     "date_of_release": "13/06/2022 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video9",
@@ -291,8 +323,10 @@
     "video_name": "I Jumped From Space",
     "creator":{
       "name": "red bull",
-      "subs_count": "1200000",
-      "profile_pic": "thumbnail4"
+      "email" :"top@" ,
+      "password" :"12345678" ,
+      "profile_pic": "thumbnail4",
+      "subs_count": "1200000"
     },
     "date_of_release": "06/03/2020 07:12:06",
     "video_path": "android.resource://com.example.youtube/raw/video10",

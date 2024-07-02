@@ -412,18 +412,21 @@ public class VideoPlayerActivity extends AppCompatActivity {
             goToLogIn();
             return;
         }
+        int subCount = Integer.parseInt(videoItem.getCreator().getSubs_count());
 
         if (!isSubscribe) {
             user.addToSubs(videoItem.getCreator());
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.text_color));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.system_color));
             btnSubscribe.setText(R.string.unsubscribe);
+            videos.get(videoPosition).getCreator().setSubs_count(String.valueOf(subCount + 1));
             isSubscribe = true;
         } else {
             user.removeFromSubs(videoItem.getCreator());
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.white));
             btnSubscribe.setText(R.string.subscribe);
+            videos.get(videoPosition).getCreator().setSubs_count(String.valueOf(subCount - 1));
             isSubscribe = false;
         }
     }

@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         }
         users = intent.getParcelableArrayListExtra("users");
         user = intent.getParcelableExtra("user");
+        if (user == null){
+            user = new user("elad","elad","elad","thumbnail2","0");
+        }
     }
 
     private void setupUI() {
