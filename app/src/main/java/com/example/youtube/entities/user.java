@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.youtube.Converters.userConverters;
+import com.example.youtube.utils.userConverters;
 
 import java.util.ArrayList;
 import java.util.Objects;

@@ -16,8 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
@@ -25,14 +25,16 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final LayoutInflater mInflater;
     private ArrayList<video> videos;
-    private final ArrayList<user> users;
     private ArrayList<video> filteredVideos;
     private final Context context;
     private final int userId;
+
+    private final AppDatabase db;
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         private final TextView video_name;
@@ -58,9 +60,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setVideos(ArrayList<video> v) {
-        videos = v;
-        filteredVideos = new ArrayList<>(v);
+    public void setVideos() {
+        videos = new ArrayList<>(db.videoDao().getAllVideos());
+        filteredVideos = new ArrayList<>(db.videoDao().getAllVideos());
         notifyDataSetChanged();
     }
 
@@ -69,11 +71,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return filteredVideos != null ? filteredVideos.size() : 0;
     }
 
-    public VideoListAdapter(Context context, int userId, ArrayList<user> users) {
+    public VideoListAdapter(Context context, int userId, AppDatabase db) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
         this.userId = userId;
-        this.users = users;
+        this.db = db;
+        List<video> temp = db.videoDao().getAllVideos();
     }
 
     @NonNull
@@ -89,7 +92,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             final video current = filteredVideos.get(position);
             String formatViews = GeneralUtils.getViews(current.getViews()) + " views";
             holder.video_name.setText(current.getVideo_name());
-            holder.creator.setText(users.get(current.getCreator()).getName());
+            holder.creator.setText(db.userDao().getUserById(current.getCreator()).getName());
             holder.views.setText(formatViews);
             holder.publish_date.setText(GeneralUtils.timeAgo(current.getDate_of_release()));
             holder.video_length.setText(current.getVideo_length());
@@ -103,7 +106,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 holder.thumbnail.setImageURI(Uri.parse(thumbnailName));
             }
             // Load creator picture
-            String creatorPic = users.get(current.getCreator()).getProfile_pic();
+            String creatorPic = db.userDao().getUserById(current.getCreator()).getProfile_pic();
             int creatorPicId = mInflater.getContext().getResources().getIdentifier(creatorPic, "drawable", mInflater.getContext().getPackageName());
             if (creatorPicId != 0) {
                 holder.creator_pic.setImageResource(creatorPicId);
@@ -115,7 +118,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideos.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            i.putExtra("video_item", clickedVideoItem.getVideoId() - 1);
+            i.putExtra("video_item", clickedVideoItem.getVideoId());
             i.putExtra("user", userId);
             mInflater.getContext().startActivity(i);
         });
@@ -131,10 +134,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                         Intent intent = new Intent(context, LogIn.class);
                         context.startActivity(intent);
                     } else {
+                        video temp = videos.get(position);
                         videos.remove(position);
                         filteredVideos.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, filteredVideos.size());
+                        db.videoDao().delete(temp);
                     }
                     return true;
                 } else if (item.getItemId() == R.id.action_download) {

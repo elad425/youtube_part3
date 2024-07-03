@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.youtube.AppDatabase;
 import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -18,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static void displayVideoList(Context context, RecyclerView lstVideos,
-                                        ArrayList<video> videos, int user, video filter, ArrayList<user> users) {
-        final VideoListAdapter adapter = new VideoListAdapter(context, user, users);
+    public static void displayVideoList(Context context, RecyclerView lstVideos
+                                        , int user, video filter, AppDatabase db) {
+        final VideoListAdapter adapter = new VideoListAdapter(context, user, db);
         lstVideos.setAdapter(adapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setVideos(videos);
+        adapter.setVideos();
         adapter.filter(filter);
     }
 

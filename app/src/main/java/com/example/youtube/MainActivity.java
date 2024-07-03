@@ -33,9 +33,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<video> videos;
     private int userId;
-    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -53,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
                 userDao.insert(u);
             }
         }
-        users = new ArrayList<user>(userDao.getAllUsers());
 
         videoDao videoDao = db.videoDao();
         if(videoDao.getAllVideos().isEmpty()){
@@ -62,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
                 videoDao.insert(v);
             }
         }
-        videos = new ArrayList<video>(videoDao.getAllVideos());
 
         if (checkPermissions()) {
             lunchApp();
@@ -84,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI() {
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        GeneralUtils.displayVideoList(this, lstVideos, videos, userId, null, users);
+        GeneralUtils.displayVideoList(this, lstVideos, userId,null, db);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());

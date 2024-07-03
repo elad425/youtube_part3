@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
@@ -30,17 +31,18 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private final int userId;
     private final Context context;
     private final LayoutInflater mInflater;
-    private final ArrayList<user> users;
+
+    private final AppDatabase db;
 
 
     public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           int userId, Context context, ArrayList<user> users) {
+                           int userId, Context context, AppDatabase db) {
         mInflater = LayoutInflater.from(context);
         this.commentList = commentList;
         this.context = context;
         this.videoPlayerActivity = videoPlayerActivity;
         this.userId = userId;
-        this.users = users;
+        this.db = db;
     }
 
     @NonNull
@@ -53,11 +55,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         comment currentComment = commentList.get(position);
-        holder.tvCommentUser.setText(users.get(currentComment.getUser()).getName());
+        holder.tvCommentUser.setText(db.userDao().getUserById(currentComment.getUser()).getName());
         holder.tvCommentText.setText(currentComment.getComment());
         holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
-        String userPic = users.get(currentComment.getUser()).getProfile_pic();
+        String userPic = db.userDao().getUserById(currentComment.getUser()).getProfile_pic();
         int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());
         if (creatorPicId != 0) {
             holder.user_pic.setImageResource(creatorPicId);

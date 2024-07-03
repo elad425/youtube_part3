@@ -1,7 +1,5 @@
 package com.example.youtube.screens;
 
-import static com.example.youtube.utils.GeneralUtils.findVideoPlace;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
@@ -52,15 +50,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private FloatingActionButton fabAddComment;
     private CommentsAdapter commentsAdapter;
     private ArrayList<comment> commentList;
-    private ArrayList<video> videos;
-    private ArrayList<user> users;
-    private int videoPosition;
     private int userId;
-    private int videoId;
     private Uri newThumbnailUri;
     private Uri newVideoUri;
     private EditText inputVideoName;
     private AppDatabase db;
+    private video currentVideo;
+    private user currentUser;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -84,32 +80,31 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         Intent intent = getIntent();
-        videoId = intent.getIntExtra("video_item",-1);
+        int videoId = intent.getIntExtra("video_item", -1);
         userId = intent.getIntExtra("user",-1);
-        users = new ArrayList<user>(db.userDao().getAllUsers());
-        videos = new ArrayList<video>(db.videoDao().getAllVideos());
+        currentVideo = db.videoDao().getVideoById(videoId);
+        currentUser = db.userDao().getUserById(userId);
 
-        int videoViews = Integer.parseInt(videos.get(videoId).getViews()) + 1;
-        videos.get(videoId).setViews(Integer.toString(videoViews));
-        db.videoDao().update(videos.get(videoId));
+        int videoViews = Integer.parseInt(currentVideo.getViews()) + 1;
+        currentVideo.setViews(Integer.toString(videoViews));
+        db.videoDao().update(currentVideo);
 
         if (userId != -1) {
-            isLiked = users.get(userId).isLiked(videos.get(videoId));
-            isDisliked = users.get(userId).isDisLiked(videos.get(videoId));
-            isSubscribe = users.get(userId).isSubs(users.get(videos.get(videoId).getCreator()));
+            isLiked = currentUser.isLiked(currentVideo);
+            isDisliked = currentUser.isDisLiked(currentVideo);
+            isSubscribe = currentUser.isSubs(db.userDao().getUserById(currentVideo.getCreator()));
         }
 
-        if (videos.get(videoId) != null) {
-            videoPosition = findVideoPlace(videos, videos.get(videoId));
-            GeneralUtils.displayVideoList(this, lstVideos, videos, userId, videos.get(videoId), users);
+        if (currentVideo != null) {
+            GeneralUtils.displayVideoList(this, lstVideos, userId, currentVideo, db);
         }
     }
 
     private void setupVideoView() {
-        if (videos.get(videoId) == null) return;
+        if (currentVideo == null) return;
 
         final VideoView videoView = findViewById(R.id.tv_video_view);
-        videoView.setVideoURI(Uri.parse(videos.get(videoId).getVideo_path()));
+        videoView.setVideoURI(Uri.parse(currentVideo.getVideo_path()));
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
@@ -126,14 +121,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
         TextView creatorSubCount = findViewById(R.id.tv_creator_subs);
         ShapeableImageView creatorPic = findViewById(R.id.creator_pic);
 
-        String formatViews = GeneralUtils.getViews(videos.get(videoId).getViews()) + " views";
-        tvVideoName.setText(videos.get(videoId).getVideo_name());
+        String formatViews = GeneralUtils.getViews(currentVideo.getViews()) + " views";
+        tvVideoName.setText(currentVideo.getVideo_name());
         tvVideoViews.setText(formatViews);
-        tvCreator.setText(users.get(videos.get(videoId).getCreator()).getName());
-        tvPublishDate.setText(GeneralUtils.timeAgo(videos.get(videoId).getDate_of_release()));
-        creatorSubCount.setText(GeneralUtils.getViews(users.get(videos.get(videoId).getCreator()).getSubs_count()));
+        tvCreator.setText(db.userDao().getUserById(currentVideo.getCreator()).getName());
+        tvPublishDate.setText(GeneralUtils.timeAgo(currentVideo.getDate_of_release()));
+        creatorSubCount.setText(GeneralUtils.getViews(db.userDao().getUserById(currentVideo.getCreator()).getSubs_count()));
 
-        String creatorPicPath = users.get(videos.get(videoId).getCreator()).getProfile_pic();
+        String creatorPicPath = db.userDao().getUserById(currentVideo.getCreator()).getProfile_pic();
         int creatorPicId = getResources().getIdentifier(creatorPicPath, "drawable", getPackageName());
         if (creatorPicId != 0) {
             creatorPic.setImageResource(creatorPicId);
@@ -144,20 +139,20 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void handleCommentsSection() {
-        if (videos.get(videoId) == null) return;
+        if (currentVideo == null) return;
 
         tvComments = findViewById(R.id.tv_comments);
         rvComments = findViewById(R.id.rv_comments);
         ivToggleComments = findViewById(R.id.iv_toggle_comments);
         fabAddComment = findViewById(R.id.fab_add_comment);
 
-        commentList = videos.get(videoId).getComments();
+        commentList = currentVideo.getComments();
         tvComments.setText(String.format("Comments (%d)", commentList.size()));
         ivToggleComments.setOnClickListener(v -> toggleComments());
         tvComments.setOnClickListener(v -> toggleComments());
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
-        commentsAdapter = new CommentsAdapter(commentList, this, userId, this, users);
+        commentsAdapter = new CommentsAdapter(commentList, this, userId, this, db);
         rvComments.setAdapter(commentsAdapter);
 
         fabAddComment.setOnClickListener(v -> {
@@ -249,10 +244,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
             if (!commentText.isEmpty()) {
                 comment newComment = new comment(commentText, userId, GeneralUtils.getTheDate());
                 commentList.add(newComment);
-                videos.get(videoPosition).setComments(commentList);
+                currentVideo.setComments(commentList);
                 commentsAdapter.notifyDataSetChanged();
                 tvComments.setText(String.format("Comments (%d)", commentList.size()));
-                db.videoDao().update(videos.get(videoId));
+                db.videoDao().update(currentVideo);
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -262,10 +257,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @SuppressLint({"NotifyDataSetChanged", "DefaultLocale"})
     public void removeComment(int position) {
         commentList.remove(position);
-        videos.get(videoPosition).setComments(commentList);
+        currentVideo.setComments(commentList);
         commentsAdapter.notifyDataSetChanged();
         tvComments.setText(String.format("Comments (%d)", commentList.size()));
-        db.videoDao().update(videos.get(videoId));
+        db.videoDao().update(currentVideo);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -282,9 +277,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
             if (!editedCommentText.isEmpty()) {
                 commentList.get(position).setComment(editedCommentText);
                 commentList.get(position).setDate(GeneralUtils.getTheDate());
-                videos.get(videoPosition).setComments(commentList);
+                currentVideo.setComments(commentList);
                 commentsAdapter.notifyDataSetChanged();
-                db.videoDao().update(videos.get(videoId));
+                db.videoDao().update(currentVideo);
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -305,7 +300,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         Button btnSelectThumbnail = view.findViewById(R.id.btn_select_thumbnail);
         Button btnSelectVideo = view.findViewById(R.id.btn_select_video);
 
-        inputVideoName.setText(videos.get(videoId).getVideo_name());
+        inputVideoName.setText(currentVideo.getVideo_name());
 
         btnSelectThumbnail.setOnClickListener(v -> pickMedia(PICK_VIDEO_THUMBNAIL));
         btnSelectVideo.setOnClickListener(v -> pickMedia(PICK_VIDEO_FILE));
@@ -327,21 +322,21 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void saveVideoChanges() {
         String newName = inputVideoName.getText().toString().trim();
         if (!newName.isEmpty()) {
-            videos.get(videoId).setVideo_name(newName);
+            currentVideo.setVideo_name(newName);
         }
         if (newThumbnailUri != null) {
-            videos.get(videoId).setThumbnail(newThumbnailUri.toString());
+            currentVideo.setThumbnail(newThumbnailUri.toString());
         }
         if (newVideoUri != null) {
-            videos.get(videoId).setVideo_path(newVideoUri.toString());
+            currentVideo.setVideo_path(newVideoUri.toString());
             final VideoView videoView = findViewById(R.id.tv_video_view);
             videoView.setVideoURI(newVideoUri);
             videoView.start();
         }
         TextView tvVideoName = findViewById(R.id.tv_video_name);
-        tvVideoName.setText(videos.get(videoId).getVideo_name());
+        tvVideoName.setText(currentVideo.getVideo_name());
 
-        db.videoDao().update(videos.get(videoId));
+        db.videoDao().update(currentVideo);
     }
 
     @Override
@@ -360,11 +355,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void shareVideo() {
-        if (videos.get(videoId) != null) {
+        if (currentVideo != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this video");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, videos.get(videoId).getVideo_path());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, currentVideo.getVideo_path());
             startActivity(Intent.createChooser(shareIntent, "Share Video"));
         }
     }
@@ -377,8 +372,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
 
         if (!isLiked) {
-            users.get(userId).addToLiked(videos.get(videoId));
-            users.get(userId).removeFromDisLiked(videos.get(videoId));
+            currentUser.addToLiked(currentVideo);
+            currentUser.removeFromDisLiked(currentVideo);
             btnLike.setImageResource(R.drawable.ic_like_fill);
             isLiked = true;
             if (isDisliked) {
@@ -386,11 +381,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 isDisliked = false;
             }
         } else {
-            users.get(userId).removeFromLiked(videos.get(videoId));
+            currentUser.removeFromLiked(currentVideo);
             btnLike.setImageResource(R.drawable.ic_like);
             isLiked = false;
         }
-        db.userDao().update(users.get(userId));
+        db.userDao().update(currentUser);
     }
 
     private void handleDislikeAction(ImageButton btnLike, ImageButton btnDislike) {
@@ -401,8 +396,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
 
         if (!isDisliked) {
-            users.get(userId).addToDisLiked(videos.get(videoId));
-            users.get(userId).removeFromLiked(videos.get(videoId));
+            currentUser.addToDisLiked(currentVideo);
+            currentUser.removeFromLiked(currentVideo);
             btnDislike.setImageResource(R.drawable.ic_dislike_fill);
             isDisliked = true;
             if (isLiked) {
@@ -410,11 +405,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 isLiked = false;
             }
         } else {
-            users.get(userId).removeFromDisLiked(videos.get(videoId));
+            currentUser.removeFromDisLiked(currentVideo);
             btnDislike.setImageResource(R.drawable.ic_dislike);
             isDisliked = false;
         }
-        db.userDao().update(users.get(userId));
+        db.userDao().update(currentUser);
     }
 
     private void handleSubscribeAction(Button btnSubscribe) {
@@ -423,23 +418,25 @@ public class VideoPlayerActivity extends AppCompatActivity {
             goToLogIn();
             return;
         }
-        int subCount = Integer.parseInt(users.get(videos.get(videoId).getCreator()).getSubs_count());
+        user creator = db.userDao().getUserById(currentVideo.getCreator());
+        int subCount = Integer.parseInt(creator.getSubs_count());
 
         if (!isSubscribe) {
-            users.get(userId).addToSubs(users.get(videos.get(videoId).getCreator()));
+            currentUser.addToSubs(db.userDao().getUserById(currentVideo.getCreator()));
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.text_color));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.system_color));
             btnSubscribe.setText(R.string.unsubscribe);
-            users.get(videos.get(videoPosition).getCreator()).setSubs_count(String.valueOf(subCount + 1));
+            creator.setSubs_count(String.valueOf(subCount + 1));
             isSubscribe = true;
         } else {
-            users.get(userId).removeFromSubs(users.get(videos.get(videoId).getCreator()));
+            currentUser.removeFromSubs(db.userDao().getUserById(currentVideo.getCreator()));
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.white));
             btnSubscribe.setText(R.string.subscribe);
-            users.get(videos.get(videoPosition).getCreator()).setSubs_count(String.valueOf(subCount - 1));
+            creator.setSubs_count(String.valueOf(subCount - 1));
             isSubscribe = false;
         }
-        db.userDao().update(users.get(userId));
+        db.userDao().update(currentUser);
+        db.userDao().update(creator);
     }
 }

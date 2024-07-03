@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.youtube.Converters.videoConverters;
+import com.example.youtube.utils.videoConverters;
 
 import java.util.ArrayList;
 @Entity(tableName = "videos")

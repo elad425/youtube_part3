@@ -19,20 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.youtube.AppDatabase;
-import com.example.youtube.Daos.userDao;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.ArrayList;
 
 public class ProfilePage extends AppCompatActivity {
 
     private int userId;
-    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -42,8 +37,6 @@ public class ProfilePage extends AppCompatActivity {
 
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
-
-        users = new ArrayList<user>(db.userDao().getAllUsers());
 
         setupWindow();
         initializeData();
@@ -78,9 +71,9 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void displayUserInfo(TextView username, TextView userEmail, ShapeableImageView userPic, Button btnLogIn) {
-        username.setText(users.get(userId).getName());
-        userEmail.setText(users.get(userId).getEmail());
-        String profilePic = users.get(userId).getProfile_pic();
+        username.setText(db.userDao().getUserById(userId).getName());
+        userEmail.setText(db.userDao().getUserById(userId).getEmail());
+        String profilePic = db.userDao().getUserById(userId).getProfile_pic();
         int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
         if (profilePicId != 0) {
             userPic.setImageResource(profilePicId);

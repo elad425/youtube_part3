@@ -111,7 +111,7 @@ public class LogIn extends AppCompatActivity {
                 if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LogIn.this, MainActivity.class);
-                    intent.putExtra("user", u.getId() - 1);
+                    intent.putExtra("user", u.getId());
                     resetFields();
                     startActivity(intent);
                     finish();

@@ -11,7 +11,7 @@
   },
   {
     "name": "yossef israeli",
-    "email" :"yossef@" ,
+    "email" :"yossef@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail4",
     "likedVideos" : [],
@@ -21,7 +21,7 @@
   },
   {
     "name": "elon musk",
-    "email" :"elon@" ,
+    "email" :"elon@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail6",
     "likedVideos" : [],
@@ -31,7 +31,7 @@
   },
   {
     "name": "rotten tomato",
-    "email" :"rotten@" ,
+    "email" :"rotten@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail8",
     "likedVideos" : [],
@@ -41,7 +41,7 @@
   },
   {
     "name": "Universal pictures",
-    "email" :"Universal@" ,
+    "email" :"Universal@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail9",
     "likedVideos" : [],
@@ -51,7 +51,7 @@
   },
   {
     "name": "motato motati",
-    "email" :"motato@" ,
+    "email" :"motato@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail7",
     "likedVideos" : [],
@@ -61,7 +61,7 @@
   },
   {
     "name": "red bull",
-    "email" :"red@" ,
+    "email" :"red@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail3",
     "likedVideos" : [],
@@ -71,7 +71,7 @@
   },
   {
     "name": "top gear",
-    "email" :"top@" ,
+    "email" :"top@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic": "thumbnail6",
     "likedVideos" : [],
@@ -81,7 +81,7 @@
   },
   {
     "name" :"mark zuckerberg" ,
-    "email" :"a@" ,
+    "email" :"a@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic" :"thumbnail3",
     "likedVideos" : [],
@@ -91,7 +91,7 @@
   },
   {
     "name" :"ilan brownfield" ,
-    "email" :"a@" ,
+    "email" :"b@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic" :"thumbnail1",
     "likedVideos" : [],
@@ -101,7 +101,7 @@
   },
   {
     "name" :"moshe rabino" ,
-    "email" :"a@" ,
+    "email" :"c@gmail.com" ,
     "password" :"12345678" ,
     "profile_pic" :"thumbnail4",
     "likedVideos" : [],
