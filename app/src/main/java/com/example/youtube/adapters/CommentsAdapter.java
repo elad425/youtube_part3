@@ -24,24 +24,25 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
     private final ArrayList<comment> commentList;
     private final VideoPlayerActivity videoPlayerActivity;
-    private final user user;
+    private final int userId;
     private final Context context;
     private final LayoutInflater mInflater;
     private final ArrayList<video> videos;
-    private final ArrayList<user> users;
+    private final List<user> users;
 
 
     public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           user user, Context context,ArrayList<video> videos, ArrayList<user> users) {
+                           int userId, Context context,ArrayList<video> videos, List<user> users) {
         mInflater = LayoutInflater.from(context);
         this.commentList = commentList;
         this.context = context;
         this.videoPlayerActivity = videoPlayerActivity;
-        this.user = user;
+        this.userId = userId;
         this.videos = videos;
         this.users = users;
     }
@@ -56,11 +57,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         comment currentComment = commentList.get(position);
-        holder.tvCommentUser.setText(currentComment.getUser().getName());
+        holder.tvCommentUser.setText(users.get(currentComment.getUser()).getName());
         holder.tvCommentText.setText(currentComment.getComment());
         holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
-        String userPic = currentComment.getUser().getProfile_pic();
+        String userPic = users.get(currentComment.getUser()).getProfile_pic();
         int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());
         if (creatorPicId != 0) {
             holder.user_pic.setImageResource(creatorPicId);
@@ -73,12 +74,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
             popup.getMenuInflater().inflate(R.menu.comment_options_menu, popup.getMenu());
 
             popup.setOnMenuItemClickListener(item -> {
-                if (user == null){
+                if (userId == -1){
                     Toast.makeText(context, "please login in order to edit or delete comments",
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, LogIn.class);
                     intent.putParcelableArrayListExtra("video_list", videos);
-                    intent.putParcelableArrayListExtra("users", users);
                     context.startActivity(intent);
                 }else {
                     if (item.getItemId() == R.id.action_edit_comment) {

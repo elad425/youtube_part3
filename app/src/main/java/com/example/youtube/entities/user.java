@@ -1,22 +1,27 @@
 package com.example.youtube.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
-import androidx.annotation.NonNull;
+import com.example.youtube.utils.Converters;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-public class user implements Parcelable {
+@Entity
+public class user {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String name;
     private String email;
     private String password;
     private String profile_pic;
+    @TypeConverters({Converters.class})
     private ArrayList<String> likedVideos;
+    @TypeConverters({Converters.class})
     private ArrayList<String> dislikedVideos;
-    private ArrayList<user> subs;
+    @TypeConverters({Converters.class})
+    private ArrayList<String> subs;
     private String subs_count;
 
     public user(String name, String email, String password, String profile_pic, String subs_count) {
@@ -30,28 +35,19 @@ public class user implements Parcelable {
         this.subs_count = subs_count;
     }
 
-    protected user(Parcel in) {
-        name = in.readString();
-        email = in.readString();
-        password = in.readString();
-        profile_pic = in.readString();
-        likedVideos = in.createStringArrayList();
-        dislikedVideos = in.createStringArrayList();
-        subs = in.createTypedArrayList(user.CREATOR);
-        subs_count = in.readString();
+    public user() {
+        likedVideos = new ArrayList<>();
+        dislikedVideos = new ArrayList<>();
+        subs = new ArrayList<>();
     }
 
-    public static final Creator<user> CREATOR = new Creator<user>() {
-        @Override
-        public user createFromParcel(Parcel in) {
-            return new user(in);
-        }
+    public int getId() {
+        return id;
+    }
 
-        @Override
-        public user[] newArray(int size) {
-            return new user[size];
-        }
-    };
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -101,11 +97,11 @@ public class user implements Parcelable {
         this.dislikedVideos = dislikedVideos;
     }
 
-    public ArrayList<user> getSubs() {
+    public ArrayList<String> getSubs() {
         return subs;
     }
 
-    public void setSubs(ArrayList<user> subs) {
+    public void setSubs(ArrayList<String> subs) {
         this.subs = subs;
     }
 
@@ -144,54 +140,43 @@ public class user implements Parcelable {
     }
 
     public void addToSubs(user creator) {
-        this.subs.add(creator);
+        this.subs.add(creator.name);
     }
 
     public void removeFromSubs(user creator) {
-        subs.removeIf(c -> Objects.equals(c.getName(), creator.getName()));
+        subs.removeIf(c -> Objects.equals(c, creator.getName()));
     }
 
     public boolean isLiked(video video) {
-        for (String s : likedVideos) {
-            if (s.equals(video.getVideo_name())) {
-                return true;
+        if(likedVideos != null) {
+            for (String s : likedVideos) {
+                if (s.equals(video.getVideo_name())) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public boolean isDisLiked(video video) {
-        for (String s : dislikedVideos) {
-            if (s.equals(video.getVideo_name())) {
-                return true;
+        if(dislikedVideos != null) {
+            for (String s : dislikedVideos) {
+                if (s.equals(video.getVideo_name())) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public boolean isSubs(user creator) {
-        for (user c : subs) {
-            if (Objects.equals(c.getName(), creator.getName())) {
-                return true;
+        if(subs != null) {
+            for (String c : subs) {
+                if (Objects.equals(c, creator.getName())) {
+                    return true;
+                }
             }
         }
         return false;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(email);
-        dest.writeString(password);
-        dest.writeString(profile_pic);
-        dest.writeStringList(likedVideos);
-        dest.writeStringList(dislikedVideos);
-        dest.writeTypedList(subs);
-        dest.writeString(subs_count);
     }
 }

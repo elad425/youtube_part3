@@ -16,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.youtube.Daos.userDao;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.AddVideoActivity;
@@ -28,16 +30,32 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<video> videos;
-    private user user;
-    private ArrayList<user> users;
+    private int userId;
+    private List<user> users;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupWindow();
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+
+        userDao userDao = db.userDao();
+
+        if(userDao.getAllUsers().isEmpty()){
+            List<user> temp = JsonUtils.loadUsersFromJson(this);
+            for (user u : temp){
+                userDao.insert(u);
+            }
+        }
+
+        users = userDao.getAllUsers();
 
         if (checkPermissions()) {
             lunchApp();
@@ -57,16 +75,13 @@ public class MainActivity extends AppCompatActivity {
         if (videos == null) {
             videos = JsonUtils.loadVideosFromJson(this);
         }
-        users = intent.getParcelableArrayListExtra("users");
-        user = intent.getParcelableExtra("user");
-        if (user == null){
-            user = new user("elad","elad","elad","thumbnail2","0");
-        }
+        userId = intent.getIntExtra("user",-1);
+
     }
 
     private void setupUI() {
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        GeneralUtils.displayVideoList(this, lstVideos, videos, user, null, users);
+        GeneralUtils.displayVideoList(this, lstVideos, videos, userId, null, users);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -79,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private void navigateToSearch() {
         Intent intent = new Intent(this, SearchVideo.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
@@ -102,24 +116,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToProfile() {
         Intent intent = new Intent(MainActivity.this, ProfilePage.class);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         intent.putExtra("videos", videos);
-        intent.putExtra("users",users);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
-        if (user != null) {
+        if (userId != -1) {
             Intent intent = new Intent(MainActivity.this, AddVideoActivity.class);
             intent.putExtra("videos", videos);
-            intent.putExtra("user", user);
-            intent.putExtra("users",users);
+            intent.putExtra("user", userId);
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LogIn.class);
             intent.putParcelableArrayListExtra("video_list", videos);
-            intent.putParcelableArrayListExtra("users", users);
             startActivity(intent);
         }
     }

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "elad cohen",
+    "email" :"elad@gmail.com" ,
+    "password" :"a1111111" ,
+    "profile_pic": "thumbnail2",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "100000000"
+  },
+  {
+    "name": "yossef israeli",
+    "email" :"yossef@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail4",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "19999"
+  },
+  {
+    "name": "elon musk",
+    "email" :"elon@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail6",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "100000000"
+  },
+  {
+    "name": "rotten tomato",
+    "email" :"rotten@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail8",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "990000"
+  },
+  {
+    "name": "Universal pictures",
+    "email" :"Universal@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail9",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "8250000"
+  },
+  {
+    "name": "motato motati",
+    "email" :"motato@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail7",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "55300"
+  },
+  {
+    "name": "red bull",
+    "email" :"red@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail3",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "1200000"
+  },
+  {
+    "name": "top gear",
+    "email" :"top@" ,
+    "password" :"12345678" ,
+    "profile_pic": "thumbnail6",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "45645324"
+  },
+  {
+    "name" :"mark zuckerberg" ,
+    "email" :"a@" ,
+    "password" :"12345678" ,
+    "profile_pic" :"thumbnail3",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "0"
+  },
+  {
+    "name" :"ilan brownfield" ,
+    "email" :"a@" ,
+    "password" :"12345678" ,
+    "profile_pic" :"thumbnail1",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "0"
+  },
+  {
+    "name" :"moshe rabino" ,
+    "email" :"a@" ,
+    "password" :"12345678" ,
+    "profile_pic" :"thumbnail4",
+    "likedVideos" : [],
+    "dislikedVideos" : [],
+    "subs" : [],
+    "subs_count": "0"
+  }
+]

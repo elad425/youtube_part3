@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class video implements Parcelable {
     private String video_name;
-    private user creator;
+    private int creatorId;
     private String date_of_release;
     private String views;
     private String likes;
@@ -16,9 +16,9 @@ public class video implements Parcelable {
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, user creator, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
+    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
         this.video_name = video_name;
-        this.creator = creator;
+        this.creatorId = creatorId;
         this.date_of_release = date_of_release;
         this.video_path = video_path;
         this.thumbnail = thumbnail;
@@ -30,7 +30,7 @@ public class video implements Parcelable {
 
     protected video(Parcel in) {
         video_name = in.readString();
-        creator = in.readParcelable(user.class.getClassLoader());
+        creatorId = in.readInt();
         date_of_release = in.readString();
         views = in.readString();
         likes = in.readString();
@@ -60,12 +60,12 @@ public class video implements Parcelable {
         this.video_name = video_name;
     }
 
-    public user getCreator() {
-        return creator;
+    public int getCreator() {
+        return creatorId;
     }
 
-    public void setCreator(user creator) {
-        this.creator = creator;
+    public void setCreator(int creator) {
+        this.creatorId = creator;
     }
 
     public String getDate_of_release() {
@@ -130,7 +130,7 @@ public class video implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(video_name);
-        dest.writeParcelable(creator,flags);
+        dest.writeInt(creatorId);
         dest.writeString(date_of_release);
         dest.writeString(views);
         dest.writeString(likes);

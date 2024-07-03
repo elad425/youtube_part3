@@ -2,6 +2,7 @@ package com.example.youtube.screens;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.util.Patterns;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.youtube.AppDatabase;
+import com.example.youtube.Daos.userDao;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
@@ -18,12 +22,14 @@ import com.example.youtube.entities.video;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
     private ArrayList<video> videos;
-    private ArrayList<user> users;
+    private List<user> users;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,14 @@ public class LogIn extends AppCompatActivity {
 
         Intent intent = getIntent();
         videos = intent.getParcelableArrayListExtra("video_list");
-        users = intent.getParcelableArrayListExtra("users");
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+
+        // Get the UserDao
+        userDao userDao = db.userDao();
+
+        users = userDao.getAllUsers();
 
         emailEditText.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,7 +92,6 @@ public class LogIn extends AppCompatActivity {
     private void signUp() {
         Intent intent = new Intent(LogIn.this, SignUpActivity.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
         resetFields();
         startActivity(intent);
     }
@@ -108,9 +120,8 @@ public class LogIn extends AppCompatActivity {
                 if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LogIn.this, MainActivity.class);
-                    intent.putExtra("user", u);
+                    intent.putExtra("user", u.getId() - 1);
                     intent.putParcelableArrayListExtra("video_list", videos);
-                    intent.putParcelableArrayListExtra("users", users);
                     resetFields();
                     startActivity(intent);
                     finish();

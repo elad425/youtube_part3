@@ -1,6 +1,9 @@
 package com.example.youtube.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.provider.Settings;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtube.adapters.VideoListAdapter;
@@ -11,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -18,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 public class GeneralUtils {
 
     public static void displayVideoList(Context context, RecyclerView lstVideos,
-                                        ArrayList<video> videos, user user, video filter, ArrayList<user> users) {
-        final VideoListAdapter adapter = new VideoListAdapter(context, user);
+                                        ArrayList<video> videos, int user, video filter, List<user> users) {
+        final VideoListAdapter adapter = new VideoListAdapter(context, user, users);
         lstVideos.setAdapter(adapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setVideos(videos, users);
+        adapter.setVideos(videos);
         adapter.filter(filter);
     }
 
@@ -37,19 +41,7 @@ public class GeneralUtils {
         return counter;
     }
 
-    public static void updateUsers(ArrayList<user> users, user user){
-        if (users != null) {
-            int position = 0;
-            while (position != users.size()) {
-                if (users.get(position).getEmail().equals(user.getEmail())) {
-                    users.set(position, user);
-                }
-                position += 1;
-            }
-        }
-    }
-
-    public static boolean isUserExist(ArrayList<user> users, String email){
+    public static boolean isUserExist(List<user> users, String email){
         if (users == null){
             return false;
         }

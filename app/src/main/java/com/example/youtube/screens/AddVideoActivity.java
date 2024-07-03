@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,8 +39,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private TextView videoPlaceholder;
     private Uri videoUri, thumbnailUri;
     private ArrayList<video> videos;
-    private ArrayList<user> users;
-    private user user;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +74,7 @@ public class AddVideoActivity extends AppCompatActivity {
         recordVideoButton.setOnClickListener(v -> openCamera());
 
         videos = getIntent().getParcelableArrayListExtra("videos");
-        users = getIntent().getParcelableArrayListExtra("users");
-        user = getIntent().getParcelableExtra("user");
+        userId = getIntent().getIntExtra("user",-1);
         if (videos == null) {
             videos = new ArrayList<>();
         }
@@ -101,17 +98,15 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void navigateToProfilePage() {
         Intent intent = new Intent(AddVideoActivity.this, ProfilePage.class);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         intent.putParcelableArrayListExtra("videos", videos);
-        intent.putParcelableArrayListExtra("users", users);
         startActivity(intent);
     }
 
     private void navigateToMainActivity() {
         Intent intent = new Intent(AddVideoActivity.this, MainActivity.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
@@ -173,7 +168,8 @@ public class AddVideoActivity extends AppCompatActivity {
             return;
         }
 
-        video newVideo = new video(videoName, user, GeneralUtils.getTheDate(), videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
+        video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
+                videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
 
         videos.add(newVideo);
         Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
@@ -194,8 +190,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         startActivity(intent);
     }
 }

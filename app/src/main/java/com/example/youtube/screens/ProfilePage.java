@@ -3,6 +3,7 @@ package com.example.youtube.screens;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -17,26 +18,35 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.youtube.AppDatabase;
+import com.example.youtube.Daos.userDao;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
-import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfilePage extends AppCompatActivity {
 
-    private user user;
+    private int userId;
     private ArrayList<video> videos;
-    private ArrayList<user> users;
+    private List<user> users;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_page);
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+
+        userDao userDao = db.userDao();
+        users = userDao.getAllUsers();
 
         setupWindow();
         initializeData();
@@ -52,9 +62,8 @@ public class ProfilePage extends AppCompatActivity {
 
     private void initializeData() {
         Intent intent = getIntent();
-        user = intent.getParcelableExtra("user");
+        userId = intent.getIntExtra("user",-1);
         videos = intent.getParcelableArrayListExtra("videos");
-        users = intent.getParcelableArrayListExtra("users");
         if (videos == null) {
             videos = new ArrayList<>();
         }
@@ -68,7 +77,7 @@ public class ProfilePage extends AppCompatActivity {
         ImageButton btnSettings = findViewById(R.id.settings);
         btnSettings.setOnClickListener(this::displaySettings);
 
-        if (user != null) {
+        if (userId != -1) {
             displayUserInfo(username, userEmail, userPic, btnLogIn);
         } else {
             displayGuestInfo(username, userEmail, userPic, btnLogIn);
@@ -76,9 +85,9 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void displayUserInfo(TextView username, TextView userEmail, ShapeableImageView userPic, Button btnLogIn) {
-        username.setText(user.getName());
-        userEmail.setText(user.getEmail());
-        String profilePic = user.getProfile_pic();
+        username.setText(users.get(userId).getName());
+        userEmail.setText(users.get(userId).getEmail());
+        String profilePic = users.get(userId).getProfile_pic();
         int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
         if (profilePicId != 0) {
             userPic.setImageResource(profilePicId);
@@ -142,17 +151,15 @@ public class ProfilePage extends AppCompatActivity {
     private void navigateToHome() {
         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
         intent.putExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
-        if (user != null) {
+        if (userId != -1) {
             Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);
             intent.putExtra("videos", videos);
-            intent.putParcelableArrayListExtra("users", users);
-            intent.putExtra("user", user);
+            intent.putExtra("user", userId);
             startActivity(intent);
         } else {
             Toast.makeText(ProfilePage.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
@@ -161,8 +168,7 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     public void onConfirmClick() {
-        GeneralUtils.updateUsers(users, user);
-        user = null;
+        userId = -1;
         Toast.makeText(this, "You logged out", Toast.LENGTH_SHORT).show();
         navigateToHome();
     }
@@ -179,15 +185,13 @@ public class ProfilePage extends AppCompatActivity {
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
+        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
     private void goToLogIn(){
         Intent intent = new Intent(this, LogIn.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
         startActivity(intent);
     }
 }

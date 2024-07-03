@@ -14,7 +14,10 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
+import com.example.youtube.AppDatabase;
+import com.example.youtube.Daos.userDao;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -23,6 +26,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -30,7 +34,8 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputLayout usernameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
     private Uri imageUri;
     private ArrayList<video> videos;
-    private ArrayList<user> users;
+    private List<user> users;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,14 @@ public class SignUpActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         videos = intent.getParcelableArrayListExtra("video_list");
-        users = intent.getParcelableArrayListExtra("users");
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+
+        // Get the UserDao
+        userDao userDao = db.userDao();
+
+        users = userDao.getAllUsers();
 
         uploadButton.setOnClickListener(v -> openFileChooser());
         signUpButton.setOnClickListener(v -> signUp());
@@ -72,7 +84,6 @@ public class SignUpActivity extends AppCompatActivity {
         resetFields();
         Intent intent = new Intent(SignUpActivity.this, LogIn.class);
         intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
         startActivity(intent);
     }
 
@@ -146,10 +157,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         user new_user = new user(username,email,password,imageUri.toString(), "0");
-        if (users==null){
-            users=new ArrayList<>();
-        }
-        users.add(new_user);
+        db.userDao().insert(new_user);
 
         Toast.makeText(this, "Sign-up successful", Toast.LENGTH_SHORT).show();
         login();

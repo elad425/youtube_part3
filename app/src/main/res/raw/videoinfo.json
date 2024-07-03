@@ -2,13 +2,7 @@
   {
     "id" : "0",
     "video_name": "video player test",
-    "creator":{
-      "name": "elad cohen",
-      "email" :"elad@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail2",
-      "subs_count": "100000000"
-    },
+    "creatorId": 0,
     "date_of_release": "13/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video3",
     "thumbnail": "thumbnail1",
@@ -18,90 +12,42 @@
     "comments": [
       {
         "comment": "what an amazing video!!",
-        "user": {
-          "name" :"mark zuckerberg" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail3",
-          "subs_count": "0"
-        },
+        "userId": 8,
         "date": "13/06/2024 11:19:06"
       },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
-        "user":{
-          "name" :"ilan brownfield" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail1",
-          "subs_count": "0"
-        },
+        "userId": 9,
         "date": "13/06/2024 11:29:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/06/2024 11:39:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/05/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/04/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/06/2023 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "12/06/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "06/06/2024 11:09:06"
       }
     ]
@@ -109,13 +55,7 @@
   {
     "id" : "1",
     "video_name": "video player test to see if each video play different file",
-    "creator": {
-      "name": "yossef israeli",
-      "email" :"yossef@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail4",
-      "subs_count": "19999"
-    },
+    "creatorId": 1,
     "date_of_release": "13/06/2024 10:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video2",
     "thumbnail": "thumbnail2",
@@ -125,35 +65,17 @@
     "comments": [
       {
       "comment": "what an amazing video!!",
-      "user": {
-        "name" :"mark zuckerberg" ,
-        "email" :"a@" ,
-        "password" :"12345678" ,
-        "profile_pic" :"thumbnail3",
-        "subs_count": "0"
-      },
+      "userId": 8,
       "date": "06/06/2024 11:09:06"
     },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
-        "user":{
-          "name" :"ilan brownfield" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 9,
         "date": "03/06/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail2",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/03/2024 11:09:06"
       }
     ]
@@ -161,13 +83,7 @@
   {
     "id" : "2",
     "video_name": "video player test to check if list is scrollable",
-    "creator": {
-      "name": "elon musk",
-      "email" :"elon@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail6",
-      "subs_count": "100000000"
-    },
+    "creatorId": 2,
     "date_of_release": "12/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video1",
     "thumbnail": "thumbnail3",
@@ -177,35 +93,17 @@
     "comments": [
       {
         "comment": "what an amazing video!!",
-        "user": {
-          "name" :"mark zuckerberg" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail3",
-          "subs_count": "0"
-        },
+        "userId": 8,
         "date": "10/06/2024 11:09:06"
       },
       {
         "comment": "this comment is to check if the limits off a single comment are ok and to blah blah blah",
-        "user":{
-          "name" :"ilan brownfield" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail4",
-          "subs_count": "0"
-        },
+        "userId": 9,
         "date": "13/01/2024 11:09:06"
       },
       {
         "comment": "this video is do bad:(",
-        "user":{
-          "name" :"moshe rabino" ,
-          "email" :"a@" ,
-          "password" :"12345678" ,
-          "profile_pic" :"thumbnail9",
-          "subs_count": "0"
-        },
+        "userId": 10,
         "date": "13/06/2022 11:09:06"
       }
     ]
@@ -213,13 +111,7 @@
   {
     "id" : "3",
     "video_name": "Inside Out 2 Trailer (2024)",
-    "creator":{
-      "name": "rotten tomato",
-      "email" :"rotten@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail8",
-      "subs_count": "990000"
-    },
+    "creatorId": 3,
     "date_of_release": "13/05/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video4",
     "thumbnail": "thumbnail4",
@@ -231,13 +123,7 @@
   {
     "id" : "4",
     "video_name": "Kung Fu Panda 4 | Official Trailer (Universal Pictures)",
-    "creator":{
-      "name": "Universal pictures",
-      "email" :"Universal@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail9",
-      "subs_count": "8250000"
-    },
+    "creatorId": 4,
     "date_of_release": "13/06/2023 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video5",
     "thumbnail": "thumbnail5",
@@ -249,13 +135,7 @@
   {
     "id" : "5",
     "video_name": "HOW TO TRAIN YOUR DRAGON: THE HIDDEN WORLD - Official Trailer",
-    "creator":{
-      "name": "Universal pictures",
-      "email" :"Universal@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail9",
-      "subs_count": "8250000"
-    },
+    "creatorId": 4,
     "date_of_release": "13/06/2024 09:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video6",
     "thumbnail": "thumbnail6",
@@ -267,13 +147,7 @@
   {
     "id" : "6",
     "video_name": "OpenAI Plays Hide and Seek",
-    "creator":{
-      "name": "motato motati",
-      "email" :"motato@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail7",
-      "subs_count": "55300"
-    },
+    "creatorId": 5,
     "date_of_release": "11/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video7",
     "thumbnail": "thumbnail7",
@@ -285,13 +159,7 @@
   {
     "id" : "7",
     "video_name": "World's Fastest Camera Drone Vs F1 Car",
-    "creator":{
-      "name": "red bull",
-      "email" :"red@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail3",
-      "subs_count": "1200000"
-    },
+    "creatorId": 6,
     "date_of_release": "13/04/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video8",
     "thumbnail": "thumbnail8",
@@ -303,13 +171,7 @@
   {
     "id" : "8",
     "video_name": "FULL FILM: McLaren Speedtail vs F35 Fighter Jet",
-    "creator":{
-      "name": "top gear",
-      "email" :"top@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail6",
-      "subs_count": "45645324"
-    },
+    "creatorId": 7,
     "date_of_release": "13/06/2022 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video9",
     "thumbnail": "thumbnail9",
@@ -321,13 +183,7 @@
   {
     "id" : "9",
     "video_name": "I Jumped From Space",
-    "creator":{
-      "name": "red bull",
-      "email" :"top@" ,
-      "password" :"12345678" ,
-      "profile_pic": "thumbnail4",
-      "subs_count": "1200000"
-    },
+    "creatorId": 6,
     "date_of_release": "06/03/2020 07:12:06",
     "video_path": "android.resource://com.example.youtube/raw/video10",
     "thumbnail": "thumbnail10",
