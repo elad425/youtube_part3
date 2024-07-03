@@ -91,9 +91,7 @@ public class ProfilePage extends AppCompatActivity {
         userPic.setImageResource(R.drawable.ic_account);
 
         btnLogIn.setText(R.string.login);
-        btnLogIn.setOnClickListener(v -> {
-            goToLogIn();
-        });
+        btnLogIn.setOnClickListener(v -> goToLogIn());
     }
 
     private void displaySettings(View v){

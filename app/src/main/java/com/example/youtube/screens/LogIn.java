@@ -14,20 +14,18 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.youtube.AppDatabase;
-import com.example.youtube.Daos.userDao;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
     private ArrayList<user> users;
-    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +38,12 @@ public class LogIn extends AppCompatActivity {
         Button loginButton = findViewById(R.id.login_login_button);
         Button signUpButton = findViewById(R.id.login_to_signup_button);
 
-        db = Room.databaseBuilder(getApplicationContext(),
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
-        users = new ArrayList<user>(db.userDao().getAllUsers());
+        users = new ArrayList<>(db.userDao().getAllUsers());
 
-        emailEditText.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(emailEditText.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -61,7 +59,7 @@ public class LogIn extends AppCompatActivity {
             }
         });
 
-        passwordEditText.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(passwordEditText.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -88,8 +86,8 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void login() {
-        String email = emailEditText.getEditText().getText().toString().trim();
-        String password = passwordEditText.getEditText().getText().toString().trim();
+        String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
+        String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
 
         if (password.isEmpty()) {
             passwordEditText.setError("Please enter a password");
@@ -124,7 +122,7 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void resetFields() {
-        emailEditText.getEditText().setText("");
-        passwordEditText.getEditText().setText("");
+        Objects.requireNonNull(emailEditText.getEditText()).setText("");
+        Objects.requireNonNull(passwordEditText.getEditText()).setText("");
     }
 }

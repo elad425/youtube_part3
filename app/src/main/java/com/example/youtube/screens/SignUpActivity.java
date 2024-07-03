@@ -17,15 +17,14 @@ import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import com.example.youtube.AppDatabase;
-import com.example.youtube.Daos.userDao;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -52,15 +51,10 @@ public class SignUpActivity extends AppCompatActivity {
         Button signUpButton = findViewById(R.id.sign_up_button);
         Button loginButton = findViewById(R.id.sign_up_login_button);
 
-        Intent intent = getIntent();
-
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
-        // Get the UserDao
-        userDao userDao = db.userDao();
-
-        users = new ArrayList<user>(db.userDao().getAllUsers());
+        users = new ArrayList<>(db.userDao().getAllUsers());
 
         uploadButton.setOnClickListener(v -> openFileChooser());
         signUpButton.setOnClickListener(v -> signUp());
@@ -84,10 +78,10 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void resetFields() {
-        usernameEditText.getEditText().setText("");
-        emailEditText.getEditText().setText("");
-        passwordEditText.getEditText().setText("");
-        confirmPasswordEditText.getEditText().setText("");
+        Objects.requireNonNull(usernameEditText.getEditText()).setText("");
+        Objects.requireNonNull(emailEditText.getEditText()).setText("");
+        Objects.requireNonNull(passwordEditText.getEditText()).setText("");
+        Objects.requireNonNull(confirmPasswordEditText.getEditText()).setText("");
         imageUri = null;
     }
 
@@ -101,10 +95,10 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUp() {
-        String username = usernameEditText.getEditText().getText().toString().trim();
-        String email = emailEditText.getEditText().getText().toString().trim();
-        String password = passwordEditText.getEditText().getText().toString().trim();
-        String confirmPassword = confirmPasswordEditText.getEditText().getText().toString().trim();
+        String username = Objects.requireNonNull(usernameEditText.getEditText()).getText().toString().trim();
+        String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
+        String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
+        String confirmPassword = Objects.requireNonNull(confirmPasswordEditText.getEditText()).getText().toString().trim();
         if (username.isEmpty()){
             usernameEditText.setError("You need to enter a username");
         }
@@ -161,6 +155,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void clearErrorOnTyping(TextInputLayout textInputLayout) {
         TextInputEditText editText = (TextInputEditText) textInputLayout.getEditText();
+        assert editText != null;
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -44,6 +44,26 @@ public class MainActivity extends AppCompatActivity {
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
+        if (checkPermissions()) {
+            lunchApp();
+        } else {
+            requestPermissions();
+        }
+    }
+
+    private boolean isFirstRun() {
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isFirstRun", true);
+    }
+
+    private void setFirstRunComplete() {
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isFirstRun", false);
+        editor.apply();
+    }
+
+    private void initializeData() {
         userDao userDao = db.userDao();
         ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
         for (user u : tempUser){
@@ -55,12 +75,6 @@ public class MainActivity extends AppCompatActivity {
         for (video v : tempVideo){
             videoDao.insert(v);
         }
-
-        if (checkPermissions()) {
-            lunchApp();
-        } else {
-            requestPermissions();
-        }
     }
 
     private void setupWindow() {
@@ -68,10 +82,9 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
     }
 
-    private void initializeData() {
+    private void initialize() {
         Intent intent = getIntent();
         userId = intent.getIntExtra("user",-1);
-
     }
 
     private void setupUI() {
@@ -180,7 +193,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void lunchApp(){
         setContentView(R.layout.activity_main);
-        initializeData();
+
+        if (isFirstRun()) {
+            initializeData();
+            setFirstRunComplete();
+        }
+
+        initialize();
         setupUI();
         setupBottomNavigation();
         handleBackButton();

@@ -50,7 +50,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewH
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            i.putExtra("video_item", clickedVideoItem.getVideoId() - 1);
+            i.putExtra("video_item", clickedVideoItem.getVideoId());
             i.putExtra("user", userId);
             mInflater.getContext().startActivity(i);
         });

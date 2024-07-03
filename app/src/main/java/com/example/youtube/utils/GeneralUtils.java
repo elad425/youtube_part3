@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
@@ -28,18 +27,6 @@ public class GeneralUtils {
         adapter.setVideos();
         adapter.filter(filter);
     }
-
-    public static int findVideoPlace (ArrayList<video> videos, video video){
-        int counter = 0;
-        for (video v : videos){
-            if (Objects.equals(v.getVideo_name(), video.getVideo_name())){
-                return counter;
-            }
-            counter++;
-        }
-        return counter;
-    }
-
     public static boolean isUserExist(ArrayList<user> users, String email){
         if (users == null){
             return false;
@@ -66,6 +53,7 @@ public class GeneralUtils {
         }
 
         Date currentDate = new Date();
+        assert givenDate != null;
         long diffInMillis = currentDate.getTime() - givenDate.getTime();
 
         long years = TimeUnit.MILLISECONDS.toDays(diffInMillis) / 365;

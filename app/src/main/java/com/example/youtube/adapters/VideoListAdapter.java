@@ -25,7 +25,6 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final LayoutInflater mInflater;
@@ -76,7 +75,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         this.context = context;
         this.userId = userId;
         this.db = db;
-        List<video> temp = db.videoDao().getAllVideos();
     }
 
     @NonNull
@@ -130,9 +128,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_delete_video) {
                     if (userId == -1) {
-                        Toast.makeText(context, "please login in order to download or delete a video", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "please login in order to delete a video", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, LogIn.class);
                         context.startActivity(intent);
+                    }else if (videos.get(position).getCreator() != userId) {
+                        Toast.makeText(context, "cant delete non-user video", Toast.LENGTH_SHORT).show();
                     } else {
                         video temp = videos.get(position);
                         videos.remove(position);

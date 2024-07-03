@@ -177,6 +177,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         ImageButton btnEdit = findViewById(R.id.edit_video);
         Button btnSubscribe = findViewById(R.id.btn_subscribe);
 
+        if ((currentUser == null) || (currentVideo.getCreator() != currentUser.getId())) {
+            btnEdit.setVisibility(View.GONE);
+        }
+
         updateActionButtons(btnLike, btnDislike, btnSubscribe);
 
         btnShare.setOnClickListener(v -> shareVideo());

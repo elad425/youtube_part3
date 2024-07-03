@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
-import com.example.youtube.entities.user;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
@@ -31,7 +30,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private final int userId;
     private final Context context;
     private final LayoutInflater mInflater;
-
     private final AppDatabase db;
 
 
@@ -65,6 +63,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
             holder.user_pic.setImageResource(creatorPicId);
         } else {
             holder.user_pic.setImageURI(Uri.parse(userPic));
+        }
+
+        if(commentList.get(position).getUser() != userId) {
+            holder.tvEditComment.setVisibility(View.GONE);
         }
 
         holder.tvEditComment.setOnClickListener(v -> {

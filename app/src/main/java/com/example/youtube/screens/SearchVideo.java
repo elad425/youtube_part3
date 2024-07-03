@@ -17,9 +17,7 @@ import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.adapters.SearchAdapter;
-import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
-import com.example.youtube.utils.JsonUtils;
 
 import java.util.ArrayList;
 
@@ -51,11 +49,7 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void initializeData() {
-        Intent intent = getIntent();
-        videos = new ArrayList<video>(db.videoDao().getAllVideos());
-        if (videos == null) {
-            videos = JsonUtils.loadVideosFromJson(this);
-        }
+        videos = new ArrayList<>(db.videoDao().getAllVideos());
         filteredList = new ArrayList<>();
     }
 
