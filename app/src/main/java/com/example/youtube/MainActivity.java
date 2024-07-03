@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.example.youtube.Daos.userDao;
+import com.example.youtube.Daos.videoDao;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.AddVideoActivity;
@@ -30,12 +31,11 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<video> videos;
     private int userId;
-    private List<user> users;
+    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -47,15 +47,22 @@ public class MainActivity extends AppCompatActivity {
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         userDao userDao = db.userDao();
-
         if(userDao.getAllUsers().isEmpty()){
-            List<user> temp = JsonUtils.loadUsersFromJson(this);
-            for (user u : temp){
+            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
+            for (user u : tempUser){
                 userDao.insert(u);
             }
         }
+        users = new ArrayList<user>(userDao.getAllUsers());
 
-        users = userDao.getAllUsers();
+        videoDao videoDao = db.videoDao();
+        if(videoDao.getAllVideos().isEmpty()){
+            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
+            for (video v : tempVideo){
+                videoDao.insert(v);
+            }
+        }
+        videos = new ArrayList<video>(videoDao.getAllVideos());
 
         if (checkPermissions()) {
             lunchApp();
@@ -71,10 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeData() {
         Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-        if (videos == null) {
-            videos = JsonUtils.loadVideosFromJson(this);
-        }
         userId = intent.getIntExtra("user",-1);
 
     }
@@ -93,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToSearch() {
         Intent intent = new Intent(this, SearchVideo.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }
@@ -117,20 +119,17 @@ public class MainActivity extends AppCompatActivity {
     private void navigateToProfile() {
         Intent intent = new Intent(MainActivity.this, ProfilePage.class);
         intent.putExtra("user", userId);
-        intent.putExtra("videos", videos);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
         if (userId != -1) {
             Intent intent = new Intent(MainActivity.this, AddVideoActivity.class);
-            intent.putExtra("videos", videos);
             intent.putExtra("user", userId);
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LogIn.class);
-            intent.putParcelableArrayListExtra("video_list", videos);
             startActivity(intent);
         }
     }

@@ -26,15 +26,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private TextInputLayout usernameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
     private Uri imageUri;
-    private ArrayList<video> videos;
-    private List<user> users;
+    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -55,7 +53,6 @@ public class SignUpActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.sign_up_login_button);
 
         Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
 
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
@@ -63,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Get the UserDao
         userDao userDao = db.userDao();
 
-        users = userDao.getAllUsers();
+        users = new ArrayList<user>(db.userDao().getAllUsers());
 
         uploadButton.setOnClickListener(v -> openFileChooser());
         signUpButton.setOnClickListener(v -> signUp());
@@ -83,7 +80,6 @@ public class SignUpActivity extends AppCompatActivity {
     private void login(){
         resetFields();
         Intent intent = new Intent(SignUpActivity.this, LogIn.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         startActivity(intent);
     }
 

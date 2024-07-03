@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class JsonUtils {
     public static ArrayList<video> loadVideosFromJson(Context context) {
@@ -23,11 +22,11 @@ public class JsonUtils {
         return gson.fromJson(reader, videoListType); // Changed return type
     }
 
-    public static List<user> loadUsersFromJson(Context context) {
+    public static ArrayList<user> loadUsersFromJson(Context context) {
         InputStream inputStream = context.getResources().openRawResource(R.raw.userinfo);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Gson gson = new Gson();
-        Type userListType = new TypeToken<List<user>>() {}.getType();
+        Type userListType = new TypeToken<ArrayList<user>>() {}.getType();
         return gson.fromJson(reader, userListType);
     }
 

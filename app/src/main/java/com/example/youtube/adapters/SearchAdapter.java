@@ -19,13 +19,11 @@ import java.util.ArrayList;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewHolder> {
     private ArrayList<video> filteredVideoList;
-    private final ArrayList<video> videoList;
     private final LayoutInflater mInflater;
     private final int userId;
 
-    public SearchAdapter(ArrayList<video> videoList, ArrayList<video> filteredVideoList,
+    public SearchAdapter( ArrayList<video> filteredVideoList,
                          Context context, int userId) {
-        this.videoList = videoList;
         this.userId = userId;
         this.filteredVideoList = filteredVideoList;
         this.mInflater = LayoutInflater.from(context);
@@ -52,8 +50,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewH
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            i.putExtra("video_item", clickedVideoItem);
-            i.putParcelableArrayListExtra("video_list", videoList);
+            i.putExtra("video_item", clickedVideoItem.getVideoId() - 1);
             i.putExtra("user", userId);
             mInflater.getContext().startActivity(i);
         });

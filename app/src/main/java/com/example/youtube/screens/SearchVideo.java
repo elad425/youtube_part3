@@ -11,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.adapters.SearchAdapter;
+import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.JsonUtils;
 
@@ -26,11 +29,15 @@ public class SearchVideo extends AppCompatActivity {
     private SearchAdapter searchAdapter;
     private ArrayList<video> videos;
     private int userId;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_video);
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         setupWindow();
         initializeData();
@@ -45,7 +52,7 @@ public class SearchVideo extends AppCompatActivity {
 
     private void initializeData() {
         Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
+        videos = new ArrayList<video>(db.videoDao().getAllVideos());
         if (videos == null) {
             videos = JsonUtils.loadVideosFromJson(this);
         }
@@ -60,7 +67,7 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void setupRecyclerView(int userId) {
-        searchAdapter = new SearchAdapter(videos, filteredList, this, userId);
+        searchAdapter = new SearchAdapter(filteredList, this, userId);
         RecyclerView rvSearch = findViewById(R.id.rv_search);
         rvSearch.setLayoutManager(new LinearLayoutManager(this));
         rvSearch.setAdapter(searchAdapter);
@@ -98,7 +105,6 @@ public class SearchVideo extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }

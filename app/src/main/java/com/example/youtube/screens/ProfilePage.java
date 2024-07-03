@@ -28,13 +28,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProfilePage extends AppCompatActivity {
 
     private int userId;
-    private ArrayList<video> videos;
-    private List<user> users;
+    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -45,8 +43,7 @@ public class ProfilePage extends AppCompatActivity {
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
-        userDao userDao = db.userDao();
-        users = userDao.getAllUsers();
+        users = new ArrayList<user>(db.userDao().getAllUsers());
 
         setupWindow();
         initializeData();
@@ -63,10 +60,6 @@ public class ProfilePage extends AppCompatActivity {
     private void initializeData() {
         Intent intent = getIntent();
         userId = intent.getIntExtra("user",-1);
-        videos = intent.getParcelableArrayListExtra("videos");
-        if (videos == null) {
-            videos = new ArrayList<>();
-        }
     }
 
     private void setupUI() {
@@ -150,7 +143,6 @@ public class ProfilePage extends AppCompatActivity {
 
     private void navigateToHome() {
         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
-        intent.putExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }
@@ -158,7 +150,6 @@ public class ProfilePage extends AppCompatActivity {
     private void navigateToAddVideo() {
         if (userId != -1) {
             Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);
-            intent.putExtra("videos", videos);
             intent.putExtra("user", userId);
             startActivity(intent);
         } else {
@@ -184,14 +175,12 @@ public class ProfilePage extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }
 
     private void goToLogIn(){
         Intent intent = new Intent(this, LogIn.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         startActivity(intent);
     }
 }

@@ -22,13 +22,11 @@ import com.example.youtube.entities.video;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
-    private ArrayList<video> videos;
-    private List<user> users;
+    private ArrayList<user> users;
     private AppDatabase db;
 
     @Override
@@ -42,16 +40,10 @@ public class LogIn extends AppCompatActivity {
         Button loginButton = findViewById(R.id.login_login_button);
         Button signUpButton = findViewById(R.id.login_to_signup_button);
 
-        Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
-        // Get the UserDao
-        userDao userDao = db.userDao();
-
-        users = userDao.getAllUsers();
+        users = new ArrayList<user>(db.userDao().getAllUsers());
 
         emailEditText.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -91,7 +83,6 @@ public class LogIn extends AppCompatActivity {
 
     private void signUp() {
         Intent intent = new Intent(LogIn.this, SignUpActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         resetFields();
         startActivity(intent);
     }
@@ -121,7 +112,6 @@ public class LogIn extends AppCompatActivity {
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LogIn.this, MainActivity.class);
                     intent.putExtra("user", u.getId() - 1);
-                    intent.putParcelableArrayListExtra("video_list", videos);
                     resetFields();
                     startActivity(intent);
                     finish();

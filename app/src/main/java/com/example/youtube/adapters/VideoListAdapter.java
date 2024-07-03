@@ -25,12 +25,11 @@ import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final LayoutInflater mInflater;
     private ArrayList<video> videos;
-    private List<user> users;
+    private final ArrayList<user> users;
     private ArrayList<video> filteredVideos;
     private final Context context;
     private final int userId;
@@ -70,7 +69,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return filteredVideos != null ? filteredVideos.size() : 0;
     }
 
-    public VideoListAdapter(Context context, int userId, List<user> users) {
+    public VideoListAdapter(Context context, int userId, ArrayList<user> users) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
         this.userId = userId;
@@ -116,13 +115,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideos.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            // add one view per click
-            int videoViews = Integer.parseInt(clickedVideoItem.getViews()) + 1;
-            clickedVideoItem.setViews(Integer.toString(videoViews));
-
-            i.putExtra("video_item", clickedVideoItem);
+            i.putExtra("video_item", clickedVideoItem.getVideoId() - 1);
             i.putExtra("user", userId);
-            i.putParcelableArrayListExtra("video_list", new ArrayList<>(videos));
             mInflater.getContext().startActivity(i);
         });
 
@@ -135,7 +129,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                     if (userId == -1) {
                         Toast.makeText(context, "please login in order to download or delete a video", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, LogIn.class);
-                        intent.putParcelableArrayListExtra("video_list", videos);
                         context.startActivity(intent);
                     } else {
                         videos.remove(position);

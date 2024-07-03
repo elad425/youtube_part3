@@ -17,14 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
     private final ArrayList<comment> commentList;
@@ -32,18 +30,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private final int userId;
     private final Context context;
     private final LayoutInflater mInflater;
-    private final ArrayList<video> videos;
-    private final List<user> users;
+    private final ArrayList<user> users;
 
 
     public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           int userId, Context context,ArrayList<video> videos, List<user> users) {
+                           int userId, Context context, ArrayList<user> users) {
         mInflater = LayoutInflater.from(context);
         this.commentList = commentList;
         this.context = context;
         this.videoPlayerActivity = videoPlayerActivity;
         this.userId = userId;
-        this.videos = videos;
         this.users = users;
     }
 
@@ -78,7 +74,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                     Toast.makeText(context, "please login in order to edit or delete comments",
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, LogIn.class);
-                    intent.putParcelableArrayListExtra("video_list", videos);
                     context.startActivity(intent);
                 }else {
                     if (item.getItemId() == R.id.action_edit_comment) {

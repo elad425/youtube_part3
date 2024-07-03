@@ -4,11 +4,11 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.youtube.utils.Converters;
+import com.example.youtube.Converters.userConverters;
 
 import java.util.ArrayList;
 import java.util.Objects;
-@Entity
+@Entity(tableName = "users")
 public class user {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -16,11 +16,11 @@ public class user {
     private String email;
     private String password;
     private String profile_pic;
-    @TypeConverters({Converters.class})
+    @TypeConverters({userConverters.class})
     private ArrayList<String> likedVideos;
-    @TypeConverters({Converters.class})
+    @TypeConverters({userConverters.class})
     private ArrayList<String> dislikedVideos;
-    @TypeConverters({Converters.class})
+    @TypeConverters({userConverters.class})
     private ArrayList<String> subs;
     private String subs_count;
 

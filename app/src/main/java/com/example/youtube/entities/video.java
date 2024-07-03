@@ -1,24 +1,31 @@
+
 package com.example.youtube.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import java.util.ArrayList;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
-public class video implements Parcelable {
+import com.example.youtube.Converters.videoConverters;
+
+import java.util.ArrayList;
+@Entity(tableName = "videos")
+public class video {
+    @PrimaryKey(autoGenerate = true)
+    private int videoId;
     private String video_name;
-    private int creatorId;
+    private int creator;
     private String date_of_release;
     private String views;
     private String likes;
+    @TypeConverters(videoConverters.class)
     private ArrayList<comment> comments;
     private String video_path;
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
+    public video(String video_name, int creator, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
         this.video_name = video_name;
-        this.creatorId = creatorId;
+        this.creator = creator;
         this.date_of_release = date_of_release;
         this.video_path = video_path;
         this.thumbnail = thumbnail;
@@ -28,29 +35,13 @@ public class video implements Parcelable {
         this.likes = likes;
     }
 
-    protected video(Parcel in) {
-        video_name = in.readString();
-        creatorId = in.readInt();
-        date_of_release = in.readString();
-        views = in.readString();
-        likes = in.readString();
-        comments = in.createTypedArrayList(comment.CREATOR);
-        video_path = in.readString();
-        thumbnail = in.readString();
-        video_length = in.readString();
+    public int getVideoId() {
+        return videoId;
     }
 
-    public static final Creator<video> CREATOR = new Creator<video>() {
-        @Override
-        public video createFromParcel(Parcel in) {
-            return new video(in);
-        }
-
-        @Override
-        public video[] newArray(int size) {
-            return new video[size];
-        }
-    };
+    public void setVideoId(int videoId) {
+        this.videoId = videoId;
+    }
 
     public String getVideo_name() {
         return video_name;
@@ -61,11 +52,11 @@ public class video implements Parcelable {
     }
 
     public int getCreator() {
-        return creatorId;
+        return creator;
     }
 
     public void setCreator(int creator) {
-        this.creatorId = creator;
+        this.creator = creator;
     }
 
     public String getDate_of_release() {
@@ -122,21 +113,4 @@ public class video implements Parcelable {
         this.video_length = video_length;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(video_name);
-        dest.writeInt(creatorId);
-        dest.writeString(date_of_release);
-        dest.writeString(views);
-        dest.writeString(likes);
-        dest.writeTypedList(comments);
-        dest.writeString(video_path);
-        dest.writeString(thumbnail);
-        dest.writeString(video_length);
-    }
 }

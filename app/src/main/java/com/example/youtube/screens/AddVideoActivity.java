@@ -17,14 +17,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
 
 public class AddVideoActivity extends AppCompatActivity {
 
@@ -38,13 +38,16 @@ public class AddVideoActivity extends AppCompatActivity {
     private VideoView videoVideoView;
     private TextView videoPlaceholder;
     private Uri videoUri, thumbnailUri;
-    private ArrayList<video> videos;
     private int userId;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         setupWindow();
         initializeUI();
@@ -73,11 +76,8 @@ public class AddVideoActivity extends AppCompatActivity {
         ImageButton recordVideoButton = findViewById(R.id.record_video_button);
         recordVideoButton.setOnClickListener(v -> openCamera());
 
-        videos = getIntent().getParcelableArrayListExtra("videos");
         userId = getIntent().getIntExtra("user",-1);
-        if (videos == null) {
-            videos = new ArrayList<>();
-        }
+
     }
 
     private void setupBottomNavigation() {
@@ -99,13 +99,11 @@ public class AddVideoActivity extends AppCompatActivity {
     private void navigateToProfilePage() {
         Intent intent = new Intent(AddVideoActivity.this, ProfilePage.class);
         intent.putExtra("user", userId);
-        intent.putParcelableArrayListExtra("videos", videos);
         startActivity(intent);
     }
 
     private void navigateToMainActivity() {
         Intent intent = new Intent(AddVideoActivity.this, MainActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }
@@ -171,7 +169,7 @@ public class AddVideoActivity extends AppCompatActivity {
         video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
                 videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
 
-        videos.add(newVideo);
+        db.videoDao().insert(newVideo);
         Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
 
         navigateToMainActivity();
@@ -189,7 +187,6 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
         intent.putExtra("user", userId);
         startActivity(intent);
     }

@@ -1,8 +1,6 @@
 package com.example.youtube.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.provider.Settings;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class GeneralUtils {
 
     public static void displayVideoList(Context context, RecyclerView lstVideos,
-                                        ArrayList<video> videos, int user, video filter, List<user> users) {
+                                        ArrayList<video> videos, int user, video filter, ArrayList<user> users) {
         final VideoListAdapter adapter = new VideoListAdapter(context, user, users);
         lstVideos.setAdapter(adapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(context));
@@ -41,7 +38,7 @@ public class GeneralUtils {
         return counter;
     }
 
-    public static boolean isUserExist(List<user> users, String email){
+    public static boolean isUserExist(ArrayList<user> users, String email){
         if (users == null){
             return false;
         }
