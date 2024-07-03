@@ -45,19 +45,15 @@ public class MainActivity extends AppCompatActivity {
                 AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         userDao userDao = db.userDao();
-        if(userDao.getAllUsers().isEmpty()){
-            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
-            for (user u : tempUser){
-                userDao.insert(u);
-            }
+        ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
+        for (user u : tempUser){
+            userDao.insert(u);
         }
 
         videoDao videoDao = db.videoDao();
-        if(videoDao.getAllVideos().isEmpty()){
-            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
-            for (video v : tempVideo){
-                videoDao.insert(v);
-            }
+        ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
+        for (video v : tempVideo){
+            videoDao.insert(v);
         }
 
         if (checkPermissions()) {
