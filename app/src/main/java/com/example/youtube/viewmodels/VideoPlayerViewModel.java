@@ -107,23 +107,28 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         }
     }
 
-    public void toggleSubscribe() {
+    public int toggleSubscribe() {
         user user = currentUser.getValue();
         user creator = currentCreator.getValue();
         if (user != null && creator != null) {
             int subCount = Integer.parseInt(creator.getSubs_count());
             if (Boolean.FALSE.equals(isSubscribed.getValue())) {
                 user.addToSubs(creator);
-                creator.setSubs_count(String.valueOf(subCount + 1));
+                subCount++;
+                creator.setSubs_count(String.valueOf(subCount));
                 isSubscribed.setValue(true);
             } else {
                 user.removeFromSubs(creator);
-                creator.setSubs_count(String.valueOf(subCount - 1));
+                subCount--;
+                creator.setSubs_count(String.valueOf(subCount));
                 isSubscribed.setValue(false);
             }
             userRepository.updateUser(user);
             userRepository.updateUser(creator);
+            currentCreator.setValue(creator);
+            return subCount;
         }
+        return -1;
     }
 
     public void addComment(String commentText) {

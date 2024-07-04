@@ -76,7 +76,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void observeViewModel() {
         viewModel.getCurrentVideo().observe(this, this::updateVideoInfo);
-        viewModel.getCurrentUser().observe(this, this::updateUserInfo);
         viewModel.getCurrentCreator().observe(this, this::updateCreatorInfo);
         viewModel.isLiked().observe(this, this::updateLikeButton);
         viewModel.isDisliked().observe(this, this::updateDislikeButton);
@@ -121,10 +120,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             tvVideoViews.setText(formatViews);
             tvPublishDate.setText(GeneralUtils.timeAgo(currentVideo.getDate_of_release()));
         }
-    }
-
-    private void updateUserInfo(user currentUser) {
-        // Update UI elements related to the current user if needed
     }
 
     private void updateCreatorInfo(user currentCreator) {
@@ -419,7 +414,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
             return;
         }
 
-        viewModel.toggleSubscribe();
+        int newSubCount = viewModel.toggleSubscribe();
+        if (newSubCount != -1) {
+            TextView creatorSubCount = findViewById(R.id.tv_creator_subs);
+            creatorSubCount.setText(GeneralUtils.getViews(String.valueOf(newSubCount)));
+        }
     }
 
     private void goToLogIn() {
