@@ -1,8 +1,13 @@
 package com.example.youtube.utils;
 
+import android.content.Context;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,5 +121,23 @@ public class GeneralUtils {
             }
         }
         return temp;
+    }
+
+    public static String getVideoDuration(Uri videoUri, Context context) throws IOException {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(context, videoUri);
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            assert time != null;
+            long timeInMilliSec = Long.parseLong(time);
+            long minutes = (timeInMilliSec / 1000) / 60;
+            long seconds = (timeInMilliSec / 1000) % 60;
+            return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0:00";
+        } finally {
+            retriever.release();
+        }
     }
 }

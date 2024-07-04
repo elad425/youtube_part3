@@ -1,5 +1,7 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.getVideoDuration;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,8 @@ import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
 
 public class AddVideoActivity extends AppCompatActivity {
 
@@ -71,7 +75,13 @@ public class AddVideoActivity extends AppCompatActivity {
         thumbnailImageView.setOnClickListener(v -> selectThumbnail());
 
         Button addVideoButton = findViewById(R.id.btn_add_video);
-        addVideoButton.setOnClickListener(v -> addVideo());
+        addVideoButton.setOnClickListener(v -> {
+            try {
+                addVideo();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         ImageButton recordVideoButton = findViewById(R.id.record_video_button);
         recordVideoButton.setOnClickListener(v -> openCamera());
@@ -163,15 +173,16 @@ public class AddVideoActivity extends AppCompatActivity {
         thumbnailPlaceholder.setBackgroundColor(0x00FFFFFF);
     }
 
-    private void addVideo() {
+    private void addVideo() throws IOException {
         String videoName = videoNameEditText.getText().toString().trim();
         if (videoName.isEmpty() || thumbnailUri == null || videoUri == null) {
             Toast.makeText(this, "Please fill all fields and choose a video and a thumbnail", Toast.LENGTH_SHORT).show();
             return;
         }
         int userId = UserSession.getInstance().getUserId();
+        String videoDuration = getVideoDuration(videoUri,this);
         video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
-                videoUri.toString(), thumbnailUri.toString(), "0:12", "0");
+                videoUri.toString(), thumbnailUri.toString(), videoDuration, "0");
         viewModel.addVideo(newVideo);
     }
 

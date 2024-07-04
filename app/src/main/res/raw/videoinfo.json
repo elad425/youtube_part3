@@ -8,7 +8,6 @@
     "thumbnail": "thumbnail1",
     "video_length": "10:10",
     "views": "1000000",
-    "likes": "333K",
     "comments": [
       {
         "comment": "what an amazing video!!",
@@ -61,7 +60,6 @@
     "thumbnail": "thumbnail2",
     "video_length": "12:45",
     "views": "245000",
-    "likes": "2M",
     "comments": [
       {
       "comment": "what an amazing video!!",
@@ -89,7 +87,6 @@
     "thumbnail": "thumbnail3",
     "video_length": "10:01",
     "views": "10000000",
-    "likes": "10M",
     "comments": [
       {
         "comment": "what an amazing video!!",
@@ -117,7 +114,6 @@
     "thumbnail": "thumbnail4",
     "video_length": "2:34",
     "views": "998000",
-    "likes": "8M",
     "comments": []
   },
   {
@@ -129,7 +125,6 @@
     "thumbnail": "thumbnail5",
     "video_length": "1:15",
     "views": "2100000",
-    "likes": "1M",
     "comments": []
   },
   {
@@ -141,7 +136,6 @@
     "thumbnail": "thumbnail6",
     "video_length": "3:00",
     "views": "6578755",
-    "likes": "999K",
     "comments": []
   },
   {
@@ -153,7 +147,6 @@
     "thumbnail": "thumbnail7",
     "video_length": "1:15:16",
     "views": "14572475",
-    "likes": "3",
     "comments": []
   },
   {
@@ -165,7 +158,6 @@
     "thumbnail": "thumbnail8",
     "video_length": "9:22",
     "views": "666",
-    "likes": "100K",
     "comments": []
   },
   {
@@ -177,7 +169,6 @@
     "thumbnail": "thumbnail9",
     "video_length": "12:12",
     "views": "333600",
-    "likes": "100K",
     "comments": []
   },
   {
@@ -189,7 +180,6 @@
     "thumbnail": "thumbnail10",
     "video_length": "8:08",
     "views": "889999",
-    "likes": "100K",
     "comments": []
   }
 ]
