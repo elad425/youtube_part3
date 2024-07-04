@@ -1,10 +1,13 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.example.youtube.AppDatabase;
 import com.example.youtube.entities.user;
+import com.example.youtube.utils.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
@@ -12,6 +15,7 @@ public class UserRepository {
 
     public UserRepository(Application application) {
         db = AppDatabase.getInstance(application);
+        loadUsers(application.getApplicationContext());
     }
 
     public user getUserById(int userId) {
@@ -24,5 +28,18 @@ public class UserRepository {
 
     public void insertUser(user newUser) {
         db.userDao().insert(newUser);
+    }
+
+    public void updateUser(user newUser) {
+        db.userDao().update(newUser);
+    }
+
+    private void loadUsers(Context context){
+        if (db.userDao().getAllUsers().isEmpty()) {
+            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(context);
+            for (user u : tempUser) {
+                db.userDao().insert(u);
+            }
+        }
     }
 }

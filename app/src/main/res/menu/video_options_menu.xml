@@ -5,6 +5,6 @@
             android:id="@+id/action_delete_video"
             android:title="@string/delete_video" />
         <item
-            android:id="@+id/action_download"
-            android:title="@string/download" />
+            android:id="@+id/action_edit_video"
+            android:title="@string/edit_video" />
 </menu>

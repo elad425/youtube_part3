@@ -7,7 +7,6 @@ import androidx.room.TypeConverters;
 import com.example.youtube.utils.userConverters;
 
 import java.util.ArrayList;
-import java.util.Objects;
 @Entity(tableName = "users")
 public class user {
     @PrimaryKey(autoGenerate = true)
@@ -17,11 +16,11 @@ public class user {
     private String password;
     private String profile_pic;
     @TypeConverters({userConverters.class})
-    private ArrayList<String> likedVideos;
+    private ArrayList<Integer> likedVideos;
     @TypeConverters({userConverters.class})
-    private ArrayList<String> dislikedVideos;
+    private ArrayList<Integer> dislikedVideos;
     @TypeConverters({userConverters.class})
-    private ArrayList<String> subs;
+    private ArrayList<Integer> subs;
     private String subs_count;
 
     public user(String name, String email, String password, String profile_pic, String subs_count) {
@@ -81,27 +80,27 @@ public class user {
         this.profile_pic = profile_pic;
     }
 
-    public ArrayList<String> getLikedVideos() {
+    public ArrayList<Integer> getLikedVideos() {
         return likedVideos;
     }
 
-    public void setLikedVideos(ArrayList<String> likedVideos) {
+    public void setLikedVideos(ArrayList<Integer> likedVideos) {
         this.likedVideos = likedVideos;
     }
 
-    public ArrayList<String> getDislikedVideos() {
+    public ArrayList<Integer> getDislikedVideos() {
         return dislikedVideos;
     }
 
-    public void setDislikedVideos(ArrayList<String> dislikedVideos) {
+    public void setDislikedVideos(ArrayList<Integer> dislikedVideos) {
         this.dislikedVideos = dislikedVideos;
     }
 
-    public ArrayList<String> getSubs() {
+    public ArrayList<Integer> getSubs() {
         return subs;
     }
 
-    public void setSubs(ArrayList<String> subs) {
+    public void setSubs(ArrayList<Integer> subs) {
         this.subs = subs;
     }
 
@@ -114,43 +113,43 @@ public class user {
     }
 
     public void addToLiked(video video) {
-        for (String s : likedVideos) {
-            if (s.equals(video.getVideo_name())) {
+        for (Integer s : likedVideos) {
+            if (s == video.getVideoId()) {
                 return;
             }
         }
-        this.likedVideos.add(video.getVideo_name());
+        this.likedVideos.add(video.getVideoId());
     }
 
     public void removeFromLiked(video video) {
-        likedVideos.removeIf(s -> s.equals(video.getVideo_name()));
+        likedVideos.removeIf(s -> s == video.getVideoId());
     }
 
     public void addToDisLiked(video video) {
-        for (String s : dislikedVideos) {
-            if (s.equals(video.getVideo_name())) {
+        for (Integer s : dislikedVideos) {
+            if (s == video.getVideoId()) {
                 return;
             }
         }
-        this.dislikedVideos.add(video.getVideo_name());
+        this.dislikedVideos.add(video.getVideoId());
     }
 
     public void removeFromDisLiked(video video) {
-        dislikedVideos.removeIf(s -> s.equals(video.getVideo_name()));
+        dislikedVideos.removeIf(s -> s == video.getVideoId());
     }
 
     public void addToSubs(user creator) {
-        this.subs.add(creator.name);
+        this.subs.add(creator.getId());
     }
 
     public void removeFromSubs(user creator) {
-        subs.removeIf(c -> Objects.equals(c, creator.getName()));
+        subs.removeIf(c -> c == creator.getId());
     }
 
     public boolean isLiked(video video) {
         if(likedVideos != null) {
-            for (String s : likedVideos) {
-                if (s.equals(video.getVideo_name())) {
+            for (Integer s : likedVideos) {
+                if (s == video.getVideoId()) {
                     return true;
                 }
             }
@@ -160,8 +159,8 @@ public class user {
 
     public boolean isDisLiked(video video) {
         if(dislikedVideos != null) {
-            for (String s : dislikedVideos) {
-                if (s.equals(video.getVideo_name())) {
+            for (Integer s : dislikedVideos) {
+                if (s == video.getVideoId()) {
                     return true;
                 }
             }
@@ -171,8 +170,8 @@ public class user {
 
     public boolean isSubs(user creator) {
         if(subs != null) {
-            for (String c : subs) {
-                if (Objects.equals(c, creator.getName())) {
+            for (Integer c : subs) {
+                if (c == creator.getId()) {
                     return true;
                 }
             }

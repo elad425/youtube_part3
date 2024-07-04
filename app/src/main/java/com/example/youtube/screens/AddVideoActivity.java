@@ -17,14 +17,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.UserSession;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
+import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AddVideoActivity extends AppCompatActivity {
@@ -39,21 +39,20 @@ public class AddVideoActivity extends AppCompatActivity {
     private VideoView videoVideoView;
     private TextView videoPlaceholder;
     private Uri videoUri, thumbnailUri;
-    private int userId;
-    private AppDatabase db;
+    private AddVideoViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        viewModel = new ViewModelProvider(this).get(AddVideoViewModel.class);
 
         setupWindow();
         initializeUI();
         setupBottomNavigation();
         handleBackButton();
+        observeViewModel();
     }
 
     private void setupWindow() {
@@ -76,9 +75,16 @@ public class AddVideoActivity extends AppCompatActivity {
 
         ImageButton recordVideoButton = findViewById(R.id.record_video_button);
         recordVideoButton.setOnClickListener(v -> openCamera());
+    }
 
-        userId = UserSession.getInstance().getUserId();
-
+    private void observeViewModel() {
+        viewModel.getVideoAddedSuccessfully().observe(this, success -> {
+            if (success) {
+                Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
+                navigateToMainActivity();
+                finish();
+            }
+        });
     }
 
     private void setupBottomNavigation() {
@@ -159,20 +165,14 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void addVideo() {
         String videoName = videoNameEditText.getText().toString().trim();
-
         if (videoName.isEmpty() || thumbnailUri == null || videoUri == null) {
             Toast.makeText(this, "Please fill all fields and choose a video and a thumbnail", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        int userId = UserSession.getInstance().getUserId();
         video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
-                videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
-
-        db.videoDao().insert(newVideo);
-        Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
-
-        navigateToMainActivity();
-        finish();
+                videoUri.toString(), thumbnailUri.toString(), "0:12", "0");
+        viewModel.addVideo(newVideo);
     }
 
     private void handleBackButton() {

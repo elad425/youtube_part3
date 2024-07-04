@@ -1,8 +1,11 @@
 package com.example.youtube.utils;
 
 import com.example.youtube.entities.user;
+import com.example.youtube.entities.video;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -94,5 +97,24 @@ public class GeneralUtils {
             e.printStackTrace();
             return "Invalid number";
         }
+    }
+
+    public static user getUserById(List<user> users, int id){
+        for (user u : users){
+            if(u.getId() == id){
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public static List<video> removeVideo(List<video> videos, video video){
+        List<video> temp = new ArrayList<>();
+        for (video v : videos){
+            if (v.getVideoId() != video.getVideoId()){
+                temp.add(v);
+            }
+        }
+        return temp;
     }
 }

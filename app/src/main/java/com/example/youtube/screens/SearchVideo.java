@@ -9,47 +9,38 @@ import android.widget.SearchView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.adapters.SearchAdapter;
-import com.example.youtube.entities.video;
+import com.example.youtube.viewmodels.SearchViewModel;
 
 import java.util.ArrayList;
 
 public class SearchVideo extends AppCompatActivity {
 
-    private ArrayList<video> filteredList;
     private SearchAdapter searchAdapter;
-    private ArrayList<video> videos;
-    private AppDatabase db;
+    private SearchViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_video);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         setupWindow();
-        initializeData();
         setupUI();
         setupSearchView();
+        observeViewModel();
     }
 
     private void setupWindow() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
-    }
-
-    private void initializeData() {
-        videos = new ArrayList<>(db.videoDao().getAllVideos());
-        filteredList = new ArrayList<>();
     }
 
     private void setupUI() {
@@ -59,7 +50,7 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        searchAdapter = new SearchAdapter(filteredList, this);
+        searchAdapter = new SearchAdapter(new ArrayList<>(), this);
         RecyclerView rvSearch = findViewById(R.id.rv_search);
         rvSearch.setLayoutManager(new LinearLayoutManager(this));
         rvSearch.setAdapter(searchAdapter);
@@ -89,26 +80,19 @@ public class SearchVideo extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterVideos(newText);
+                viewModel.filterVideos(newText);
                 return true;
             }
         });
     }
 
+    private void observeViewModel() {
+        viewModel.getFilteredVideos().observe(this, filteredVideos ->
+                searchAdapter.setFilteredList(new ArrayList<>(filteredVideos)));
+    }
+
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-    }
-
-    private void filterVideos(String query) {
-        filteredList.clear();
-        if (!query.isEmpty()) {
-            for (video video : videos) {
-                if (video.getVideo_name().toLowerCase().startsWith(query.toLowerCase())) {
-                    filteredList.add(video);
-                }
-            }
-        }
-        searchAdapter.setFilteredList(filteredList);
     }
 }

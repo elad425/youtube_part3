@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,10 +16,13 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.R;
+import com.example.youtube.entities.user;
+import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.SignUpViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.List;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -68,12 +72,6 @@ public class SignUpActivity extends AppCompatActivity {
                 login();
             }
         });
-
-        viewModel.getErrorMessage().observe(this, errorMessage -> {
-            if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void openFileChooser() {
@@ -111,8 +109,55 @@ public class SignUpActivity extends AppCompatActivity {
         String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
         String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
         String confirmPassword = Objects.requireNonNull(confirmPasswordEditText.getEditText()).getText().toString().trim();
+        if (username.isEmpty()){
+            usernameEditText.setError("You need to enter a username");
+        }
+        if (email.isEmpty()){
+            emailEditText.setError("Please enter an email");
+        }
+        if (password.isEmpty()){
+            passwordEditText.setError("Please enter a password");
 
-        viewModel.signUp(username, email, password, confirmPassword, imageUri);
+        }
+        if(confirmPassword.isEmpty()){
+            confirmPasswordEditText.setError("You need to enter a password confirmation");
+        }
+
+        if(username.length()>=15){
+            usernameEditText.setError("username too long, must be under 15 letters");
+            return;
+        }
+
+        List<user> users = viewModel.getUsers().getValue();
+        if(GeneralUtils.isUserExist(users,email)){
+            emailEditText.setError("this email is already exists");
+            return;
+        }
+
+        if (username.isEmpty()||email.isEmpty()||password.isEmpty()||confirmPassword.isEmpty()){
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.setError("Please enter a valid email address");
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            confirmPasswordEditText.setError("Passwords do not match");
+            return;
+        }
+
+        if (password.length() < 8 || !password.matches(".*\\d.*")) {
+            passwordEditText.setError("Password must be at least 8 characters long and contain at least one number");
+            return;
+        }
+
+        if (imageUri == null) {
+            Toast.makeText(this, "Please upload an image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        user newUser = new user(username, email, password, imageUri.toString(), "0");
+        viewModel.signUp(newUser);
     }
 
     private void clearErrorOnTyping(TextInputLayout textInputLayout) {
