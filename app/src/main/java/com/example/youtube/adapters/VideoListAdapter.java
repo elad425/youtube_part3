@@ -88,7 +88,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         if (filteredVideos != null) {
             final video current = filteredVideos.get(position);
-            user currentCreator = db.userDao().getUserById(current.getCreator());
+            user currentCreator = db.userDao().getUserById(current.getCreatorId());
             String formatViews = GeneralUtils.getViews(current.getViews()) + " views";
             holder.video_name.setText(current.getVideo_name());
             holder.creator.setText(currentCreator.getName());
@@ -132,7 +132,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                         Toast.makeText(context, "please login in order to delete a video", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, LogIn.class);
                         context.startActivity(intent);
-                    }else if (videos.get(position).getCreator() != userId) {
+                    }else if (videos.get(position).getCreatorId() != userId) {
                         Toast.makeText(context, "cant delete non-user video", Toast.LENGTH_SHORT).show();
                     } else {
                         video temp = videos.get(position);

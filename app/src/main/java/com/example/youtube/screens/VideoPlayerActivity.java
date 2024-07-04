@@ -83,7 +83,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         currentVideo = db.videoDao().getVideoById(intent.getIntExtra("video_item", -1));
         currentUser = db.userDao().getUserById(intent.getIntExtra("user",-1));
-        currentCreator = db.userDao().getUserById(currentVideo.getCreator());
+        currentCreator = db.userDao().getUserById(currentVideo.getCreatorId());
         userId = -1;
 
         int videoViews = Integer.parseInt(currentVideo.getViews()) + 1;
@@ -179,7 +179,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         ImageButton btnEdit = findViewById(R.id.edit_video);
         Button btnSubscribe = findViewById(R.id.btn_subscribe);
 
-        if ((currentUser == null) || (currentVideo.getCreator() != currentUser.getId())) {
+        if ((currentUser == null) || (currentVideo.getCreatorId() != currentUser.getId())) {
             btnEdit.setVisibility(View.GONE);
         }
 

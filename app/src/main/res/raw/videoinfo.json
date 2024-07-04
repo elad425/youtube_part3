@@ -2,7 +2,7 @@
   {
     "videoId" : 1,
     "video_name": "video player test",
-    "creator": 1,
+    "creatorId": 1,
     "date_of_release": "13/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video3",
     "thumbnail": "thumbnail1",
@@ -55,7 +55,7 @@
   {
     "videoId" : 2,
     "video_name": "video player test to see if each video play different file",
-    "creator": 2,
+    "creatorId": 2,
     "date_of_release": "13/06/2024 10:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video2",
     "thumbnail": "thumbnail2",
@@ -83,7 +83,7 @@
   {
     "videoId" : 3,
     "video_name": "video player test to check if list is scrollable",
-    "creator": 3,
+    "creatorId": 3,
     "date_of_release": "12/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video1",
     "thumbnail": "thumbnail3",
@@ -111,7 +111,7 @@
   {
     "videoId" : 4,
     "video_name": "Inside Out 2 Trailer (2024)",
-    "creator": 4,
+    "creatorId": 4,
     "date_of_release": "13/05/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video4",
     "thumbnail": "thumbnail4",
@@ -123,7 +123,7 @@
   {
     "videoId" : 5,
     "video_name": "Kung Fu Panda 4 | Official Trailer (Universal Pictures)",
-    "creator": 5,
+    "creatorId": 5,
     "date_of_release": "13/06/2023 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video5",
     "thumbnail": "thumbnail5",
@@ -135,7 +135,7 @@
   {
     "videoId" : 6,
     "video_name": "HOW TO TRAIN YOUR DRAGON: THE HIDDEN WORLD - Official Trailer",
-    "creator": 5,
+    "creatorId": 5,
     "date_of_release": "13/06/2024 09:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video6",
     "thumbnail": "thumbnail6",
@@ -147,7 +147,7 @@
   {
     "videoId" : 7,
     "video_name": "OpenAI Plays Hide and Seek",
-    "creator": 6,
+    "creatorId": 6,
     "date_of_release": "11/06/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video7",
     "thumbnail": "thumbnail7",
@@ -159,7 +159,7 @@
   {
     "videoId" : 8,
     "video_name": "World's Fastest Camera Drone Vs F1 Car",
-    "creator": 7,
+    "creatorId": 7,
     "date_of_release": "13/04/2024 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video8",
     "thumbnail": "thumbnail8",
@@ -171,7 +171,7 @@
   {
     "videoId" : 9,
     "video_name": "FULL FILM: McLaren Speedtail vs F35 Fighter Jet",
-    "creator": 8,
+    "creatorId": 8,
     "date_of_release": "13/06/2022 11:09:06",
     "video_path": "android.resource://com.example.youtube/raw/video9",
     "thumbnail": "thumbnail9",
@@ -183,7 +183,7 @@
   {
     "videoId" : 10,
     "video_name": "I Jumped From Space",
-    "creator": 7,
+    "creatorId": 7,
     "date_of_release": "06/03/2020 07:12:06",
     "video_path": "android.resource://com.example.youtube/raw/video10",
     "thumbnail": "thumbnail10",

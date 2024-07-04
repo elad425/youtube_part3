@@ -13,7 +13,7 @@ public class video {
     @PrimaryKey(autoGenerate = true)
     private int videoId;
     private String video_name;
-    private int creator;
+    private int creatorId;
     private String date_of_release;
     private String views;
     private String likes;
@@ -23,9 +23,9 @@ public class video {
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, int creator, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
+    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
         this.video_name = video_name;
-        this.creator = creator;
+        this.creatorId = creatorId;
         this.date_of_release = date_of_release;
         this.video_path = video_path;
         this.thumbnail = thumbnail;
@@ -51,12 +51,12 @@ public class video {
         this.video_name = video_name;
     }
 
-    public int getCreator() {
-        return creator;
+    public int getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(int creator) {
-        this.creator = creator;
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
     }
 
     public String getDate_of_release() {
