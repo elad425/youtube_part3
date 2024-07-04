@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
+import com.example.youtube.entities.user;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
@@ -53,11 +54,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         comment currentComment = commentList.get(position);
-        holder.tvCommentUser.setText(db.userDao().getUserById(currentComment.getUser()).getName());
+        user currentUser = db.userDao().getUserById(currentComment.getUser());
+        holder.tvCommentUser.setText(currentUser.getName());
         holder.tvCommentText.setText(currentComment.getComment());
         holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
-        String userPic = db.userDao().getUserById(currentComment.getUser()).getProfile_pic();
+        String userPic = currentUser.getProfile_pic();
         int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());
         if (creatorPicId != 0) {
             holder.user_pic.setImageResource(creatorPicId);

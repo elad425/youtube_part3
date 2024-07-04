@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.entities.user;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -71,9 +72,10 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void displayUserInfo(TextView username, TextView userEmail, ShapeableImageView userPic, Button btnLogIn) {
-        username.setText(db.userDao().getUserById(userId).getName());
-        userEmail.setText(db.userDao().getUserById(userId).getEmail());
-        String profilePic = db.userDao().getUserById(userId).getProfile_pic();
+        user currentUser = db.userDao().getUserById(userId);
+        username.setText(currentUser.getName());
+        userEmail.setText(currentUser.getEmail());
+        String profilePic = currentUser.getProfile_pic();
         int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
         if (profilePicId != 0) {
             userPic.setImageResource(profilePicId);

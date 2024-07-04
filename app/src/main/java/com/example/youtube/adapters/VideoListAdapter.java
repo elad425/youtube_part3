@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
+import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
@@ -32,7 +33,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     private ArrayList<video> filteredVideos;
     private final Context context;
     private final int userId;
-
     private final AppDatabase db;
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
@@ -88,9 +88,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         if (filteredVideos != null) {
             final video current = filteredVideos.get(position);
+            user currentCreator = db.userDao().getUserById(current.getCreator());
             String formatViews = GeneralUtils.getViews(current.getViews()) + " views";
             holder.video_name.setText(current.getVideo_name());
-            holder.creator.setText(db.userDao().getUserById(current.getCreator()).getName());
+            holder.creator.setText(currentCreator.getName());
             holder.views.setText(formatViews);
             holder.publish_date.setText(GeneralUtils.timeAgo(current.getDate_of_release()));
             holder.video_length.setText(current.getVideo_length());
@@ -104,7 +105,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 holder.thumbnail.setImageURI(Uri.parse(thumbnailName));
             }
             // Load creator picture
-            String creatorPic = db.userDao().getUserById(current.getCreator()).getProfile_pic();
+            String creatorPic = currentCreator.getProfile_pic();
             int creatorPicId = mInflater.getContext().getResources().getIdentifier(creatorPic, "drawable", mInflater.getContext().getPackageName());
             if (creatorPicId != 0) {
                 holder.creator_pic.setImageResource(creatorPicId);

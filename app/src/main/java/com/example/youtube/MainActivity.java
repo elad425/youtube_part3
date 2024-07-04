@@ -51,29 +51,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isFirstRun() {
-        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("isFirstRun", true);
-    }
-
-    private void setFirstRunComplete() {
-        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isFirstRun", false);
-        editor.apply();
-    }
-
     private void initializeData() {
         userDao userDao = db.userDao();
-        ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
-        for (user u : tempUser){
-            userDao.insert(u);
+        if (userDao.getAllUsers().isEmpty()) {
+            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
+            for (user u : tempUser) {
+                userDao.insert(u);
+            }
         }
 
         videoDao videoDao = db.videoDao();
-        ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
-        for (video v : tempVideo){
-            videoDao.insert(v);
+        if (videoDao.getAllVideos().isEmpty()) {
+            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
+            for (video v : tempVideo) {
+                videoDao.insert(v);
+            }
         }
     }
 
@@ -193,12 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void lunchApp(){
         setContentView(R.layout.activity_main);
-
-        if (isFirstRun()) {
-            initializeData();
-            setFirstRunComplete();
-        }
-
+        initializeData();
         initialize();
         setupUI();
         setupBottomNavigation();

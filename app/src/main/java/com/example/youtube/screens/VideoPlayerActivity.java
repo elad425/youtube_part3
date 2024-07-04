@@ -57,6 +57,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private AppDatabase db;
     private video currentVideo;
     private user currentUser;
+    private user currentCreator;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -80,19 +81,20 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         Intent intent = getIntent();
-        int videoId = intent.getIntExtra("video_item", -1);
-        userId = intent.getIntExtra("user",-1);
-        currentVideo = db.videoDao().getVideoById(videoId);
-        currentUser = db.userDao().getUserById(userId);
+        currentVideo = db.videoDao().getVideoById(intent.getIntExtra("video_item", -1));
+        currentUser = db.userDao().getUserById(intent.getIntExtra("user",-1));
+        currentCreator = db.userDao().getUserById(currentVideo.getCreator());
+        userId = -1;
 
         int videoViews = Integer.parseInt(currentVideo.getViews()) + 1;
         currentVideo.setViews(Integer.toString(videoViews));
         db.videoDao().update(currentVideo);
 
-        if (userId != -1) {
+        if (currentUser != null) {
             isLiked = currentUser.isLiked(currentVideo);
             isDisliked = currentUser.isDisLiked(currentVideo);
-            isSubscribe = currentUser.isSubs(db.userDao().getUserById(currentVideo.getCreator()));
+            isSubscribe = currentUser.isSubs(currentCreator);
+            userId = currentUser.getId();
         }
 
         if (currentVideo != null) {
@@ -124,11 +126,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
         String formatViews = GeneralUtils.getViews(currentVideo.getViews()) + " views";
         tvVideoName.setText(currentVideo.getVideo_name());
         tvVideoViews.setText(formatViews);
-        tvCreator.setText(db.userDao().getUserById(currentVideo.getCreator()).getName());
+        tvCreator.setText(currentCreator.getName());
         tvPublishDate.setText(GeneralUtils.timeAgo(currentVideo.getDate_of_release()));
-        creatorSubCount.setText(GeneralUtils.getViews(db.userDao().getUserById(currentVideo.getCreator()).getSubs_count()));
+        creatorSubCount.setText(GeneralUtils.getViews(currentCreator.getSubs_count()));
 
-        String creatorPicPath = db.userDao().getUserById(currentVideo.getCreator()).getProfile_pic();
+        String creatorPicPath = currentCreator.getProfile_pic();
         int creatorPicId = getResources().getIdentifier(creatorPicPath, "drawable", getPackageName());
         if (creatorPicId != 0) {
             creatorPic.setImageResource(creatorPicId);
@@ -156,7 +158,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         rvComments.setAdapter(commentsAdapter);
 
         fabAddComment.setOnClickListener(v -> {
-            if (userId == -1) {
+            if (currentUser == null) {
                 Toast.makeText(this, "please login in order to add a comment", Toast.LENGTH_SHORT).show();
                 goToLogIn();
             } else {
@@ -291,7 +293,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showEditVideoDialog() {
-        if (userId == -1) {
+        if (currentUser == null) {
             Toast.makeText(this, "please login in order to edit a video", Toast.LENGTH_SHORT).show();
             goToLogIn();
             return;
@@ -369,7 +371,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void handleLikeAction(ImageButton btnLike, ImageButton btnDislike) {
-        if (userId == -1) {
+        if (currentUser == null) {
             Toast.makeText(this, "please login in order to like", Toast.LENGTH_SHORT).show();
             goToLogIn();
             return;
@@ -393,7 +395,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void handleDislikeAction(ImageButton btnLike, ImageButton btnDislike) {
-        if (userId == -1) {
+        if (currentUser == null) {
             Toast.makeText(this, "please login in order to dislike", Toast.LENGTH_SHORT).show();
             goToLogIn();
             return;
@@ -417,30 +419,29 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void handleSubscribeAction(Button btnSubscribe) {
-        if (userId == -1) {
+        if (currentUser == null) {
             Toast.makeText(this, "please login in order to subscribe", Toast.LENGTH_SHORT).show();
             goToLogIn();
             return;
         }
-        user creator = db.userDao().getUserById(currentVideo.getCreator());
-        int subCount = Integer.parseInt(creator.getSubs_count());
+        int subCount = Integer.parseInt(currentCreator.getSubs_count());
 
         if (!isSubscribe) {
-            currentUser.addToSubs(db.userDao().getUserById(currentVideo.getCreator()));
+            currentUser.addToSubs(currentCreator);
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.text_color));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.system_color));
             btnSubscribe.setText(R.string.unsubscribe);
-            creator.setSubs_count(String.valueOf(subCount + 1));
+            currentCreator.setSubs_count(String.valueOf(subCount + 1));
             isSubscribe = true;
         } else {
-            currentUser.removeFromSubs(db.userDao().getUserById(currentVideo.getCreator()));
+            currentUser.removeFromSubs(currentCreator);
             btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.white));
             btnSubscribe.setText(R.string.subscribe);
-            creator.setSubs_count(String.valueOf(subCount - 1));
+            currentCreator.setSubs_count(String.valueOf(subCount - 1));
             isSubscribe = false;
         }
         db.userDao().update(currentUser);
-        db.userDao().update(creator);
+        db.userDao().update(currentCreator);
     }
 }
