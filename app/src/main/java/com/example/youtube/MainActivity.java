@@ -13,11 +13,13 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.example.youtube.Daos.userDao;
 import com.example.youtube.Daos.videoDao;
+import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.AddVideoActivity;
@@ -25,7 +27,6 @@ import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
 import com.example.youtube.screens.SearchVideo;
 import com.example.youtube.utils.JsonUtils;
-import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -72,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        GeneralUtils.displayVideoList(this, lstVideos, userId,null, db);
+        lstVideos.setAdapter(new VideoListAdapter(this, userId, db, null));
+        lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());

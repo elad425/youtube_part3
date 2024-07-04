@@ -28,6 +28,7 @@ import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.UserSession;
 import com.example.youtube.adapters.CommentsAdapter;
+import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -98,7 +99,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
 
         if (currentVideo != null) {
-            GeneralUtils.displayVideoList(this, lstVideos, userId, currentVideo, db);
+            lstVideos.setAdapter(new VideoListAdapter(this, userId, db, currentVideo));
+            lstVideos.setLayoutManager(new LinearLayoutManager(this));
         }
     }
 

@@ -20,14 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static void displayVideoList(Context context, RecyclerView lstVideos
-                                        , int user, video filter, AppDatabase db) {
-        final VideoListAdapter adapter = new VideoListAdapter(context, user, db);
-        lstVideos.setAdapter(adapter);
-        lstVideos.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setVideos();
-        adapter.filter(filter);
-    }
     public static boolean isUserExist(ArrayList<user> users, String email){
         if (users == null){
             return false;

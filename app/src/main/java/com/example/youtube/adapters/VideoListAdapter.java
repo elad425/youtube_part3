@@ -1,6 +1,5 @@
 package com.example.youtube.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final LayoutInflater mInflater;
-    private ArrayList<video> videos;
+    private final ArrayList<video> videos;
     private ArrayList<video> filteredVideos;
     private final Context context;
     private final int userId;
@@ -58,23 +57,20 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setVideos() {
-        videos = new ArrayList<>(db.videoDao().getAllVideos());
-        filteredVideos = new ArrayList<>(db.videoDao().getAllVideos());
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
         return filteredVideos != null ? filteredVideos.size() : 0;
     }
 
-    public VideoListAdapter(Context context, int userId, AppDatabase db) {
+    public VideoListAdapter(Context context, int userId, AppDatabase db, video filter) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
         this.userId = userId;
         this.db = db;
+        this.videos = new ArrayList<>(db.videoDao().getAllVideos());
+        this.filteredVideos = new ArrayList<>(db.videoDao().getAllVideos());
+        filter(filter);
+        notifyDataSetChanged();
     }
 
     @NonNull
