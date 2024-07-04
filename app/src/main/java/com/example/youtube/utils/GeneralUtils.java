@@ -1,8 +1,12 @@
 package com.example.youtube.utils;
 
 import android.content.Context;
+import android.provider.Settings;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.youtube.AppDatabase;
 import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -12,42 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
-
-    public static void displayVideoList(Context context, RecyclerView lstVideos,
-                                        ArrayList<video> videos, user user, video filter, ArrayList<user> users) {
-        final VideoListAdapter adapter = new VideoListAdapter(context, user);
-        lstVideos.setAdapter(adapter);
-        lstVideos.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setVideos(videos, users);
-        adapter.filter(filter);
-    }
-
-    public static int findVideoPlace (ArrayList<video> videos, video video){
-        int counter = 0;
-        for (video v : videos){
-            if (Objects.equals(v.getVideo_name(), video.getVideo_name())){
-                return counter;
-            }
-            counter++;
-        }
-        return counter;
-    }
-
-    public static void updateUsers(ArrayList<user> users, user user){
-        if (users != null) {
-            int position = 0;
-            while (position != users.size()) {
-                if (users.get(position).getEmail().equals(user.getEmail())) {
-                    users.set(position, user);
-                }
-                position += 1;
-            }
-        }
-    }
 
     public static boolean isUserExist(ArrayList<user> users, String email){
         if (users == null){
@@ -75,6 +46,7 @@ public class GeneralUtils {
         }
 
         Date currentDate = new Date();
+        assert givenDate != null;
         long diffInMillis = currentDate.getTime() - givenDate.getTime();
 
         long years = TimeUnit.MILLISECONDS.toDays(diffInMillis) / 365;

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.VideoPlayerActivity;
 
@@ -20,18 +19,11 @@ import java.util.ArrayList;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewHolder> {
     private ArrayList<video> filteredVideoList;
-    private final ArrayList<video> videoList;
-    private final ArrayList<user> users;
     private final LayoutInflater mInflater;
-    private final user user;
 
-    public SearchAdapter(ArrayList<video> videoList, ArrayList<video> filteredVideoList,
-                         Context context, user user, ArrayList<user> users) {
-        this.videoList = videoList;
-        this.users = users;
+    public SearchAdapter( ArrayList<video> filteredVideoList, Context context) {
         this.filteredVideoList = filteredVideoList;
         this.mInflater = LayoutInflater.from(context);
-        this.user = user;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -55,10 +47,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewH
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            i.putExtra("video_item", clickedVideoItem);
-            i.putParcelableArrayListExtra("users", users);
-            i.putParcelableArrayListExtra("video_list", videoList);
-            i.putExtra("user", user);
+            i.putExtra("video_item", clickedVideoItem.getVideoId());
             mInflater.getContext().startActivity(i);
         });
     }

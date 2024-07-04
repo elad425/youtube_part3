@@ -14,10 +14,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
@@ -28,22 +28,20 @@ import java.util.ArrayList;
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
     private final ArrayList<comment> commentList;
     private final VideoPlayerActivity videoPlayerActivity;
-    private final user user;
+    private final int userId;
     private final Context context;
     private final LayoutInflater mInflater;
-    private final ArrayList<video> videos;
-    private final ArrayList<user> users;
+    private final AppDatabase db;
 
 
     public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           user user, Context context,ArrayList<video> videos, ArrayList<user> users) {
+                           int userId, Context context, AppDatabase db) {
         mInflater = LayoutInflater.from(context);
         this.commentList = commentList;
         this.context = context;
         this.videoPlayerActivity = videoPlayerActivity;
-        this.user = user;
-        this.videos = videos;
-        this.users = users;
+        this.userId = userId;
+        this.db = db;
     }
 
     @NonNull
@@ -56,11 +54,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         comment currentComment = commentList.get(position);
-        holder.tvCommentUser.setText(currentComment.getUser().getName());
+        user currentUser = db.userDao().getUserById(currentComment.getUser());
+        holder.tvCommentUser.setText(currentUser.getName());
         holder.tvCommentText.setText(currentComment.getComment());
         holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
-        String userPic = currentComment.getUser().getProfile_pic();
+        String userPic = currentUser.getProfile_pic();
         int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());
         if (creatorPicId != 0) {
             holder.user_pic.setImageResource(creatorPicId);
@@ -68,17 +67,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
             holder.user_pic.setImageURI(Uri.parse(userPic));
         }
 
+        if(commentList.get(position).getUser() != userId) {
+            holder.tvEditComment.setVisibility(View.GONE);
+        }
+
         holder.tvEditComment.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.getMenuInflater().inflate(R.menu.comment_options_menu, popup.getMenu());
 
             popup.setOnMenuItemClickListener(item -> {
-                if (user == null){
+                if (userId == 0){
                     Toast.makeText(context, "please login in order to edit or delete comments",
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, LogIn.class);
-                    intent.putParcelableArrayListExtra("video_list", videos);
-                    intent.putParcelableArrayListExtra("users", users);
                     context.startActivity(intent);
                 }else {
                     if (item.getItemId() == R.id.action_edit_comment) {

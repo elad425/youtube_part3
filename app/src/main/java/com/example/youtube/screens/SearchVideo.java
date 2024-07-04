@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.adapters.SearchAdapter;
-import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
-import com.example.youtube.utils.JsonUtils;
 
 import java.util.ArrayList;
 
@@ -26,13 +26,15 @@ public class SearchVideo extends AppCompatActivity {
     private ArrayList<video> filteredList;
     private SearchAdapter searchAdapter;
     private ArrayList<video> videos;
-    private ArrayList<user> users;
-    private user user;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_video);
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         setupWindow();
         initializeData();
@@ -46,24 +48,18 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void initializeData() {
-        Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-        users = intent.getParcelableArrayListExtra("users");
-        if (videos == null) {
-            videos = JsonUtils.loadVideosFromJson(this);
-        }
+        videos = new ArrayList<>(db.videoDao().getAllVideos());
         filteredList = new ArrayList<>();
     }
 
     private void setupUI() {
-        user = getIntent().getParcelableExtra("user");
-        setupRecyclerView(user);
+        setupRecyclerView();
         setupBackButton();
         setupBackPressedDispatcher();
     }
 
-    private void setupRecyclerView(user user) {
-        searchAdapter = new SearchAdapter(videos, filteredList, this, user, users);
+    private void setupRecyclerView() {
+        searchAdapter = new SearchAdapter(filteredList, this);
         RecyclerView rvSearch = findViewById(R.id.rv_search);
         rvSearch.setLayoutManager(new LinearLayoutManager(this));
         rvSearch.setAdapter(searchAdapter);
@@ -101,9 +97,6 @@ public class SearchVideo extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
         startActivity(intent);
     }
 

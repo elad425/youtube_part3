@@ -1,9 +1,7 @@
 package com.example.youtube;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,8 +13,13 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.youtube.Daos.userDao;
+import com.example.youtube.Daos.videoDao;
+import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 import com.example.youtube.screens.AddVideoActivity;
@@ -24,20 +27,17 @@ import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
 import com.example.youtube.screens.SearchVideo;
 import com.example.youtube.utils.JsonUtils;
-import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<video> videos;
-    private user user;
-    private ArrayList<user> users;
+    private int userId;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupWindow();
 
         if (checkPermissions()) {
             lunchApp();
@@ -46,27 +46,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupWindow() {
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
-    }
-
     private void initializeData() {
-        Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-        if (videos == null) {
-            videos = JsonUtils.loadVideosFromJson(this);
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        userId = UserSession.getInstance().getUserId();
+
+        userDao userDao = db.userDao();
+        if (userDao.getAllUsers().isEmpty()) {
+            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
+            for (user u : tempUser) {
+                userDao.insert(u);
+            }
         }
-        users = intent.getParcelableArrayListExtra("users");
-        user = intent.getParcelableExtra("user");
-        if (user == null){
-            user = new user("elad","elad","elad","thumbnail2","0");
+
+        videoDao videoDao = db.videoDao();
+        if (videoDao.getAllVideos().isEmpty()) {
+            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
+            for (video v : tempVideo) {
+                videoDao.insert(v);
+            }
         }
     }
 
     private void setupUI() {
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        GeneralUtils.displayVideoList(this, lstVideos, videos, user, null, users);
+        lstVideos.setAdapter(new VideoListAdapter(this, userId, db, null));
+        lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -74,14 +82,6 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnCast = findViewById(R.id.cast_button);
         btnCast.setOnClickListener(v -> Toast.makeText(MainActivity.this,
                 "The app doesn't support Chromecast yet", Toast.LENGTH_SHORT).show());
-    }
-
-    private void navigateToSearch() {
-        Intent intent = new Intent(this, SearchVideo.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
-        intent.putExtra("user", user);
-        startActivity(intent);
     }
 
     private void setupBottomNavigation() {
@@ -100,27 +100,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void navigateToSearch() {
+        startActivity(new Intent(this, SearchVideo.class));
+    }
+
     private void navigateToProfile() {
-        Intent intent = new Intent(MainActivity.this, ProfilePage.class);
-        intent.putExtra("user", user);
-        intent.putExtra("videos", videos);
-        intent.putExtra("users",users);
-        startActivity(intent);
+        startActivity(new Intent(MainActivity.this, ProfilePage.class));
     }
 
     private void navigateToAddVideo() {
-        if (user != null) {
-            Intent intent = new Intent(MainActivity.this, AddVideoActivity.class);
-            intent.putExtra("videos", videos);
-            intent.putExtra("user", user);
-            intent.putExtra("users",users);
-            startActivity(intent);
+        if (userId != 0) {
+            startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LogIn.class);
-            intent.putParcelableArrayListExtra("video_list", videos);
-            intent.putParcelableArrayListExtra("users", users);
-            startActivity(intent);
+            startActivity(new Intent(this, LogIn.class));
         }
     }
 
@@ -175,26 +168,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void lunchApp(){
         setContentView(R.layout.activity_main);
         initializeData();
         setupUI();
         setupBottomNavigation();
         handleBackButton();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        clearUserDetails();
-    }
-
-    private void clearUserDetails() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserDetails", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
     }
 
     private void handleBackButton() {

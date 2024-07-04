@@ -7,17 +7,17 @@ import androidx.annotation.NonNull;
 
 public class comment implements Parcelable {
     private String comment;
-    private user user;
+    private int userId;
     private String date;
-    public comment(String comment, user user, String date) {
+    public comment(String comment, int userId, String date) {
         this.comment = comment;
-        this.user = user;
+        this.userId = userId;
         this.date = date;
     }
 
     protected comment(Parcel in) {
         comment = in.readString();
-        user = in.readParcelable(user.class.getClassLoader());
+        userId = in.readInt();
         date = in.readString();
     }
 
@@ -41,12 +41,12 @@ public class comment implements Parcelable {
         this.comment = comment;
     }
 
-    public user getUser() {
-        return user;
+    public int getUser() {
+        return userId;
     }
 
-    public void setUser(user user) {
-        this.user = user;
+    public void setUser(int userId) {
+        this.userId = userId;
     }
 
     public String getDate() {
@@ -65,7 +65,7 @@ public class comment implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(comment);
-        dest.writeParcelable(user,flags);
+        dest.writeInt(userId);
         dest.writeString(date);
     }
 }

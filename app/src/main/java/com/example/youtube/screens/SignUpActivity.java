@@ -14,23 +14,25 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private TextInputLayout usernameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
     private Uri imageUri;
-    private ArrayList<video> videos;
     private ArrayList<user> users;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +51,10 @@ public class SignUpActivity extends AppCompatActivity {
         Button signUpButton = findViewById(R.id.sign_up_button);
         Button loginButton = findViewById(R.id.sign_up_login_button);
 
-        Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-        users = intent.getParcelableArrayListExtra("users");
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+
+        users = new ArrayList<>(db.userDao().getAllUsers());
 
         uploadButton.setOnClickListener(v -> openFileChooser());
         signUpButton.setOnClickListener(v -> signUp());
@@ -71,16 +74,14 @@ public class SignUpActivity extends AppCompatActivity {
     private void login(){
         resetFields();
         Intent intent = new Intent(SignUpActivity.this, LogIn.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
         startActivity(intent);
     }
 
     private void resetFields() {
-        usernameEditText.getEditText().setText("");
-        emailEditText.getEditText().setText("");
-        passwordEditText.getEditText().setText("");
-        confirmPasswordEditText.getEditText().setText("");
+        Objects.requireNonNull(usernameEditText.getEditText()).setText("");
+        Objects.requireNonNull(emailEditText.getEditText()).setText("");
+        Objects.requireNonNull(passwordEditText.getEditText()).setText("");
+        Objects.requireNonNull(confirmPasswordEditText.getEditText()).setText("");
         imageUri = null;
     }
 
@@ -94,10 +95,10 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUp() {
-        String username = usernameEditText.getEditText().getText().toString().trim();
-        String email = emailEditText.getEditText().getText().toString().trim();
-        String password = passwordEditText.getEditText().getText().toString().trim();
-        String confirmPassword = confirmPasswordEditText.getEditText().getText().toString().trim();
+        String username = Objects.requireNonNull(usernameEditText.getEditText()).getText().toString().trim();
+        String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
+        String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
+        String confirmPassword = Objects.requireNonNull(confirmPasswordEditText.getEditText()).getText().toString().trim();
         if (username.isEmpty()){
             usernameEditText.setError("You need to enter a username");
         }
@@ -146,10 +147,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         user new_user = new user(username,email,password,imageUri.toString(), "0");
-        if (users==null){
-            users=new ArrayList<>();
-        }
-        users.add(new_user);
+        db.userDao().insert(new_user);
 
         Toast.makeText(this, "Sign-up successful", Toast.LENGTH_SHORT).show();
         login();
@@ -157,6 +155,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void clearErrorOnTyping(TextInputLayout textInputLayout) {
         TextInputEditText editText = (TextInputEditText) textInputLayout.getEditText();
+        assert editText != null;
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

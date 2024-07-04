@@ -2,6 +2,7 @@ package com.example.youtube.screens;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,18 +12,20 @@ import android.util.Patterns;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.UserSession;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
-    private ArrayList<video> videos;
     private ArrayList<user> users;
 
     @Override
@@ -36,11 +39,12 @@ public class LogIn extends AppCompatActivity {
         Button loginButton = findViewById(R.id.login_login_button);
         Button signUpButton = findViewById(R.id.login_to_signup_button);
 
-        Intent intent = getIntent();
-        videos = intent.getParcelableArrayListExtra("video_list");
-        users = intent.getParcelableArrayListExtra("users");
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
-        emailEditText.getEditText().addTextChangedListener(new TextWatcher() {
+        users = new ArrayList<>(db.userDao().getAllUsers());
+
+        Objects.requireNonNull(emailEditText.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -56,7 +60,7 @@ public class LogIn extends AppCompatActivity {
             }
         });
 
-        passwordEditText.getEditText().addTextChangedListener(new TextWatcher() {
+        Objects.requireNonNull(passwordEditText.getEditText()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -78,15 +82,13 @@ public class LogIn extends AppCompatActivity {
 
     private void signUp() {
         Intent intent = new Intent(LogIn.this, SignUpActivity.class);
-        intent.putParcelableArrayListExtra("video_list", videos);
-        intent.putParcelableArrayListExtra("users", users);
         resetFields();
         startActivity(intent);
     }
 
     private void login() {
-        String email = emailEditText.getEditText().getText().toString().trim();
-        String password = passwordEditText.getEditText().getText().toString().trim();
+        String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
+        String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
 
         if (password.isEmpty()) {
             passwordEditText.setError("Please enter a password");
@@ -108,9 +110,7 @@ public class LogIn extends AppCompatActivity {
                 if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LogIn.this, MainActivity.class);
-                    intent.putExtra("user", u);
-                    intent.putParcelableArrayListExtra("video_list", videos);
-                    intent.putParcelableArrayListExtra("users", users);
+                    UserSession.getInstance().setUserId(u.getId());
                     resetFields();
                     startActivity(intent);
                     finish();
@@ -123,7 +123,7 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void resetFields() {
-        emailEditText.getEditText().setText("");
-        passwordEditText.getEditText().setText("");
+        Objects.requireNonNull(emailEditText.getEditText()).setText("");
+        Objects.requireNonNull(passwordEditText.getEditText()).setText("");
     }
 }

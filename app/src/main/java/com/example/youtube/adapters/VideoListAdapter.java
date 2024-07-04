@@ -1,6 +1,5 @@
 package com.example.youtube.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -28,11 +28,11 @@ import java.util.ArrayList;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final LayoutInflater mInflater;
-    private ArrayList<video> videos;
-    private ArrayList<user> users;
+    private final ArrayList<video> videos;
     private ArrayList<video> filteredVideos;
     private final Context context;
-    private final user user;
+    private final int userId;
+    private final AppDatabase db;
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         private final TextView video_name;
@@ -57,23 +57,20 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setVideos(ArrayList<video> v, ArrayList<user> u) {
-        videos = v;
-        users = u;
-        filteredVideos = new ArrayList<>(v);
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
         return filteredVideos != null ? filteredVideos.size() : 0;
     }
 
-    public VideoListAdapter(Context context, user user) {
+    public VideoListAdapter(Context context, int userId, AppDatabase db, video filter) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
-        this.user = user;
+        this.userId = userId;
+        this.db = db;
+        this.videos = new ArrayList<>(db.videoDao().getAllVideos());
+        this.filteredVideos = new ArrayList<>(db.videoDao().getAllVideos());
+        filter(filter);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -87,9 +84,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         if (filteredVideos != null) {
             final video current = filteredVideos.get(position);
+            user currentCreator = db.userDao().getUserById(current.getCreatorId());
             String formatViews = GeneralUtils.getViews(current.getViews()) + " views";
             holder.video_name.setText(current.getVideo_name());
-            holder.creator.setText(current.getCreator().getName());
+            holder.creator.setText(currentCreator.getName());
             holder.views.setText(formatViews);
             holder.publish_date.setText(GeneralUtils.timeAgo(current.getDate_of_release()));
             holder.video_length.setText(current.getVideo_length());
@@ -103,7 +101,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 holder.thumbnail.setImageURI(Uri.parse(thumbnailName));
             }
             // Load creator picture
-            String creatorPic = current.getCreator().getProfile_pic();
+            String creatorPic = currentCreator.getProfile_pic();
             int creatorPicId = mInflater.getContext().getResources().getIdentifier(creatorPic, "drawable", mInflater.getContext().getPackageName());
             if (creatorPicId != 0) {
                 holder.creator_pic.setImageResource(creatorPicId);
@@ -115,14 +113,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideos.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
-            // add one view per click
-            int videoViews = Integer.parseInt(clickedVideoItem.getViews()) + 1;
-            clickedVideoItem.setViews(Integer.toString(videoViews));
-
-            i.putExtra("video_item", clickedVideoItem);
-            i.putExtra("user", user);
-            i.putParcelableArrayListExtra("video_list", new ArrayList<>(videos));
-            i.putParcelableArrayListExtra("users", users);
+            i.putExtra("video_item", clickedVideoItem.getVideoId());
             mInflater.getContext().startActivity(i);
         });
 
@@ -132,17 +123,19 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_delete_video) {
-                    if (user == null) {
-                        Toast.makeText(context, "please login in order to download or delete a video", Toast.LENGTH_SHORT).show();
+                    if (userId == 0) {
+                        Toast.makeText(context, "please login in order to delete a video", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, LogIn.class);
-                        intent.putParcelableArrayListExtra("video_list", videos);
-                        intent.putParcelableArrayListExtra("users", users);
                         context.startActivity(intent);
+                    }else if (videos.get(position).getCreatorId() != userId) {
+                        Toast.makeText(context, "cant delete non-user video", Toast.LENGTH_SHORT).show();
                     } else {
+                        video temp = videos.get(position);
                         videos.remove(position);
                         filteredVideos.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, filteredVideos.size());
+                        db.videoDao().delete(temp);
                     }
                     return true;
                 } else if (item.getItemId() == R.id.action_download) {
