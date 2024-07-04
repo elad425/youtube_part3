@@ -1,6 +1,9 @@
 package com.example.youtube;
 
+import android.app.Application;
+
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
@@ -14,6 +17,17 @@ import com.example.youtube.utils.videoConverters;
 @Database(entities = {user.class, video.class}, version = 1)
 @TypeConverters({videoConverters.class, userConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
+    static AppDatabase instance;
     public abstract userDao userDao();
     public abstract videoDao videoDao();
+
+    public static synchronized AppDatabase getInstance(Application application) {
+        if (instance == null) {
+            instance = Room.databaseBuilder(application.getApplicationContext(),
+                            AppDatabase.class, "userDb")
+                    .allowMainThreadQueries()
+                    .build();
+        }
+        return instance;
+    }
 }

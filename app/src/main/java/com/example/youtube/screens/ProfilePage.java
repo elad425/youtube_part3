@@ -3,7 +3,7 @@ package com.example.youtube.screens;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -18,42 +18,34 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.UserSession;
 import com.example.youtube.entities.user;
+import com.example.youtube.viewmodels.ProfilePageViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
-
 public class ProfilePage extends AppCompatActivity {
-
-    private int userId;
-    private AppDatabase db;
+    private ProfilePageViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_page);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        viewModel = new ViewModelProvider(this).get(ProfilePageViewModel.class);
 
         setupWindow();
-        initializeData();
         setupUI();
         setupBottomNavigation();
         handleBackButton();
+
+        observeViewModel();
     }
 
     private void setupWindow() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
-    }
-
-    private void initializeData() {
-        userId = UserSession.getInstance().getUserId();
     }
 
     private void setupUI() {
@@ -64,27 +56,36 @@ public class ProfilePage extends AppCompatActivity {
         ImageButton btnSettings = findViewById(R.id.settings);
         btnSettings.setOnClickListener(this::displaySettings);
 
-        if (userId != 0) {
-            displayUserInfo(username, userEmail, userPic, btnLogIn);
-        } else {
-            displayGuestInfo(username, userEmail, userPic, btnLogIn);
-        }
+        viewModel.isUserLoggedIn().observe(this, isLoggedIn -> {
+            if (isLoggedIn) {
+                btnLogIn.setText(R.string.logOut);
+                btnLogIn.setOnClickListener(v -> onConfirmClick());
+            } else {
+                displayGuestInfo(username, userEmail, userPic, btnLogIn);
+            }
+        });
     }
 
-    private void displayUserInfo(TextView username, TextView userEmail, ShapeableImageView userPic, Button btnLogIn) {
-        user currentUser = db.userDao().getUserById(userId);
-        username.setText(currentUser.getName());
-        userEmail.setText(currentUser.getEmail());
-        String profilePic = currentUser.getProfile_pic();
-        int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
-        if (profilePicId != 0) {
-            userPic.setImageResource(profilePicId);
-        } else {
-            userPic.setImageURI(Uri.parse(profilePic));
-        }
+    private void observeViewModel() {
+        viewModel.getCurrentUser().observe(this, this::displayUserInfo);
+    }
 
-        btnLogIn.setText(R.string.logOut);
-        btnLogIn.setOnClickListener(v -> onConfirmClick());
+    private void displayUserInfo(user currentUser) {
+        if (currentUser != null) {
+            TextView username = findViewById(R.id.username);
+            TextView userEmail = findViewById(R.id.user_email);
+            ShapeableImageView userPic = findViewById(R.id.user_pic);
+
+            username.setText(currentUser.getName());
+            userEmail.setText(currentUser.getEmail());
+            String profilePic = currentUser.getProfile_pic();
+            int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
+            if (profilePicId != 0) {
+                userPic.setImageResource(profilePicId);
+            } else {
+                userPic.setImageURI(Uri.parse(profilePic));
+            }
+        }
     }
 
     private void displayGuestInfo(TextView username, TextView userEmail, ShapeableImageView userPic, Button btnLogIn) {
@@ -96,7 +97,7 @@ public class ProfilePage extends AppCompatActivity {
         btnLogIn.setOnClickListener(v -> goToLogIn());
     }
 
-    private void displaySettings(View v){
+    private void displaySettings(View v) {
         PopupMenu popup = new PopupMenu(v.getContext(), v);
         popup.getMenuInflater().inflate(R.menu.settings_menu, popup.getMenu());
 
@@ -140,19 +141,20 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void navigateToAddVideo() {
-        if (userId != 0) {
-            Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);
-            startActivity(intent);
-        } else {
-            Toast.makeText(ProfilePage.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
-            goToLogIn();
-        }
+        viewModel.isUserLoggedIn().observe(this, isLoggedIn -> {
+            if (isLoggedIn) {
+                Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfilePage.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
+                goToLogIn();
+            }
+        });
     }
 
     public void onConfirmClick() {
-        UserSession.getInstance().setUserId(0);
+        viewModel.logOut();
         Toast.makeText(this, "You logged out", Toast.LENGTH_SHORT).show();
-        navigateToHome();
     }
 
     private void handleBackButton() {
@@ -169,7 +171,7 @@ public class ProfilePage extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void goToLogIn(){
+    private void goToLogIn() {
         Intent intent = new Intent(this, LogIn.class);
         startActivity(intent);
     }

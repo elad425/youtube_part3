@@ -1,26 +1,16 @@
 package com.example.youtube.utils;
 
-import android.content.Context;
-import android.provider.Settings;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.youtube.AppDatabase;
-import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static boolean isUserExist(ArrayList<user> users, String email){
+    public static boolean isUserExist(List<user> users, String email){
         if (users == null){
             return false;
         }
