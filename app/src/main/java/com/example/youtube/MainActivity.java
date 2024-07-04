@@ -1,9 +1,7 @@
 package com.example.youtube;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,10 +37,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupWindow();
-
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
 
         if (checkPermissions()) {
             lunchApp();
@@ -52,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeData() {
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        userId = UserSession.getInstance().getUserId();
+
         userDao userDao = db.userDao();
         if (userDao.getAllUsers().isEmpty()) {
             ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
@@ -69,17 +67,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupWindow() {
+    private void setupUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
-    }
 
-    private void initialize() {
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("user",-1);
-    }
-
-    private void setupUI() {
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         GeneralUtils.displayVideoList(this, lstVideos, userId,null, db);
 
@@ -89,12 +80,6 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnCast = findViewById(R.id.cast_button);
         btnCast.setOnClickListener(v -> Toast.makeText(MainActivity.this,
                 "The app doesn't support Chromecast yet", Toast.LENGTH_SHORT).show());
-    }
-
-    private void navigateToSearch() {
-        Intent intent = new Intent(this, SearchVideo.class);
-        intent.putExtra("user", userId);
-        startActivity(intent);
     }
 
     private void setupBottomNavigation() {
@@ -113,21 +98,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void navigateToSearch() {
+        startActivity(new Intent(this, SearchVideo.class));
+    }
+
     private void navigateToProfile() {
-        Intent intent = new Intent(MainActivity.this, ProfilePage.class);
-        intent.putExtra("user", userId);
-        startActivity(intent);
+        startActivity(new Intent(MainActivity.this, ProfilePage.class));
     }
 
     private void navigateToAddVideo() {
-        if (userId != -1) {
-            Intent intent = new Intent(MainActivity.this, AddVideoActivity.class);
-            intent.putExtra("user", userId);
-            startActivity(intent);
+        if (userId != 0) {
+            startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LogIn.class);
-            startActivity(intent);
+            startActivity(new Intent(this, LogIn.class));
         }
     }
 
@@ -182,27 +166,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void lunchApp(){
         setContentView(R.layout.activity_main);
         initializeData();
-        initialize();
         setupUI();
         setupBottomNavigation();
         handleBackButton();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        clearUserDetails();
-    }
-
-    private void clearUserDetails() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserDetails", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
     }
 
     private void handleBackButton() {

@@ -22,6 +22,7 @@ import androidx.room.Room;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.UserSession;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -76,7 +77,7 @@ public class AddVideoActivity extends AppCompatActivity {
         ImageButton recordVideoButton = findViewById(R.id.record_video_button);
         recordVideoButton.setOnClickListener(v -> openCamera());
 
-        userId = getIntent().getIntExtra("user",-1);
+        userId = UserSession.getInstance().getUserId();
 
     }
 
@@ -98,13 +99,11 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void navigateToProfilePage() {
         Intent intent = new Intent(AddVideoActivity.this, ProfilePage.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
     private void navigateToMainActivity() {
         Intent intent = new Intent(AddVideoActivity.this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
@@ -187,7 +186,6 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 }

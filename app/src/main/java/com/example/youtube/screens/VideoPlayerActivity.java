@@ -26,6 +26,7 @@ import androidx.room.Room;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.UserSession;
 import com.example.youtube.adapters.CommentsAdapter;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
@@ -82,9 +83,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         Intent intent = getIntent();
         currentVideo = db.videoDao().getVideoById(intent.getIntExtra("video_item", -1));
-        currentUser = db.userDao().getUserById(intent.getIntExtra("user",-1));
+        currentUser = db.userDao().getUserById(UserSession.getInstance().getUserId());
         currentCreator = db.userDao().getUserById(currentVideo.getCreatorId());
-        userId = -1;
 
         int videoViews = Integer.parseInt(currentVideo.getViews()) + 1;
         currentVideo.setViews(Integer.toString(videoViews));
@@ -179,8 +179,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         ImageButton btnEdit = findViewById(R.id.edit_video);
         Button btnSubscribe = findViewById(R.id.btn_subscribe);
 
-        if ((currentUser == null) || (currentVideo.getCreatorId() != currentUser.getId())) {
+        if ((currentUser == null) || (currentCreator.getId() != currentUser.getId())) {
             btnEdit.setVisibility(View.GONE);
+        }
+
+        if ((currentUser != null) && (currentCreator.getId() == currentUser.getId())){
+            btnSubscribe.setVisibility(View.GONE);
         }
 
         updateActionButtons(btnLike, btnDislike, btnSubscribe);
@@ -220,7 +224,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.UserSession;
 import com.example.youtube.entities.user;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -52,8 +53,7 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void initializeData() {
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("user",-1);
+        userId = UserSession.getInstance().getUserId();
     }
 
     private void setupUI() {
@@ -64,7 +64,7 @@ public class ProfilePage extends AppCompatActivity {
         ImageButton btnSettings = findViewById(R.id.settings);
         btnSettings.setOnClickListener(this::displaySettings);
 
-        if (userId != -1) {
+        if (userId != 0) {
             displayUserInfo(username, userEmail, userPic, btnLogIn);
         } else {
             displayGuestInfo(username, userEmail, userPic, btnLogIn);
@@ -136,14 +136,12 @@ public class ProfilePage extends AppCompatActivity {
 
     private void navigateToHome() {
         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
-        if (userId != -1) {
+        if (userId != 0) {
             Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);
-            intent.putExtra("user", userId);
             startActivity(intent);
         } else {
             Toast.makeText(ProfilePage.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
@@ -152,7 +150,7 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     public void onConfirmClick() {
-        userId = -1;
+        UserSession.getInstance().setUserId(0);
         Toast.makeText(this, "You logged out", Toast.LENGTH_SHORT).show();
         navigateToHome();
     }
@@ -168,7 +166,6 @@ public class ProfilePage extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 

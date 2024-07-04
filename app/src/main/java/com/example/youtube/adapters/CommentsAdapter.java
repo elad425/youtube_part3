@@ -76,7 +76,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
             popup.getMenuInflater().inflate(R.menu.comment_options_menu, popup.getMenu());
 
             popup.setOnMenuItemClickListener(item -> {
-                if (userId == -1){
+                if (userId == 0){
                     Toast.makeText(context, "please login in order to edit or delete comments",
                             Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, LogIn.class);

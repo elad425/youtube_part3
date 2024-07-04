@@ -118,7 +118,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             video clickedVideoItem = filteredVideos.get(holder.getAdapterPosition());
             Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
             i.putExtra("video_item", clickedVideoItem.getVideoId());
-            i.putExtra("user", userId);
             mInflater.getContext().startActivity(i);
         });
 
@@ -128,7 +127,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_delete_video) {
-                    if (userId == -1) {
+                    if (userId == 0) {
                         Toast.makeText(context, "please login in order to delete a video", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, LogIn.class);
                         context.startActivity(intent);

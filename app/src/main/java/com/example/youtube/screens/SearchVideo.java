@@ -26,7 +26,6 @@ public class SearchVideo extends AppCompatActivity {
     private ArrayList<video> filteredList;
     private SearchAdapter searchAdapter;
     private ArrayList<video> videos;
-    private int userId;
     private AppDatabase db;
 
     @Override
@@ -54,14 +53,13 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void setupUI() {
-        userId = getIntent().getIntExtra("user",-1);
-        setupRecyclerView(userId);
+        setupRecyclerView();
         setupBackButton();
         setupBackPressedDispatcher();
     }
 
-    private void setupRecyclerView(int userId) {
-        searchAdapter = new SearchAdapter(filteredList, this, userId);
+    private void setupRecyclerView() {
+        searchAdapter = new SearchAdapter(filteredList, this);
         RecyclerView rvSearch = findViewById(R.id.rv_search);
         rvSearch.setLayoutManager(new LinearLayoutManager(this));
         rvSearch.setAdapter(searchAdapter);
@@ -99,7 +97,6 @@ public class SearchVideo extends AppCompatActivity {
 
     private void handleBackAction() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user", userId);
         startActivity(intent);
     }
 

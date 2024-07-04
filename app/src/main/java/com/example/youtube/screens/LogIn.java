@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.UserSession;
 import com.example.youtube.entities.user;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -109,7 +110,7 @@ public class LogIn extends AppCompatActivity {
                 if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LogIn.this, MainActivity.class);
-                    intent.putExtra("user", u.getId());
+                    UserSession.getInstance().setUserId(u.getId());
                     resetFields();
                     startActivity(intent);
                     finish();
