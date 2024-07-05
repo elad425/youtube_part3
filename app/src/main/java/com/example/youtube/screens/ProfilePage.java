@@ -1,6 +1,5 @@
 package com.example.youtube.screens;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,6 +26,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 public class ProfilePage extends AppCompatActivity {
     private ProfilePageViewModel viewModel;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,6 @@ public class ProfilePage extends AppCompatActivity {
         setupWindow();
         setupUI();
         setupBottomNavigation();
-        handleBackButton();
-
         observeViewModel();
     }
 
@@ -120,19 +118,32 @@ public class ProfilePage extends AppCompatActivity {
         builder.show();
     }
 
+    protected void onResume() {
+        super.onResume();
+        updateBottomNavigationSelection();
+    }
+
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.navigation_profile);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_home) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
                 navigateToHome();
                 return true;
-            } else if (item.getItemId() == R.id.navigation_add_video) {
+            } else
+                if (itemId == R.id.navigation_add_video) {
                 navigateToAddVideo();
                 return true;
-            }
-            return false;
+            } else return itemId == R.id.navigation_profile;
         });
+
+        updateBottomNavigationSelection();
+    }
+
+    private void updateBottomNavigationSelection() {
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.navigation_profile);
+        }
     }
 
     private void navigateToHome() {
@@ -155,20 +166,6 @@ public class ProfilePage extends AppCompatActivity {
     public void onConfirmClick() {
         viewModel.logOut();
         Toast.makeText(this, "You logged out", Toast.LENGTH_SHORT).show();
-    }
-
-    private void handleBackButton() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
-
-    private void handleBackAction() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
     private void goToLogIn() {

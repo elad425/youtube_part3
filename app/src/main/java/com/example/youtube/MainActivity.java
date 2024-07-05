@@ -9,7 +9,6 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -17,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.youtube.adapters.MainVideoListAdapter;
+import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
@@ -28,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
     private int userId;
     private MainViewModel videoViewModel;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBottomNavigationSelection();
+    }
+
     private void initializeData() {
         userId = UserSession.getInstance().getUserId();
         videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -50,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        MainVideoListAdapter videoAdapter = new MainVideoListAdapter(this);
+        VideoListAdapter videoAdapter = new VideoListAdapter(this,
+                null, videoViewModel.getAllUsers());
         lstVideos.setAdapter(videoAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -65,19 +72,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.navigation_home);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_profile) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
                 navigateToProfile();
                 return true;
             }
-            else if (item.getItemId() == R.id.navigation_add_video) {
+            else
+                if (itemId == R.id.navigation_add_video) {
                 navigateToAddVideo();
                 return true;
             }
-            return false;
+            else return itemId == R.id.navigation_home;
         });
+
+        updateBottomNavigationSelection();
+    }
+
+    private void updateBottomNavigationSelection() {
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.navigation_home);
+        }
     }
 
     private void navigateToSearch() {
@@ -153,19 +169,7 @@ public class MainActivity extends AppCompatActivity {
         initializeData();
         setupUI();
         setupBottomNavigation();
-        handleBackButton();
     }
 
-    private void handleBackButton() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
 
-    private void handleBackAction() {
-
-    }
 }

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +27,7 @@ import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.UserSession;
 import com.example.youtube.adapters.CommentsAdapter;
-import com.example.youtube.adapters.PlayerVideoListAdapter;
+import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
@@ -69,8 +68,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         setupVideoView();
         handleCommentsSection();
         handleActionButtons();
-        handleBackButton();
-
         observeViewModel();
     }
 
@@ -88,12 +85,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        PlayerVideoListAdapter playerVideoListAdapter = new PlayerVideoListAdapter(this,
+        VideoListAdapter videoListAdapter = new VideoListAdapter(this,
                 viewModel.getCurrentVideo().getValue(),viewModel.getUsers());
-        lstVideos.setAdapter(playerVideoListAdapter);
+        lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel.getVideos().observe(this, playerVideoListAdapter::setVideos);
+        viewModel.getVideos().observe(this, videoListAdapter::setVideos);
+
+        ImageButton btnBack = findViewById(R.id.tv_video_back);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void setupVideoView() {
@@ -202,16 +202,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
         ImageButton btnEdit = findViewById(R.id.edit_video);
         Button btnSubscribe = findViewById(R.id.btn_subscribe);
 
-        viewModel.getCurrentUser().observe(this, currentUser -> {
-            viewModel.getCurrentCreator().observe(this, currentCreator -> {
-                if (currentUser == null || currentCreator == null || currentCreator.getId() != currentUser.getId()) {
-                    btnEdit.setVisibility(View.GONE);
-                }
-                if (currentUser != null && currentCreator != null && currentCreator.getId() == currentUser.getId()) {
-                    btnSubscribe.setVisibility(View.GONE);
-                }
-            });
-        });
+        viewModel.getCurrentUser().observe(this, currentUser ->
+                viewModel.getCurrentCreator().observe(this, currentCreator -> {
+            if (currentUser == null || currentCreator == null || currentCreator.getId() != currentUser.getId()) {
+                btnEdit.setVisibility(View.GONE);
+            }
+            if (currentUser != null && currentCreator != null && currentCreator.getId() == currentUser.getId()) {
+                btnSubscribe.setVisibility(View.GONE);
+            }
+        }));
 
         btnShare.setOnClickListener(v -> shareVideo());
         btnLike.setOnClickListener(v -> handleLikeAction());
@@ -241,23 +240,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.white));
             btnSubscribe.setText(R.string.subscribe);
         }
-    }
-
-    private void handleBackButton() {
-        ImageButton btnBack = findViewById(R.id.tv_video_back);
-        btnBack.setOnClickListener(v -> handleBackAction());
-
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
-
-    private void handleBackAction() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
     private void showAddCommentDialog() {

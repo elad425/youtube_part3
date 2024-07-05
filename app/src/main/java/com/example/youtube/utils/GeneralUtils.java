@@ -115,6 +115,9 @@ public class GeneralUtils {
 
     public static List<video> removeVideo(List<video> videos, video video){
         List<video> temp = new ArrayList<>();
+        if (video == null){
+            return videos;
+        }
         for (video v : videos){
             if (v.getVideoId() != video.getVideoId()){
                 temp.add(v);

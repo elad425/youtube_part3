@@ -46,7 +46,6 @@ public class SearchVideo extends AppCompatActivity {
     private void setupUI() {
         setupRecyclerView();
         setupBackButton();
-        setupBackPressedDispatcher();
     }
 
     private void setupRecyclerView() {
@@ -58,16 +57,7 @@ public class SearchVideo extends AppCompatActivity {
 
     private void setupBackButton() {
         ImageButton btnBack = findViewById(R.id.search_back);
-        btnBack.setOnClickListener(v -> handleBackAction());
-    }
-
-    private void setupBackPressedDispatcher() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void setupSearchView() {
@@ -89,10 +79,5 @@ public class SearchVideo extends AppCompatActivity {
     private void observeViewModel() {
         viewModel.getFilteredVideos().observe(this, filteredVideos ->
                 searchAdapter.setFilteredList(new ArrayList<>(filteredVideos)));
-    }
-
-    private void handleBackAction() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 }

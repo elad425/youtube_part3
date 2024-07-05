@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -44,6 +43,7 @@ public class AddVideoActivity extends AppCompatActivity {
     private TextView videoPlaceholder;
     private Uri videoUri, thumbnailUri;
     private AddVideoViewModel viewModel;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,13 @@ public class AddVideoActivity extends AppCompatActivity {
         setupWindow();
         initializeUI();
         setupBottomNavigation();
-        handleBackButton();
         observeViewModel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBottomNavigationSelection();
     }
 
     private void setupWindow() {
@@ -98,19 +103,28 @@ public class AddVideoActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.navigation_add_video);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_profile) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
                 navigateToProfilePage();
                 return true;
             }
-            else if (item.getItemId() == R.id.navigation_home) {
+            else
+                if (itemId == R.id.navigation_home) {
                 navigateToMainActivity();
                 return true;
             }
-            return false;
+            else return itemId == R.id.navigation_add_video;
         });
+
+        updateBottomNavigationSelection();
+    }
+
+    private void updateBottomNavigationSelection() {
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.navigation_add_video);
+        }
     }
 
     private void navigateToProfilePage() {
@@ -184,19 +198,5 @@ public class AddVideoActivity extends AppCompatActivity {
         video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
                 videoUri.toString(), thumbnailUri.toString(), videoDuration, "0");
         viewModel.addVideo(newVideo);
-    }
-
-    private void handleBackButton() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
-
-    private void handleBackAction() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 }

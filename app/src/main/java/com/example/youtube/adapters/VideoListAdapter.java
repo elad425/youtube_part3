@@ -25,18 +25,18 @@ import com.google.android.material.imageview.ShapeableImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerVideoListAdapter extends RecyclerView.Adapter<PlayerVideoListAdapter.VideoViewHolder> {
+public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
     private final Context context;
     private List<video> videos;
     private final List<user> users;
     private final video currentVideo;
 
 
-    public PlayerVideoListAdapter(Context context, video currentVideo, List<user> users) {
+    public VideoListAdapter(Context context, video currentVideo, List<user> users) {
         this.context = context;
         this.users = users;
         this.currentVideo = currentVideo;
-        this.videos = new ArrayList<>(); // This should be populated with related videos
+        this.videos = new ArrayList<>();
     }
 
     @NonNull
@@ -91,7 +91,7 @@ public class PlayerVideoListAdapter extends RecyclerView.Adapter<PlayerVideoList
     public void setVideos(List<video> videos) {
         this.videos.clear();
         this.videos.addAll(videos);
-        this.videos = removeVideo(this.videos,currentVideo); // Remove the current video from the list
+        this.videos = removeVideo(this.videos,currentVideo);
         notifyDataSetChanged();
     }
 
