@@ -3,6 +3,7 @@ package com.example.youtube.adapters;
 import static com.example.youtube.utils.GeneralUtils.getUserById;
 import static com.example.youtube.utils.GeneralUtils.removeVideo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -30,13 +31,17 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     private List<video> videos;
     private final List<user> users;
     private final video currentVideo;
+    private final Activity activity;
+    private final Boolean isMain;
 
 
-    public VideoListAdapter(Context context, video currentVideo, List<user> users) {
+    public VideoListAdapter(Context context, video currentVideo, List<user> users, Activity activity) {
         this.context = context;
         this.users = users;
         this.currentVideo = currentVideo;
         this.videos = new ArrayList<>();
+        this.activity = activity;
+        isMain = currentVideo == null;
     }
 
     @NonNull
@@ -80,6 +85,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             Intent intent = new Intent(context, VideoPlayerActivity.class);
             intent.putExtra("video_item", currentVideo.getVideoId());
             context.startActivity(intent);
+            if (!isMain){
+                activity.finish();
+            }
         });
     }
 

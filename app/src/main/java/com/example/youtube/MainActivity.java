@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.adapters.VideoListAdapter;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         VideoListAdapter videoAdapter = new VideoListAdapter(this,
-                null, videoViewModel.getAllUsers());
+                null, videoViewModel.getAllUsers(),this);
         lstVideos.setAdapter(videoAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -86,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
             }
             else return itemId == R.id.navigation_home;
         });
-
         updateBottomNavigationSelection();
     }
 

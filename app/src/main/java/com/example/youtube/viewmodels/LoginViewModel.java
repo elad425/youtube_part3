@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.youtube.UserSession;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.user;
 import com.example.youtube.repositories.UserRepository;
 

@@ -3,7 +3,7 @@ package com.example.youtube.repositories;
 import android.app.Application;
 import android.content.Context;
 
-import com.example.youtube.AppDatabase;
+import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.user;
 import com.example.youtube.utils.JsonUtils;
 

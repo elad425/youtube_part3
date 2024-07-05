@@ -5,7 +5,7 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.youtube.AppDatabase;
+import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.JsonUtils;
 

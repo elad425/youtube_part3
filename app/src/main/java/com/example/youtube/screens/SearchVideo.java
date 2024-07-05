@@ -1,19 +1,16 @@
 package com.example.youtube.screens;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.youtube.MainActivity;
 import com.example.youtube.R;
 import com.example.youtube.adapters.SearchAdapter;
 import com.example.youtube.viewmodels.SearchViewModel;
@@ -49,7 +46,7 @@ public class SearchVideo extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        searchAdapter = new SearchAdapter(new ArrayList<>(), this);
+        searchAdapter = new SearchAdapter(new ArrayList<>(), this, this);
         RecyclerView rvSearch = findViewById(R.id.rv_search);
         rvSearch.setLayoutManager(new LinearLayoutManager(this));
         rvSearch.setAdapter(searchAdapter);

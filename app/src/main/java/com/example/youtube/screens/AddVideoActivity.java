@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.UserSession;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.AddVideoViewModel;

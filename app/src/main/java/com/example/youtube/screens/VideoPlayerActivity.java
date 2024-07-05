@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.UserSession;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.adapters.CommentsAdapter;
 import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.comment;
@@ -37,6 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 public class VideoPlayerActivity extends AppCompatActivity {
@@ -86,7 +87,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         VideoListAdapter videoListAdapter = new VideoListAdapter(this,
-                viewModel.getCurrentVideo().getValue(),viewModel.getUsers());
+                viewModel.getCurrentVideo().getValue(),viewModel.getUsers(),this);
         lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -179,7 +180,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void updateComments(ArrayList<comment> comments) {
         commentsAdapter.updateComments(comments);
-        tvComments.setText(String.format("Comments (%d)", comments.size()));
+        tvComments.setText(String.format(Locale.US, "Comments (%d)", comments.size()));
     }
 
     private void toggleComments() {
