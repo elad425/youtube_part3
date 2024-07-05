@@ -1,21 +1,21 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
-import android.content.Context;
 
+import com.example.youtube.api.UserApi;
 import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.user;
-import com.example.youtube.utils.JsonUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
     private final AppDatabase db;
+    private final UserApi api;
 
     public UserRepository(Application application) {
         db = AppDatabase.getInstance(application);
-        loadUsers(application.getApplicationContext());
+        api = new UserApi(db.userDao());
+        api.get();
     }
 
     public user getUserById(int userId) {
@@ -28,18 +28,32 @@ public class UserRepository {
 
     public void insertUser(user newUser) {
         db.userDao().insert(newUser);
+        api.createUser(newUser, new UserApi.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Handle successful user creation
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
     public void updateUser(user newUser) {
         db.userDao().update(newUser);
+        api.updateUser(newUser.getId(), newUser, new UserApi.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Handle successful user update
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
-    private void loadUsers(Context context){
-        if (db.userDao().getAllUsers().isEmpty()) {
-            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(context);
-            for (user u : tempUser) {
-                db.userDao().insert(u);
-            }
-        }
-    }
 }

@@ -17,6 +17,9 @@ public interface videoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(video video);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertList(List<video> video);
+
     @Update
     void update(video video);
 
@@ -31,4 +34,7 @@ public interface videoDao {
 
     @Query("SELECT * FROM videos")
     LiveData<List<video>> getAllVideosLive();
+
+    @Query("DELETE FROM videos")
+    void clear();
 }

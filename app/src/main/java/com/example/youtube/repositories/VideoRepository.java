@@ -1,35 +1,68 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.video;
-import com.example.youtube.utils.JsonUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VideoRepository {
     private final AppDatabase db;
+    private final VideoApi api;
 
     public VideoRepository(Application application) {
         db = AppDatabase.getInstance(application);
-        loadVideos(application.getApplicationContext());
+        api = new VideoApi(db.videoDao());
+        api.getVideos();
     }
 
     public void insertVideo(video newVideo) {
         db.videoDao().insert(newVideo);
+        api.createVideo(newVideo, new VideoApi.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Handle successful user creation
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
     public void updateVideo(video updatedVideo) {
         db.videoDao().update(updatedVideo);
+        api.updateVideo(updatedVideo.getVideoId(), updatedVideo, new VideoApi.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Handle successful user update
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
     public void deleteVideo(video videoToDelete) {
         db.videoDao().delete(videoToDelete);
+        api.deleteVideo(videoToDelete.getVideoId(), new VideoApi.ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Handle successful user update
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error
+            }
+        });
     }
 
     public LiveData<List<video>> getAllVideosLive() {
@@ -38,15 +71,6 @@ public class VideoRepository {
 
     public List<video> getAllVideos() {
         return db.videoDao().getAllVideos();
-    }
-
-    private void loadVideos(Context context) {
-        if (db.videoDao().getAllVideos().isEmpty()) {
-            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(context);
-            for (video v : tempVideo) {
-                db.videoDao().insert(v);
-            }
-        }
     }
 
     public video getVideoById(int id) {

@@ -17,6 +17,9 @@ public interface userDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(user user);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertList(List<user> users);
+
     @Update
     void update(user user);
 
@@ -28,4 +31,8 @@ public interface userDao {
 
     @Query("SELECT * FROM users")
     List<user> getAllUsers();
+
+    @Query("DELETE FROM users")
+    void clear();
+
 }

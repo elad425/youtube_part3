@@ -86,4 +86,5 @@
     <string name="select_thumbnail">Select Thumbnail</string>
     <string name="select_video">Select Video</string>
     <string name="camera">camera</string>
+    <string name="baseUrl">http://192.168.68.117:3000/</string>
 </resources>
