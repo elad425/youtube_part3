@@ -3,7 +3,6 @@ package com.example.youtube.repositories;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.video;
@@ -14,59 +13,32 @@ public class VideoRepository {
     private final AppDatabase db;
     private final VideoApi api;
 
+    private final LiveData<List<video>> videos;
+
     public VideoRepository(Application application) {
         db = AppDatabase.getInstance(application);
         api = new VideoApi(db.videoDao());
         api.getVideos();
+        videos = db.videoDao().getAllVideosLive();
     }
 
     public void insertVideo(video newVideo) {
         db.videoDao().insert(newVideo);
-        api.createVideo(newVideo, new VideoApi.ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // Handle successful user creation
-            }
-
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        api.createVideo(newVideo);
     }
 
     public void updateVideo(video updatedVideo) {
         db.videoDao().update(updatedVideo);
-        api.updateVideo(updatedVideo.getVideoId(), updatedVideo, new VideoApi.ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // Handle successful user update
-            }
-
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        api.updateVideo(updatedVideo.getId(), updatedVideo);
     }
 
     public void deleteVideo(video videoToDelete) {
         db.videoDao().delete(videoToDelete);
-        api.deleteVideo(videoToDelete.getVideoId(), new VideoApi.ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // Handle successful user update
-            }
-
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        api.deleteVideo(videoToDelete.getId());
     }
 
     public LiveData<List<video>> getAllVideosLive() {
-        return db.videoDao().getAllVideosLive();
+        return videos;
     }
 
     public List<video> getAllVideos() {

@@ -38,44 +38,27 @@ public class UserApi {
         });
     }
 
-    public void createUser(user newUser, final ApiCallback<Void> callback) {
+    public void createUser(user newUser) {
         Call<Void> call = usersWebServiceApi.createUser(newUser);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onError("Failed to create user: " + response.message());
-                }
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                callback.onError("Network error: " + t.getMessage());
             }
         });
     }
 
-    public void updateUser(int userId, user updatedUser, final ApiCallback<Void> callback) {
+    public void updateUser(int userId, user updatedUser) {
         Call<Void> call = usersWebServiceApi.updateUser(userId,updatedUser);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onError("Failed to update user: " + response.message());
-                }
             }
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                callback.onError("Network error: " + t.getMessage());
-            }
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
         });
     }
 
-    public interface ApiCallback<T> {
-        void onSuccess(T result);
-        void onError(String error);
-    }
 }

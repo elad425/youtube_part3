@@ -26,7 +26,7 @@ public interface videoDao {
     @Delete
     void delete(video video);
 
-    @Query("SELECT * FROM videos WHERE videoId = :id")
+    @Query("SELECT * FROM videos WHERE id = :id")
     video getVideoById(int id);
 
     @Query("SELECT * FROM videos")

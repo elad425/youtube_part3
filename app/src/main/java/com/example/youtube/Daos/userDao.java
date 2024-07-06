@@ -1,5 +1,6 @@
 package com.example.youtube.Daos;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -34,5 +35,8 @@ public interface userDao {
 
     @Query("DELETE FROM users")
     void clear();
+
+    @Query("SELECT * FROM users")
+    LiveData<List<user>> getAllUsersLive();
 
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.entities.video;
+import com.example.youtube.repositories.UserRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.ArrayList;
@@ -15,12 +16,11 @@ import java.util.List;
 
 public class SearchViewModel extends AndroidViewModel {
     private final MutableLiveData<List<video>> filteredVideos = new MutableLiveData<>();
-    private final List<video> allVideos;
+    private final VideoRepository videoRepository;
 
     public SearchViewModel(@NonNull Application application) {
         super(application);
-        VideoRepository videoRepository = new VideoRepository(application);
-        allVideos = videoRepository.getAllVideos();
+        videoRepository = new VideoRepository(application);
     }
 
     public LiveData<List<video>> getFilteredVideos() {
@@ -28,6 +28,7 @@ public class SearchViewModel extends AndroidViewModel {
     }
 
     public void filterVideos(String query) {
+        List<video> allVideos = videoRepository.getAllVideos();
         List<video> filtered = new ArrayList<>();
         if (!query.isEmpty()) {
             for (video video : allVideos) {

@@ -119,7 +119,7 @@ public class GeneralUtils {
             return videos;
         }
         for (video v : videos){
-            if (v.getVideoId() != video.getVideoId()){
+            if (v.getId() != video.getId()){
                 temp.add(v);
             }
         }
@@ -142,5 +142,23 @@ public class GeneralUtils {
         } finally {
             retriever.release();
         }
+    }
+
+    public static int videoIdGenerator(List<video> videos){
+        int i = 1;
+        for (video v : videos){
+            if (v.getId() != i){ break;}
+            i+=1;
+        }
+        return i;
+    }
+
+    public static int userIdGenerator(List<user> users){
+        int i = 1;
+        for (user u : users){
+            if (u.getId() != i){ break;}
+            i+=1;
+        }
+        return i;
     }
 }

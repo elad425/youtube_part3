@@ -38,62 +38,39 @@ public class VideoApi {
         });
     }
 
-    public void createVideo(video newvideo, final VideoApi.ApiCallback<Void> callback) {
+    public void createVideo(video newvideo) {
         Call<Void> call = videoWebServiceApi.createVideo(newvideo);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onError("Failed to create video: " + response.message());
-                }
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                callback.onError("Network error: " + t.getMessage());
             }
         });
     }
 
-    public void updateVideo(int videoId, video updatedvideo, final VideoApi.ApiCallback<Void> callback) {
+    public void updateVideo(int videoId, video updatedvideo) {
         Call<Void> call = videoWebServiceApi.updateVideo(videoId,updatedvideo);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onError("Failed to update video: " + response.message());
-                }
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                callback.onError("Network error: " + t.getMessage());
             }
         });
     }
 
-    public void deleteVideo(int videoId, final VideoApi.ApiCallback<Void> callback) {
+    public void deleteVideo(int videoId) {
         Call<Void> call = videoWebServiceApi.deleteVideo(videoId);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onError("Failed to update video: " + response.message());
-                }
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                callback.onError("Network error: " + t.getMessage());
             }
         });
-    }
-
-    public interface ApiCallback<T> {
-        void onSuccess(T result);
-        void onError(String error);
     }
 }

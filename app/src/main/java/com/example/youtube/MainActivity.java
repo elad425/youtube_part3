@@ -25,6 +25,8 @@ import com.example.youtube.screens.SearchVideo;
 import com.example.youtube.viewmodels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MainActivity extends AppCompatActivity {
     private int userId;
     private MainViewModel videoViewModel;
@@ -33,9 +35,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+        setupBottomNavigation();
 
         if (checkPermissions()) {
-            launchApp();
+            initializeData();
         } else {
             requestPermissions();
         }
@@ -48,21 +55,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeData() {
+        showLoadingIndicator();
         userId = UserSession.getInstance().getUserId();
         videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        observeData();
+    }
+
+    private void observeData() {
+        AtomicBoolean usersLoaded = new AtomicBoolean(false);
+        AtomicBoolean videosLoaded = new AtomicBoolean(false);
+
+        videoViewModel.getAllUsersLive().observe(this, users -> {
+            if (!users.isEmpty()) {
+                usersLoaded.set(true);
+                checkDataAndSetupUI(usersLoaded.get(), videosLoaded.get());
+            }
+        });
+
+        videoViewModel.getAllVideosLive().observe(this, videos -> {
+            if (!videos.isEmpty()) {
+                videosLoaded.set(true);
+                checkDataAndSetupUI(usersLoaded.get(), videosLoaded.get());
+            }
+        });
+    }
+
+    private void checkDataAndSetupUI(boolean usersLoaded, boolean videosLoaded) {
+        if (usersLoaded && videosLoaded) {
+            hideLoadingIndicator();
+            setupUI();
+        }
+    }
+
+    private void showLoadingIndicator() {
+        // Show your loading indicator (e.g., ProgressBar)
+    }
+
+    private void hideLoadingIndicator() {
+        // Hide your loading indicator
     }
 
     private void setupUI() {
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         VideoListAdapter videoAdapter = new VideoListAdapter(this,
-                null, videoViewModel.getAllUsers(),this);
+                null, videoViewModel.getAllUsersLive().getValue(),this);
         lstVideos.setAdapter(videoAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
-        videoViewModel.getAllVideos().observe(this, videoAdapter::setVideos);
+        videoViewModel.getAllVideosLive().observe(this, videoAdapter::setVideos);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -149,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             boolean imagesPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
             if (videoPermission && imagesPermission && cameraPermission) {
-                launchApp();
+                initializeData();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
@@ -157,19 +198,10 @@ public class MainActivity extends AppCompatActivity {
             boolean storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             if (storagePermission && cameraPermission) {
-                launchApp();
+                initializeData();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-    public void launchApp(){
-        setContentView(R.layout.activity_main);
-        initializeData();
-        setupUI();
-        setupBottomNavigation();
-    }
-
-
 }

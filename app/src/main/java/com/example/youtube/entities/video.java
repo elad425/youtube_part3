@@ -10,8 +10,8 @@ import com.example.youtube.utils.videoConverters;
 import java.util.ArrayList;
 @Entity(tableName = "videos")
 public class video {
-    @PrimaryKey(autoGenerate = true)
-    private int videoId;
+    @PrimaryKey
+    private int id;
     private String video_name;
     private int creatorId;
     private String date_of_release;
@@ -22,7 +22,8 @@ public class video {
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views) {
+    public video(int id, String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views) {
+        this.id = id;
         this.video_name = video_name;
         this.creatorId = creatorId;
         this.date_of_release = date_of_release;
@@ -33,12 +34,12 @@ public class video {
         this.comments = new ArrayList<>();
     }
 
-    public int getVideoId() {
-        return videoId;
+    public int getId() {
+        return id;
     }
 
-    public void setVideoId(int videoId) {
-        this.videoId = videoId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getVideo_name() {

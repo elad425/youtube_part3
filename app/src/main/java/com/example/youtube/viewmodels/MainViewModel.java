@@ -13,20 +13,20 @@ import com.example.youtube.repositories.VideoRepository;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
-    private final LiveData<List<video>> allVideos;
-    private final List<user> allUsers;
+    private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
 
     public MainViewModel(Application application) {
         super(application);
-        VideoRepository videoRepository = new VideoRepository(application);
-        UserRepository userRepository = new UserRepository(application);
-        allVideos = videoRepository.getAllVideosLive();
-        allUsers = userRepository.getAllUsers();
+        videoRepository = new VideoRepository(application);
+        userRepository = new UserRepository(application);
     }
 
-    public LiveData<List<video>> getAllVideos() {
-        return allVideos;
+    public LiveData<List<video>> getAllVideosLive() {
+        return videoRepository.getAllVideosLive();
     }
 
-    public List<user> getAllUsers(){ return allUsers;}
+    public LiveData<List<user>> getAllUsersLive(){
+        return userRepository.getAllUsersLive();}
+
 }

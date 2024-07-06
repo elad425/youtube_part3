@@ -1,6 +1,7 @@
 package com.example.youtube.screens;
 
 import static com.example.youtube.utils.GeneralUtils.getVideoDuration;
+import static com.example.youtube.utils.GeneralUtils.videoIdGenerator;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
+import java.util.List;
 
 public class AddVideoActivity extends AppCompatActivity {
 
@@ -195,7 +197,8 @@ public class AddVideoActivity extends AppCompatActivity {
         }
         int userId = UserSession.getInstance().getUserId();
         String videoDuration = getVideoDuration(videoUri,this);
-        video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
+        video newVideo = new video(videoIdGenerator(viewModel.getVideos())
+                ,videoName, userId, GeneralUtils.getTheDate(),
                 videoUri.toString(), thumbnailUri.toString(), videoDuration, "0");
         viewModel.addVideo(newVideo);
     }

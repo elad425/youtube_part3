@@ -1,5 +1,7 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.userIdGenerator;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -156,7 +158,8 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Please upload an image", Toast.LENGTH_SHORT).show();
             return;
         }
-        user newUser = new user(username, email, password, imageUri.toString(), "0");
+        user newUser = new user(userIdGenerator(viewModel.getUsers().getValue())
+                ,username, email, password, imageUri.toString(), "0");
         viewModel.signUp(newUser);
     }
 

@@ -83,7 +83,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, VideoPlayerActivity.class);
-            intent.putExtra("video_item", currentVideo.getVideoId());
+            intent.putExtra("video_item", currentVideo.getId());
             context.startActivity(intent);
             if (!isMain){
                 activity.finish();

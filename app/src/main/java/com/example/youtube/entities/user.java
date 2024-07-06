@@ -9,7 +9,7 @@ import com.example.youtube.utils.userConverters;
 import java.util.ArrayList;
 @Entity(tableName = "users")
 public class user {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int id;
     private String name;
     private String email;
@@ -23,7 +23,8 @@ public class user {
     private ArrayList<Integer> subs;
     private String subs_count;
 
-    public user(String name, String email, String password, String profile_pic, String subs_count) {
+    public user(int id, String name, String email, String password, String profile_pic, String subs_count) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -114,28 +115,28 @@ public class user {
 
     public void addToLiked(video video) {
         for (Integer s : likedVideos) {
-            if (s == video.getVideoId()) {
+            if (s == video.getId()) {
                 return;
             }
         }
-        this.likedVideos.add(video.getVideoId());
+        this.likedVideos.add(video.getId());
     }
 
     public void removeFromLiked(video video) {
-        likedVideos.removeIf(s -> s == video.getVideoId());
+        likedVideos.removeIf(s -> s == video.getId());
     }
 
     public void addToDisLiked(video video) {
         for (Integer s : dislikedVideos) {
-            if (s == video.getVideoId()) {
+            if (s == video.getId()) {
                 return;
             }
         }
-        this.dislikedVideos.add(video.getVideoId());
+        this.dislikedVideos.add(video.getId());
     }
 
     public void removeFromDisLiked(video video) {
-        dislikedVideos.removeIf(s -> s == video.getVideoId());
+        dislikedVideos.removeIf(s -> s == video.getId());
     }
 
     public void addToSubs(user creator) {
@@ -149,7 +150,7 @@ public class user {
     public boolean isLiked(video video) {
         if(likedVideos != null) {
             for (Integer s : likedVideos) {
-                if (s == video.getVideoId()) {
+                if (s == video.getId()) {
                     return true;
                 }
             }
@@ -160,7 +161,7 @@ public class user {
     public boolean isDisLiked(video video) {
         if(dislikedVideos != null) {
             for (Integer s : dislikedVideos) {
-                if (s == video.getVideoId()) {
+                if (s == video.getId()) {
                     return true;
                 }
             }
