@@ -147,11 +147,13 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void navigateToHome() {
+        finish();
         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
+        finish();
         viewModel.isUserLoggedIn().observe(this, isLoggedIn -> {
             if (isLoggedIn) {
                 Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);

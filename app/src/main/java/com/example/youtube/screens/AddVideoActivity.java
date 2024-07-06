@@ -130,11 +130,13 @@ public class AddVideoActivity extends AppCompatActivity {
     }
 
     private void navigateToProfilePage() {
+        finish();
         Intent intent = new Intent(AddVideoActivity.this, ProfilePage.class);
         startActivity(intent);
     }
 
     private void navigateToMainActivity() {
+        finish();
         Intent intent = new Intent(AddVideoActivity.this, MainActivity.class);
         startActivity(intent);
     }

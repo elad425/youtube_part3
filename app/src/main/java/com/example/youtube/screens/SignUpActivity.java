@@ -85,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void login() {
         resetFields();
+        finish();
         Intent intent = new Intent(SignUpActivity.this, LogIn.class);
         startActivity(intent);
     }
