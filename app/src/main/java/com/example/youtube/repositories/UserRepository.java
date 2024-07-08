@@ -13,7 +13,7 @@ public class UserRepository {
     private User user;
 
     public UserRepository(Application application) {
-        api = new UserApi();
+        api = new UserApi(application.getApplicationContext());
         getUsers();
     }
 

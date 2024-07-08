@@ -26,7 +26,7 @@ public interface usersWebServiceApi {
     Call<Void> updateUser(@Path("id") String id ,@Body User user);
     @POST("api/users/login")
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
-    @GET("api/tokens") // Update to match your actual endpoint if different
+    @GET("api/tokens")
     Call<User> validateToken(@Header("Authorization") String token);
 }
 

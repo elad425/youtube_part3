@@ -1,7 +1,10 @@
 package com.example.youtube.api;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
+import com.example.youtube.R;
 import com.example.youtube.entities.LoginRequest;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
@@ -17,8 +20,8 @@ public class UserApi {
     Retrofit retrofit;
     usersWebServiceApi usersWebServiceApi;
 
-    public UserApi() {
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
+    public UserApi(Context context) {
+        retrofit = new Retrofit.Builder().baseUrl(context.getString(R.string.baseUrl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         usersWebServiceApi = retrofit.create(usersWebServiceApi.class);
     }

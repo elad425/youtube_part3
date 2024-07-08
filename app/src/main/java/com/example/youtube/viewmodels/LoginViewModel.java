@@ -2,7 +2,6 @@ package com.example.youtube.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,19 +12,14 @@ import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import com.example.youtube.data.UserSession;
-import com.example.youtube.repositories.UserRepository;
-
-import java.util.List;
 
 public class LoginViewModel extends AndroidViewModel {
-    private final UserRepository userRepository;
     private final UserApi userApi;
     private final MutableLiveData<Boolean> loginSuccessful = new MutableLiveData<>();
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
-        userRepository = new UserRepository(application);
-        userApi = new UserApi();
+        userApi = new UserApi(application.getApplicationContext());
     }
 
     public LiveData<Boolean> getLoginSuccessful() {

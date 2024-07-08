@@ -1,7 +1,10 @@
 package com.example.youtube.api;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
+import com.example.youtube.R;
 import com.example.youtube.entities.Comment;
 import com.example.youtube.Daos.videoDao;
 import com.example.youtube.entities.Video;
@@ -18,9 +21,9 @@ public class VideoApi {
     Retrofit retrofit;
     videoWebServiceApi videoWebServiceApi;
 
-    public VideoApi(videoDao dao) {
+    public VideoApi(videoDao dao, Context context) {
         this.dao = dao;
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
+        retrofit = new Retrofit.Builder().baseUrl(context.getString(R.string.baseUrl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         videoWebServiceApi = retrofit.create(videoWebServiceApi.class);
     }

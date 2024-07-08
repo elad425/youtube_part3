@@ -21,7 +21,7 @@ public class VideoRepository {
 
     public VideoRepository(Application application) {
         db = AppDatabase.getInstance(application);
-        videoApi = new VideoApi(db.videoDao());
+        videoApi = new VideoApi(db.videoDao(),application.getApplicationContext());
         videoApi.getVideos();
         videos = db.videoDao().getAllVideosLive();
         comments = new MutableLiveData<>();
