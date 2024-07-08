@@ -30,7 +30,7 @@ public class MediaApi {
     public MediaApi(imgDao imgDao, Context context) {
         dao = imgDao;
         this.context = context;
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.68.113:5000/")
+        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         mediaWebServiceApi = retrofit.create(mediaWebServiceApi.class);
     }

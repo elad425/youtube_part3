@@ -14,7 +14,7 @@ import com.example.youtube.entities.Video;
 import com.example.youtube.utils.userConverters;
 import com.example.youtube.utils.videoConverters;
 
-@Database(entities = {Video.class, Image.class}, version = 1)
+@Database(entities = {Video.class, Image.class}, version = 2)
 @TypeConverters({videoConverters.class, userConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
     static AppDatabase instance;

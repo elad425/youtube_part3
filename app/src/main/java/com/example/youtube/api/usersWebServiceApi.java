@@ -1,11 +1,14 @@
 package com.example.youtube.api;
 
+import com.example.youtube.entities.LoginRequest;
+import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -21,6 +24,9 @@ public interface usersWebServiceApi {
     Call<Void> deleteUser(@Path("id") String id);
     @PUT("api/users//{id}")
     Call<Void> updateUser(@Path("id") String id ,@Body User user);
-
+    @POST("api/users/login")
+    Call<LoginResponse> login(@Body LoginRequest loginRequest);
+    @GET("api/tokens") // Update to match your actual endpoint if different
+    Call<User> validateToken(@Header("Authorization") String token);
 }
 

@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Window;
 import android.widget.Button;
@@ -15,10 +18,15 @@ import android.widget.Toast;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.entities.LoginResponse;
+import com.example.youtube.entities.User;
 import com.example.youtube.viewmodels.LoginViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class LogIn extends AppCompatActivity {
 
@@ -34,6 +42,8 @@ public class LogIn extends AppCompatActivity {
 
         setupUI();
         observeViewModel();
+        checkSavedToken();
+
     }
 
     private void setupUI() {
@@ -50,7 +60,15 @@ public class LogIn extends AppCompatActivity {
         loginButton.setOnClickListener(v -> login());
         signUpButton.setOnClickListener(v -> signUp());
     }
-
+    private void checkSavedToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+        if (token != null) {
+            Log.d("LoginActivity", "Token saved: " + token);
+        } else {
+            Log.d("LoginActivity", "No token found");
+        }
+    }
     private void setupTextWatchers() {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -83,12 +101,13 @@ public class LogIn extends AppCompatActivity {
                 navigateToMain();
             } else {
                 Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+                emailEditText.setError("Invalid email or password");
+                passwordEditText.setError("Invalid email or password");
             }
         });
     }
 
     private void signUp() {
-        finish();
         Intent intent = new Intent(LogIn.this, SignUpActivity.class);
         resetFields();
         startActivity(intent);
