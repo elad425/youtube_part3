@@ -122,13 +122,8 @@ public class VideoPlayerViewModel extends AndroidViewModel {
             Comment newComment = new Comment(commentText,getTheDate(), user, video.get_id());
             List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null) {
+                videoRepository.addComment(newComment);
                 updatedComments.add(newComment);
-                List<String> temp = new ArrayList<>();
-                for(Comment c : updatedComments){
-                    temp.add(c.get_id());
-                }
-                video.setComments(temp);
-                videoRepository.updateVideo(video);
                 commentList.setValue(updatedComments);
             }
         }
@@ -139,13 +134,8 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         if (video != null) {
             List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null && position < updatedComments.size()) {
+                videoRepository.deleteComment(updatedComments.get(position));
                 updatedComments.remove(position);
-                List<String> temp = new ArrayList<>();
-                for(Comment c : updatedComments){
-                    temp.add(c.get_id());
-                }
-                video.setComments(temp);
-                videoRepository.updateVideo(video);
                 commentList.setValue(updatedComments);
             }
         }
@@ -159,12 +149,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
                 Comment editedComment = updatedComments.get(position);
                 editedComment.setCommentMessage(editedCommentText);
                 editedComment.setDate(getTheDate());
-                List<String> temp = new ArrayList<>();
-                for(Comment c : updatedComments){
-                    temp.add(c.get_id());
-                }
-                video.setComments(temp);
-                videoRepository.updateVideo(video);
+                videoRepository.updateComment(editedComment);
                 commentList.setValue(updatedComments);
             }
         }

@@ -68,4 +68,16 @@ public class VideoRepository {
         return comments;
     }
 
+    public void addComment(Comment comment){
+        videoApi.createComment(comment);
+    }
+
+    public void deleteComment(Comment comment){
+        videoApi.deleteComment(comment.get_id());
+    }
+
+    public void updateComment(Comment comment){
+        videoApi.updateComment(comment);
+    }
+
 }

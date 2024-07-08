@@ -91,6 +91,42 @@ public class VideoApi {
         });
     }
 
+    public void createComment(Comment comment) {
+        Call<Void> call = videoWebServiceApi.createComment(comment);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            }
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            }
+        });
+    }
+
+    public void deleteComment(String commentId) {
+        Call<Void> call = videoWebServiceApi.deleteComment(commentId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            }
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            }
+        });
+    }
+
+    public void updateComment(Comment comment) {
+        Call<Void> call = videoWebServiceApi.updateVideo(comment.get_id(),comment);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            }
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            }
+        });
+    }
+
     public interface ApiCallback<T> {
         void onSuccess(T result);
         void onError(String error);
