@@ -1,7 +1,5 @@
 package com.example.youtube.adapters;
 
-import static com.example.youtube.utils.GeneralUtils.getUserById;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,28 +10,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.entities.Comment;
 import com.example.youtube.R;
-import com.example.youtube.entities.comment;
-import com.example.youtube.entities.user;
+import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
-    private ArrayList<comment> commentList;
+    private List<Comment> commentList;
     private final VideoPlayerActivity videoPlayerActivity;
-    private final int userId;
-    private final List<user> users;
+    private final String userId;
+    private final MediaRepository mediaRepository;
 
-    public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           int userId, List<user> users) {
+    public CommentsAdapter(List<Comment> commentList, VideoPlayerActivity videoPlayerActivity,
+                           String userId, MediaRepository mediaRepository) {
         this.commentList = commentList;
         this.videoPlayerActivity = videoPlayerActivity;
         this.userId = userId;
-        this.users = users;
+        this.mediaRepository = mediaRepository;
     }
 
     @NonNull
@@ -45,28 +42,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        comment currentComment = commentList.get(position);
-        user creator = getUserById(users, currentComment.getUserId());
-        assert creator != null;
-        holder.tvCommentUser.setText(creator.getName());
-        holder.tvCommentText.setText(currentComment.getComment());
+        Comment currentComment = commentList.get(position);
+        holder.tvCommentUser.setText(currentComment.getUser_id().getUsername());
+        holder.tvCommentText.setText(currentComment.getCommentMessage());
+        holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
+        holder.user_pic.setImageBitmap(mediaRepository.getImage(currentComment.getUser_id().getIcon()));
 
-        if (currentComment.isEdited()){
-            holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()).concat(" (edited)"));
-        }else {
-            holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
-        }
-
-        // Load user picture
-        String userPic = creator.getProfile_pic();
-        int userPicId = holder.itemView.getContext().getResources().getIdentifier(userPic, "drawable", holder.itemView.getContext().getPackageName());
-        if (userPicId != 0) {
-            holder.user_pic.setImageResource(userPicId);
-        } else {
-            holder.user_pic.setImageURI(android.net.Uri.parse(userPic));
-        }
-
-        if (creator.getId() != userId) {
+        if (!currentComment.getUser_id().get_id().equals(userId)) {
             holder.tvEditComment.setVisibility(View.GONE);
         } else {
             holder.tvEditComment.setVisibility(View.VISIBLE);
@@ -79,7 +61,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         return commentList.size();
     }
 
-    public void updateComments(ArrayList<comment> newComments) {
+    public void updateComments(List<Comment> newComments) {
         this.commentList = newComments;
         notifyDataSetChanged();
     }

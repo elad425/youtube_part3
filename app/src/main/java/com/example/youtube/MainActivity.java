@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.data.UserSession;
+import com.example.youtube.entities.User;
 import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
@@ -26,9 +27,10 @@ import com.example.youtube.viewmodels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
-    private int userId;
+    private User userId;
     private MainViewModel videoViewModel;
     private BottomNavigationView bottomNav;
 
@@ -56,54 +58,55 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeData() {
         showLoadingIndicator();
-        userId = UserSession.getInstance().getUserId();
+        userId = UserSession.getInstance().getUser();
         videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         observeData();
     }
 
     private void observeData() {
-        AtomicBoolean usersLoaded = new AtomicBoolean(false);
         AtomicBoolean videosLoaded = new AtomicBoolean(false);
-
-        videoViewModel.getAllUsersLive().observe(this, users -> {
-            if (!users.isEmpty()) {
-                usersLoaded.set(true);
-                checkDataAndSetupUI(usersLoaded.get(), videosLoaded.get());
-            }
-        });
+        AtomicBoolean imagesLoaded = new AtomicBoolean(false);
 
         videoViewModel.getAllVideosLive().observe(this, videos -> {
             if (!videos.isEmpty()) {
                 videosLoaded.set(true);
-                checkDataAndSetupUI(usersLoaded.get(), videosLoaded.get());
+                checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
+                videoViewModel.initImages();
+            }
+        });
+
+        videoViewModel.getAllImagesLive().observe(this, images -> {
+            if(!images.isEmpty()){
+                imagesLoaded.set(true);
+                checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
             }
         });
     }
 
-    private void checkDataAndSetupUI(boolean usersLoaded, boolean videosLoaded) {
-        if (usersLoaded && videosLoaded) {
+    private void checkDataAndSetupUI(boolean videosLoaded, boolean imageLoader) {
+        if (videosLoaded && imageLoader) {
             hideLoadingIndicator();
             setupUI();
         }
     }
 
     private void showLoadingIndicator() {
-        // Show your loading indicator (e.g., ProgressBar)
+        // Show loading indicator
     }
 
     private void hideLoadingIndicator() {
-        // Hide your loading indicator
+        // Hide loading indicator
     }
 
     private void setupUI() {
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        VideoListAdapter videoAdapter = new VideoListAdapter(this,
-                null, videoViewModel.getAllUsersLive().getValue(),this);
-        lstVideos.setAdapter(videoAdapter);
+        VideoListAdapter videoListAdapter = new VideoListAdapter(
+                null ,this,videoViewModel.getMediaRepository(), this);
+        lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
-        videoViewModel.getAllVideosLive().observe(this, videoAdapter::setVideos);
+        videoViewModel.getAllVideosLive().observe(this, videoListAdapter::setVideos);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -146,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToAddVideo() {
-        if (userId != 0) {
+        if (userId != null) {
             startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();

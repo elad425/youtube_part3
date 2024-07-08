@@ -7,20 +7,21 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.example.youtube.Daos.userDao;
+import com.example.youtube.Daos.imgDao;
 import com.example.youtube.Daos.videoDao;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.Image;
+import com.example.youtube.entities.Video;
+import com.example.youtube.utils.imageConverter;
 import com.example.youtube.utils.userConverters;
 import com.example.youtube.utils.videoConverters;
 
 
-@Database(entities = {user.class, video.class}, version = 1)
+@Database(entities = {Video.class, Image.class}, version = 1)
 @TypeConverters({videoConverters.class, userConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
     static AppDatabase instance;
-    public abstract userDao userDao();
     public abstract videoDao videoDao();
+    public abstract imgDao imgDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {

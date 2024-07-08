@@ -1,48 +1,62 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
-
-import androidx.lifecycle.LiveData;
-
+import com.example.youtube.entities.User;
 import com.example.youtube.api.UserApi;
-import com.example.youtube.data.AppDatabase;
-import com.example.youtube.entities.user;
 
 import java.util.List;
 
+
 public class UserRepository {
-    private final AppDatabase db;
     private final UserApi api;
 
-    private final LiveData<List<user>> users;
+    private List<User> users;
+
+    private User user;
 
     public UserRepository(Application application) {
-        db = AppDatabase.getInstance(application);
-        api = new UserApi(db.userDao());
-        api.get();
-        users = db.userDao().getAllUsersLive();
+        api = new UserApi();
+        getUsers();
     }
 
-    public user getUserById(int userId) {
-        return db.userDao().getUserById(userId);
+    public User getUserById(String userId) {
+        api.getUserById(userId,new UserApi.ApiCallback<User>() {
+            @Override
+            public void onSuccess(User result) {
+                user = result;
+            }
+
+            @Override
+            public void onError(String error) {
+            }
+        });
+        return user;
     }
 
-    public List<user> getAllUsers() {
-        return db.userDao().getAllUsers();
+    public void getUsers() {
+        api.getUsers(new UserApi.ApiCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> result) {
+                users = result;
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 
-    public LiveData<List<user>> getAllUsersLive() {
+    public List<User> getAllUsers(){
         return users;
     }
 
-    public void insertUser(user newUser) {
-        db.userDao().insert(newUser);
+    public void insertUser(User newUser) {
         api.createUser(newUser);
     }
 
-    public void updateUser(user newUser) {
-        db.userDao().update(newUser);
-        api.updateUser(newUser.getId(), newUser);
+    public void updateUser(User newUser) {
+        api.updateUser(newUser.get_id(), newUser);
     }
 
 }

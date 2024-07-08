@@ -1,41 +1,43 @@
 package com.example.youtube.viewmodels;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.youtube.entities.User;
 import com.example.youtube.data.UserSession;
-import com.example.youtube.entities.user;
-import com.example.youtube.repositories.UserRepository;
+import com.example.youtube.repositories.MediaRepository;
+
+import java.util.Objects;
 
 public class ProfilePageViewModel extends AndroidViewModel {
-    private final UserRepository userRepository;
-    private final MutableLiveData<user> currentUser = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserLoggedIn = new MutableLiveData<>();
+    private MediaRepository mediaRepository;
 
     public ProfilePageViewModel(@NonNull Application application) {
         super(application);
-        userRepository = new UserRepository(application);
         checkLoginStatus();
+        mediaRepository = new MediaRepository(application);
     }
 
     public void checkLoginStatus() {
-        int userId = UserSession.getInstance().getUserId();
-        isUserLoggedIn.setValue(userId != 0);
-        if (userId != 0) {
-            loadUserData(userId);
+        User user = UserSession.getInstance().getUser();
+        isUserLoggedIn.setValue(user != null);
+        if (user != null) {
+            loadUserData(user);
         }
     }
 
-    private void loadUserData(int userId) {
-        user user = userRepository.getUserById(userId);
+    private void loadUserData(User user) {
         currentUser.setValue(user);
     }
 
-    public LiveData<user> getCurrentUser() {
+    public LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
@@ -44,8 +46,13 @@ public class ProfilePageViewModel extends AndroidViewModel {
     }
 
     public void logOut() {
-        UserSession.getInstance().setUserId(0);
+        UserSession.getInstance().setUser(null);
         isUserLoggedIn.setValue(false);
         currentUser.setValue(null);
     }
+
+    public Bitmap getBitmap(User user) {
+        return mediaRepository.getImage(Objects.requireNonNull(currentUser.getValue()).getIcon());
+    }
+
 }

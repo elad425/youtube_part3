@@ -1,23 +1,31 @@
 package com.example.youtube.utils;
 
 import androidx.room.TypeConverter;
+
+import com.example.youtube.entities.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.example.youtube.entities.comment;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class videoConverters {
     @TypeConverter
-    public static ArrayList<comment> fromString(String value) {
-        Type listType = new TypeToken<ArrayList<comment>>() {}.getType();
-        return new Gson().fromJson(value, listType);
+    public static String fromUser(User user) {
+        if (user == null) {
+            return null;
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<User>() {}.getType();
+        return gson.toJson(user, type);
     }
 
     @TypeConverter
-    public static String fromArrayList(ArrayList<comment> list) {
+    public static User toUser(String user) {
+        if (user == null) {
+            return null;
+        }
         Gson gson = new Gson();
-        return gson.toJson(list);
+        Type type = new TypeToken<User>() {}.getType();
+        return gson.fromJson(user, type);
     }
 }

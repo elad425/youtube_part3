@@ -1,51 +1,74 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.example.youtube.entities.Comment;
+import com.example.youtube.entities.Video;
+
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
-import com.example.youtube.entities.video;
-
 import java.util.List;
+
+
 
 public class VideoRepository {
     private final AppDatabase db;
-    private final VideoApi api;
+    private final VideoApi videoApi;
 
-    private final LiveData<List<video>> videos;
+    private final LiveData<List<Video>> videos;
+    private final MutableLiveData<List<Comment>> comments;
 
     public VideoRepository(Application application) {
         db = AppDatabase.getInstance(application);
-        api = new VideoApi(db.videoDao());
-        api.getVideos();
+        videoApi = new VideoApi(db.videoDao());
+        videoApi.getVideos();
         videos = db.videoDao().getAllVideosLive();
+        comments = new MutableLiveData<>();
     }
 
-    public void insertVideo(video newVideo) {
+    public void insertVideo(Video newVideo) {
         db.videoDao().insert(newVideo);
-        api.createVideo(newVideo);
+        videoApi.createVideo(newVideo);
     }
 
-    public void updateVideo(video updatedVideo) {
+    public void updateVideo(Video updatedVideo) {
         db.videoDao().update(updatedVideo);
-        api.updateVideo(updatedVideo.getId(), updatedVideo);
+        videoApi.updateVideo(updatedVideo.get_id(), updatedVideo);
     }
 
-    public void deleteVideo(video videoToDelete) {
+    public void deleteVideo(Video videoToDelete) {
         db.videoDao().delete(videoToDelete);
-        api.deleteVideo(videoToDelete.getId());
+        videoApi.deleteVideo(videoToDelete.get_id());
     }
 
-    public LiveData<List<video>> getAllVideosLive() {
+    public LiveData<List<Video>> getAllVideosLive() {
         return videos;
     }
 
-    public List<video> getAllVideos() {
+    public List<Video> getAllVideos() {
         return db.videoDao().getAllVideos();
     }
 
-    public video getVideoById(int id) {
+    public Video getVideoById(String id) {
         return db.videoDao().getVideoById(id);
     }
+
+    public MutableLiveData<List<Comment>> getCommentByVideoId(String videoId) {
+        videoApi.getCommentsById(videoId, new VideoApi.ApiCallback<List<Comment>>() {
+            @Override
+            public void onSuccess(List<Comment> result) {
+                comments.setValue(result);
+            }
+
+            @Override
+            public void onError(String error) {
+            }
+        });
+        return comments;
+    }
+
 }

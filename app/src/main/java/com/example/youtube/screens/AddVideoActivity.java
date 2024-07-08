@@ -1,7 +1,6 @@
 package com.example.youtube.screens;
 
 import static com.example.youtube.utils.GeneralUtils.getVideoDuration;
-import static com.example.youtube.utils.GeneralUtils.videoIdGenerator;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -23,8 +22,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.entities.User;
+import com.example.youtube.entities.Video;
 import com.example.youtube.data.UserSession;
-import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -197,11 +197,9 @@ public class AddVideoActivity extends AppCompatActivity {
             Toast.makeText(this, "Please fill all fields and choose a video and a thumbnail", Toast.LENGTH_SHORT).show();
             return;
         }
-        int userId = UserSession.getInstance().getUserId();
+        User user = UserSession.getInstance().getUser();
         String videoDuration = getVideoDuration(videoUri,this);
-        video newVideo = new video(videoIdGenerator(viewModel.getVideos())
-                ,videoName, userId, GeneralUtils.getTheDate(),
-                videoUri.toString(), thumbnailUri.toString(), videoDuration, "0");
+        Video newVideo = new Video(videoName,"",GeneralUtils.getTheDate(),videoUri.toString(), thumbnailUri.toString(),user);
         viewModel.addVideo(newVideo);
     }
 }
