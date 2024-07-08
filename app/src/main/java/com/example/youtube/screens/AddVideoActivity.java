@@ -195,7 +195,7 @@ public class AddVideoActivity extends AppCompatActivity {
             return;
         }
         User user = UserSession.getInstance().getUser();
-        Video newVideo = new Video(videoName,"",GeneralUtils.getTheDate(),videoUri.toString(), thumbnailUri.toString(),user);
+        Video newVideo = new Video(videoName,"",videoUri.toString(), thumbnailUri.toString(),user);
         viewModel.addVideo(newVideo);
     }
 }

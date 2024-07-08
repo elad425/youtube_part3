@@ -1,6 +1,5 @@
 package com.example.youtube.viewmodels;
 
-import static com.example.youtube.utils.GeneralUtils.getTheDate;
 
 import android.app.Application;
 import android.graphics.Bitmap;
@@ -119,7 +118,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         User user = currentUser.getValue();
         Video video = currentVideo.getValue();
         if (user != null && video != null) {
-            Comment newComment = new Comment(commentText,getTheDate(), user, video.get_id());
+            Comment newComment = new Comment(commentText, user, video.get_id());
             List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null) {
                 videoRepository.addComment(newComment);
@@ -148,7 +147,6 @@ public class VideoPlayerViewModel extends AndroidViewModel {
             if (updatedComments != null && position < updatedComments.size()) {
                 Comment editedComment = updatedComments.get(position);
                 editedComment.setCommentMessage(editedCommentText);
-                editedComment.setDate(getTheDate());
                 videoRepository.updateComment(editedComment);
                 commentList.setValue(updatedComments);
             }

@@ -35,14 +35,22 @@ public class GeneralUtils {
     }
 
     public static String timeAgo(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         Date givenDate;
 
+        if (dateString == null){
+            return "just now";
+        }
+
         try {
-            givenDate = dateFormat.parse(dateString);
+            givenDate = dateFormat1.parse(dateString);
         } catch (ParseException e) {
-            e.printStackTrace();
-            return "Invalid date format";
+            try {
+                givenDate = dateFormat2.parse(dateString);
+            } catch (ParseException t){
+                return "invalid date";
+            }
         }
 
         Date currentDate = new Date();
@@ -69,13 +77,7 @@ public class GeneralUtils {
             return days + " days ago";
         }
 
-        return "Just now";
-    }
-
-    public static String getTheDate(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
-        Date currentDate = new Date();
-        return dateFormat.format(currentDate);
+        return "today";
     }
 
     public static String getViews(String numberStr) {

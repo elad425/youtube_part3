@@ -59,6 +59,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private Uri newVideoUri;
     private EditText inputVideoName;
     private VideoPlayerViewModel viewModel;
+    private Boolean playing = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,8 +160,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void setupVideoView() {
         final VideoView videoView = findViewById(R.id.tv_video_view);
         viewModel.getCurrentVideo().observe(this, currentVideo -> {
-            if (currentVideo != null) {
-
+            if (currentVideo != null && playing) {
+                playing = false;
                 File videoFile;
                 try {
                     videoFile = viewModel.getMediaRepository().byteArrayToFile();

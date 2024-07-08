@@ -7,9 +7,8 @@ public class Comment {
     private User user_id;
     private String video_id;
 
-    public Comment(String commentMessage, String date, User user_id, String video_id) {
+    public Comment(String commentMessage, User user_id, String video_id) {
         this.commentMessage = commentMessage;
-        this.date = date;
         this.user_id = user_id;
         this.video_id = video_id;
     }

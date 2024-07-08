@@ -29,10 +29,9 @@ public class Video {
     @TypeConverters({userConverters.class})
     private List<String> dislikes;
 
-    public Video(String title, String description, String date, @NonNull String video_src, String thumbnail, User userDetails) {
+    public Video(String title, String description, @NonNull String video_src, String thumbnail, User userDetails) {
         this.title = title;
         this.description = description;
-        this.date = date;
         this.video_src = video_src;
         this.thumbnail = thumbnail;
         this.userDetails = userDetails;
