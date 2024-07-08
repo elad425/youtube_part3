@@ -20,7 +20,7 @@ public class VideoApi {
 
     public VideoApi(videoDao dao) {
         this.dao = dao;
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.68.113:5000/")
+        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         videoWebServiceApi = retrofit.create(videoWebServiceApi.class);
     }

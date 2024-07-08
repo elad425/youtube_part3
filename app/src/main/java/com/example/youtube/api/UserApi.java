@@ -2,6 +2,8 @@ package com.example.youtube.api;
 
 import androidx.annotation.NonNull;
 
+import com.example.youtube.entities.LoginRequest;
+import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class UserApi {
     usersWebServiceApi usersWebServiceApi;
 
     public UserApi() {
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.68.113:5000/")
+        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         usersWebServiceApi = retrofit.create(usersWebServiceApi.class);
     }
@@ -75,6 +77,43 @@ public class UserApi {
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+        });
+    }
+    public void login(String email, String password, final ApiCallback<LoginResponse> callback) {
+        LoginRequest loginRequest = new LoginRequest(email, password);
+        Call<LoginResponse> call = usersWebServiceApi.login(loginRequest);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Login failed: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                callback.onError("Login failed: " + t.getMessage());
+            }
+        });
+    }
+    public void validateToken(String token, final ApiCallback<User> callback) {
+        Call<User> call = usersWebServiceApi.validateToken("Bearer " + token);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Token validation failed: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                callback.onError("Token validation failed: " + t.getMessage());
+            }
         });
     }
 

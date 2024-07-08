@@ -2,9 +2,11 @@ package com.example.youtube;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
 import com.example.youtube.screens.SearchVideo;
+import com.example.youtube.viewmodels.LoginViewModel;
 import com.example.youtube.viewmodels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private User userId;
     private MainViewModel videoViewModel;
     private BottomNavigationView bottomNav;
+    private LoginViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
         setupBottomNavigation();
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        checkSavedToken();
 
         if (checkPermissions()) {
             initializeData();
@@ -57,9 +63,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeData() {
         showLoadingIndicator();
-        userId = UserSession.getInstance().getUser();
         videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         observeData();
+    }
+
+    private void checkSavedToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", null);
+        if (token != null) {
+            Log.d("MainActivity", "Token found: " + token);
+            loginViewModel.validateToken(token);
+            observeTokenValidation();
+        }
+    }
+
+    private void observeTokenValidation() {
+        loginViewModel.getLoginSuccessful().observe(this, isSuccessful -> {
+            if (isSuccessful) {
+                userId = UserSession.getInstance().getUser();
+            } else {
+                // Handle failed token validation if needed
+            }
+        });
     }
 
     private void observeData() {
@@ -75,15 +100,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         videoViewModel.getAllImagesLive().observe(this, images -> {
-            if(!images.isEmpty()){
+            if (!images.isEmpty()) {
                 imagesLoaded.set(true);
                 checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
             }
         });
     }
 
-    private void checkDataAndSetupUI(boolean videosLoaded, boolean imageLoader) {
-        if (videosLoaded && imageLoader) {
+    private void checkDataAndSetupUI(boolean videosLoaded, boolean imagesLoaded) {
+        if (videosLoaded && imagesLoaded) {
             hideLoadingIndicator();
             setupUI();
         }
@@ -98,10 +123,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
-
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
         VideoListAdapter videoListAdapter = new VideoListAdapter(
-                null ,this,videoViewModel.getMediaRepository(), this);
+                null, this, videoViewModel.getMediaRepository(), this);
         lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -122,13 +146,10 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.navigation_profile) {
                 navigateToProfile();
                 return true;
-            }
-            else
-                if (itemId == R.id.navigation_add_video) {
+            } else if (itemId == R.id.navigation_add_video) {
                 navigateToAddVideo();
                 return true;
-            }
-            else return itemId == R.id.navigation_home;
+            } else return itemId == R.id.navigation_home;
         });
         updateBottomNavigationSelection();
     }
@@ -164,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             return resultVideo == PackageManager.PERMISSION_GRANTED &&
                     resultImages == PackageManager.PERMISSION_GRANTED &&
                     resultCamera == PackageManager.PERMISSION_GRANTED;
-        } else{
+        } else {
             int resultStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
             return resultStorage == PackageManager.PERMISSION_GRANTED &&
                     resultCamera == PackageManager.PERMISSION_GRANTED;
