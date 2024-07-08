@@ -16,14 +16,13 @@ public class video {
     private int creatorId;
     private String date_of_release;
     private String views;
-    private String likes;
     @TypeConverters(videoConverters.class)
     private ArrayList<comment> comments;
     private String video_path;
     private String thumbnail;
     private String video_length;
 
-    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views, String likes) {
+    public video(String video_name, int creatorId, String date_of_release, String video_path, String thumbnail, String video_length, String views) {
         this.video_name = video_name;
         this.creatorId = creatorId;
         this.date_of_release = date_of_release;
@@ -32,7 +31,6 @@ public class video {
         this.views = views;
         this.video_length = video_length;
         this.comments = new ArrayList<>();
-        this.likes = likes;
     }
 
     public int getVideoId() {
@@ -71,14 +69,6 @@ public class video {
 
     public void setViews(String views) {
         this.views = views;
-    }
-
-    public String getLikes() {
-        return likes;
-    }
-
-    public void setLikes(String likes) {
-        this.likes = likes;
     }
 
     public ArrayList<comment> getComments() {

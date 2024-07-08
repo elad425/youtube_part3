@@ -1,37 +1,16 @@
 package com.example.youtube.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
-
-public class comment implements Parcelable {
+public class comment {
     private String comment;
     private int userId;
     private String date;
+    private boolean edited;
     public comment(String comment, int userId, String date) {
         this.comment = comment;
         this.userId = userId;
         this.date = date;
+        this.edited = false;
     }
-
-    protected comment(Parcel in) {
-        comment = in.readString();
-        userId = in.readInt();
-        date = in.readString();
-    }
-
-    public static final Creator<comment> CREATOR = new Creator<comment>() {
-        @Override
-        public comment createFromParcel(Parcel in) {
-            return new comment(in);
-        }
-
-        @Override
-        public comment[] newArray(int size) {
-            return new comment[size];
-        }
-    };
 
     public String getComment() {
         return comment;
@@ -41,11 +20,11 @@ public class comment implements Parcelable {
         this.comment = comment;
     }
 
-    public int getUser() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUser(int userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -57,15 +36,11 @@ public class comment implements Parcelable {
         this.date = date;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public boolean isEdited() {
+        return edited;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(comment);
-        dest.writeInt(userId);
-        dest.writeString(date);
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 }

@@ -1,47 +1,39 @@
 package com.example.youtube.adapters;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import static com.example.youtube.utils.GeneralUtils.getUserById;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.R;
 import com.example.youtube.entities.comment;
 import com.example.youtube.entities.user;
-import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
-    private final ArrayList<comment> commentList;
+    private ArrayList<comment> commentList;
     private final VideoPlayerActivity videoPlayerActivity;
     private final int userId;
-    private final Context context;
-    private final LayoutInflater mInflater;
-    private final AppDatabase db;
-
+    private final List<user> users;
 
     public CommentsAdapter(ArrayList<comment> commentList, VideoPlayerActivity videoPlayerActivity,
-                           int userId, Context context, AppDatabase db) {
-        mInflater = LayoutInflater.from(context);
+                           int userId, List<user> users) {
         this.commentList = commentList;
-        this.context = context;
         this.videoPlayerActivity = videoPlayerActivity;
         this.userId = userId;
-        this.db = db;
+        this.users = users;
     }
 
     @NonNull
@@ -54,51 +46,59 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         comment currentComment = commentList.get(position);
-        user currentUser = db.userDao().getUserById(currentComment.getUser());
-        holder.tvCommentUser.setText(currentUser.getName());
+        user creator = getUserById(users, currentComment.getUserId());
+        assert creator != null;
+        holder.tvCommentUser.setText(creator.getName());
         holder.tvCommentText.setText(currentComment.getComment());
-        holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
 
-        String userPic = currentUser.getProfile_pic();
-        int creatorPicId = mInflater.getContext().getResources().getIdentifier(userPic, "drawable", mInflater.getContext().getPackageName());
-        if (creatorPicId != 0) {
-            holder.user_pic.setImageResource(creatorPicId);
+        if (currentComment.isEdited()){
+            holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()).concat(" (edited)"));
+        }else {
+            holder.tvCommentDate.setText(GeneralUtils.timeAgo(currentComment.getDate()));
+        }
+
+        // Load user picture
+        String userPic = creator.getProfile_pic();
+        int userPicId = holder.itemView.getContext().getResources().getIdentifier(userPic, "drawable", holder.itemView.getContext().getPackageName());
+        if (userPicId != 0) {
+            holder.user_pic.setImageResource(userPicId);
         } else {
-            holder.user_pic.setImageURI(Uri.parse(userPic));
+            holder.user_pic.setImageURI(android.net.Uri.parse(userPic));
         }
 
-        if(commentList.get(position).getUser() != userId) {
+        if (creator.getId() != userId) {
             holder.tvEditComment.setVisibility(View.GONE);
+        } else {
+            holder.tvEditComment.setVisibility(View.VISIBLE);
+            holder.tvEditComment.setOnClickListener(v -> showCommentOptions(position, v));
         }
-
-        holder.tvEditComment.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(v.getContext(), v);
-            popup.getMenuInflater().inflate(R.menu.comment_options_menu, popup.getMenu());
-
-            popup.setOnMenuItemClickListener(item -> {
-                if (userId == 0){
-                    Toast.makeText(context, "please login in order to edit or delete comments",
-                            Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, LogIn.class);
-                    context.startActivity(intent);
-                }else {
-                    if (item.getItemId() == R.id.action_edit_comment) {
-                        videoPlayerActivity.editComment(position);
-                        return true;
-                    } else if (item.getItemId() == R.id.action_delete_comment) {
-                        videoPlayerActivity.removeComment(position);
-                        return true;
-                    }
-                }
-                return false;
-            });
-            popup.show();
-        });
     }
 
     @Override
     public int getItemCount() {
         return commentList.size();
+    }
+
+    public void updateComments(ArrayList<comment> newComments) {
+        this.commentList = newComments;
+        notifyDataSetChanged();
+    }
+
+    private void showCommentOptions(int position, View v) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.getMenuInflater().inflate(R.menu.comment_options_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_edit_comment) {
+                videoPlayerActivity.editComment(position);
+                return true;
+            } else if (item.getItemId() == R.id.action_delete_comment) {
+                videoPlayerActivity.removeComment(position);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     static class CommentViewHolder extends RecyclerView.ViewHolder {

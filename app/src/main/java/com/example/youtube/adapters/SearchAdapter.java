@@ -1,6 +1,7 @@
 package com.example.youtube.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -19,11 +20,13 @@ import java.util.ArrayList;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewHolder> {
     private ArrayList<video> filteredVideoList;
-    private final LayoutInflater mInflater;
+    private final Context context;
+    private final Activity activity;
 
-    public SearchAdapter( ArrayList<video> filteredVideoList, Context context) {
+    public SearchAdapter(ArrayList<video> filteredVideoList, Context context, Activity activity) {
         this.filteredVideoList = filteredVideoList;
-        this.mInflater = LayoutInflater.from(context);
+        this.context = context;
+        this.activity = activity;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -46,9 +49,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewH
 
         holder.itemView.setOnClickListener(v -> {
             video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
-            Intent i = new Intent(mInflater.getContext(), VideoPlayerActivity.class);
+            Intent i = new Intent(context, VideoPlayerActivity.class);
             i.putExtra("video_item", clickedVideoItem.getVideoId());
-            mInflater.getContext().startActivity(i);
+            context.startActivity(i);
+            activity.finish();
         });
     }
 

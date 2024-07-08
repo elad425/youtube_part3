@@ -1,5 +1,7 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.getVideoDuration;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,19 +15,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.UserSession;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
+import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
 
 public class AddVideoActivity extends AppCompatActivity {
 
@@ -39,21 +42,26 @@ public class AddVideoActivity extends AppCompatActivity {
     private VideoView videoVideoView;
     private TextView videoPlaceholder;
     private Uri videoUri, thumbnailUri;
-    private int userId;
-    private AppDatabase db;
+    private AddVideoViewModel viewModel;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
+        viewModel = new ViewModelProvider(this).get(AddVideoViewModel.class);
 
         setupWindow();
         initializeUI();
         setupBottomNavigation();
-        handleBackButton();
+        observeViewModel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBottomNavigationSelection();
     }
 
     private void setupWindow() {
@@ -72,29 +80,51 @@ public class AddVideoActivity extends AppCompatActivity {
         thumbnailImageView.setOnClickListener(v -> selectThumbnail());
 
         Button addVideoButton = findViewById(R.id.btn_add_video);
-        addVideoButton.setOnClickListener(v -> addVideo());
+        addVideoButton.setOnClickListener(v -> {
+            try {
+                addVideo();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         ImageButton recordVideoButton = findViewById(R.id.record_video_button);
         recordVideoButton.setOnClickListener(v -> openCamera());
+    }
 
-        userId = UserSession.getInstance().getUserId();
-
+    private void observeViewModel() {
+        viewModel.getVideoAddedSuccessfully().observe(this, success -> {
+            if (success) {
+                Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
+                navigateToMainActivity();
+                finish();
+            }
+        });
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.navigation_add_video);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_profile) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
                 navigateToProfilePage();
                 return true;
             }
-            else if (item.getItemId() == R.id.navigation_home) {
+            else
+                if (itemId == R.id.navigation_home) {
                 navigateToMainActivity();
                 return true;
             }
-            return false;
+            else return itemId == R.id.navigation_add_video;
         });
+
+        updateBottomNavigationSelection();
+    }
+
+    private void updateBottomNavigationSelection() {
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.navigation_add_video);
+        }
     }
 
     private void navigateToProfilePage() {
@@ -157,35 +187,16 @@ public class AddVideoActivity extends AppCompatActivity {
         thumbnailPlaceholder.setBackgroundColor(0x00FFFFFF);
     }
 
-    private void addVideo() {
+    private void addVideo() throws IOException {
         String videoName = videoNameEditText.getText().toString().trim();
-
         if (videoName.isEmpty() || thumbnailUri == null || videoUri == null) {
             Toast.makeText(this, "Please fill all fields and choose a video and a thumbnail", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        int userId = UserSession.getInstance().getUserId();
+        String videoDuration = getVideoDuration(videoUri,this);
         video newVideo = new video(videoName, userId, GeneralUtils.getTheDate(),
-                videoUri.toString(), thumbnailUri.toString(), "0:12", "0", "0");
-
-        db.videoDao().insert(newVideo);
-        Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
-
-        navigateToMainActivity();
-        finish();
-    }
-
-    private void handleBackButton() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
-
-    private void handleBackAction() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+                videoUri.toString(), thumbnailUri.toString(), videoDuration, "0");
+        viewModel.addVideo(newVideo);
     }
 }

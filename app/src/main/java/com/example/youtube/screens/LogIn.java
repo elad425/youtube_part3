@@ -2,7 +2,7 @@ package com.example.youtube.screens;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,71 +13,78 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.youtube.AppDatabase;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.UserSession;
-import com.example.youtube.entities.user;
+import com.example.youtube.viewmodels.LoginViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
-    private ArrayList<user> users;
+    private LoginViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+
+        setupUI();
+        observeViewModel();
+    }
+
+    private void setupUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+
         emailEditText = findViewById(R.id.login_email);
         passwordEditText = findViewById(R.id.login_password);
         Button loginButton = findViewById(R.id.login_login_button);
         Button signUpButton = findViewById(R.id.login_to_signup_button);
 
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
-
-        users = new ArrayList<>(db.userDao().getAllUsers());
-
-        Objects.requireNonNull(emailEditText.getEditText()).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                emailEditText.setError(null); // Clear error when user starts typing
-                emailEditText.setErrorEnabled(false);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-        Objects.requireNonNull(passwordEditText.getEditText()).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                passwordEditText.setError(null); // Clear error when user starts typing
-                passwordEditText.setErrorEnabled(false);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        setupTextWatchers();
 
         loginButton.setOnClickListener(v -> login());
         signUpButton.setOnClickListener(v -> signUp());
+    }
+
+    private void setupTextWatchers() {
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                clearErrors();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        Objects.requireNonNull(emailEditText.getEditText()).addTextChangedListener(textWatcher);
+        Objects.requireNonNull(passwordEditText.getEditText()).addTextChangedListener(textWatcher);
+    }
+
+    private void clearErrors() {
+        emailEditText.setError(null);
+        emailEditText.setErrorEnabled(false);
+        passwordEditText.setError(null);
+        passwordEditText.setErrorEnabled(false);
+    }
+
+    private void observeViewModel() {
+        viewModel.getLoginSuccessful().observe(this, isSuccessful -> {
+            if (isSuccessful) {
+                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                navigateToMain();
+            } else {
+                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void signUp() {
@@ -90,36 +97,34 @@ public class LogIn extends AppCompatActivity {
         String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
         String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
 
-        if (password.isEmpty()) {
-            passwordEditText.setError("Please enter a password");
-        }
-        if (email.isEmpty()) {
-            emailEditText.setError("Please enter an email");
-        }
-        if (password.isEmpty()||email.isEmpty()){
-            return;
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailEditText.setError("Please enter a valid email address");
+        if (!validateInput(email, password)) {
             return;
         }
 
-        // Check if the email and password match any user in the users list
-        if (users != null) {
-            for (user u : users) {
-                if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LogIn.this, MainActivity.class);
-                    UserSession.getInstance().setUserId(u.getId());
-                    resetFields();
-                    startActivity(intent);
-                    finish();
-                    return;
-                }
-            }
+        viewModel.login(email, password);
+    }
+
+    private boolean validateInput(String email, String password) {
+        if (email.isEmpty()) {
+            emailEditText.setError("Please enter an email");
+            return false;
         }
-        // If no match is found, show an error message
-        Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailEditText.setError("Please enter a valid email address");
+            return false;
+        }
+        if (password.isEmpty()) {
+            passwordEditText.setError("Please enter a password");
+            return false;
+        }
+        return true;
+    }
+
+    private void navigateToMain() {
+        Intent intent = new Intent(LogIn.this, MainActivity.class);
+        resetFields();
+        startActivity(intent);
+        finish();
     }
 
     private void resetFields() {

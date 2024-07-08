@@ -9,63 +9,47 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import com.example.youtube.Daos.userDao;
-import com.example.youtube.Daos.videoDao;
 import com.example.youtube.adapters.VideoListAdapter;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
 import com.example.youtube.screens.SearchVideo;
-import com.example.youtube.utils.JsonUtils;
+import com.example.youtube.viewmodels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private int userId;
-    private AppDatabase db;
+    private MainViewModel videoViewModel;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (checkPermissions()) {
-            lunchApp();
+            launchApp();
         } else {
             requestPermissions();
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBottomNavigationSelection();
+    }
+
     private void initializeData() {
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "userDb").allowMainThreadQueries().build();
         userId = UserSession.getInstance().getUserId();
-
-        userDao userDao = db.userDao();
-        if (userDao.getAllUsers().isEmpty()) {
-            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(this);
-            for (user u : tempUser) {
-                userDao.insert(u);
-            }
-        }
-
-        videoDao videoDao = db.videoDao();
-        if (videoDao.getAllVideos().isEmpty()) {
-            ArrayList<video> tempVideo = JsonUtils.loadVideosFromJson(this);
-            for (video v : tempVideo) {
-                videoDao.insert(v);
-            }
-        }
+        videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
     }
 
     private void setupUI() {
@@ -73,8 +57,12 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        lstVideos.setAdapter(new VideoListAdapter(this, userId, db, null));
+        VideoListAdapter videoAdapter = new VideoListAdapter(this,
+                null, videoViewModel.getAllUsers(),this);
+        lstVideos.setAdapter(videoAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
+
+        videoViewModel.getAllVideos().observe(this, videoAdapter::setVideos);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -85,19 +73,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.navigation_home);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_profile) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
                 navigateToProfile();
                 return true;
             }
-            else if (item.getItemId() == R.id.navigation_add_video) {
+            else
+                if (itemId == R.id.navigation_add_video) {
                 navigateToAddVideo();
                 return true;
             }
-            return false;
+            else return itemId == R.id.navigation_home;
         });
+        updateBottomNavigationSelection();
+    }
+
+    private void updateBottomNavigationSelection() {
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.navigation_home);
+        }
     }
 
     private void navigateToSearch() {
@@ -153,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             boolean imagesPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
             if (videoPermission && imagesPermission && cameraPermission) {
-                lunchApp();
+                launchApp();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
@@ -161,31 +157,19 @@ public class MainActivity extends AppCompatActivity {
             boolean storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             if (storagePermission && cameraPermission) {
-                lunchApp();
+                launchApp();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public void lunchApp(){
+    public void launchApp(){
         setContentView(R.layout.activity_main);
         initializeData();
         setupUI();
         setupBottomNavigation();
-        handleBackButton();
     }
 
-    private void handleBackButton() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                handleBackAction();
-            }
-        });
-    }
 
-    private void handleBackAction() {
-
-    }
 }

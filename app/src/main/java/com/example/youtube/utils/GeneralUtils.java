@@ -1,26 +1,24 @@
 package com.example.youtube.utils;
 
 import android.content.Context;
-import android.provider.Settings;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.youtube.AppDatabase;
-import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.entities.user;
 import com.example.youtube.entities.video;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static boolean isUserExist(ArrayList<user> users, String email){
+    public static boolean isUserExist(List<user> users, String email){
         if (users == null){
             return false;
         }
@@ -103,6 +101,46 @@ public class GeneralUtils {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             return "Invalid number";
+        }
+    }
+
+    public static user getUserById(List<user> users, int id){
+        for (user u : users){
+            if(u.getId() == id){
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public static List<video> removeVideo(List<video> videos, video video){
+        List<video> temp = new ArrayList<>();
+        if (video == null){
+            return videos;
+        }
+        for (video v : videos){
+            if (v.getVideoId() != video.getVideoId()){
+                temp.add(v);
+            }
+        }
+        return temp;
+    }
+
+    public static String getVideoDuration(Uri videoUri, Context context) throws IOException {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(context, videoUri);
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            assert time != null;
+            long timeInMilliSec = Long.parseLong(time);
+            long minutes = (timeInMilliSec / 1000) / 60;
+            long seconds = (timeInMilliSec / 1000) % 60;
+            return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0:00";
+        } finally {
+            retriever.release();
         }
     }
 }

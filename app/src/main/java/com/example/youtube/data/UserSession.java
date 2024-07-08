@@ -1,4 +1,4 @@
-package com.example.youtube;
+package com.example.youtube.data;
 
 public class UserSession {
     private static UserSession instance;

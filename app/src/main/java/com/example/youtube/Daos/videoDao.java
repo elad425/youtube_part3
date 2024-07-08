@@ -1,5 +1,6 @@
 package com.example.youtube.Daos;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -28,4 +29,6 @@ public interface videoDao {
     @Query("SELECT * FROM videos")
     List<video> getAllVideos();
 
+    @Query("SELECT * FROM videos")
+    LiveData<List<video>> getAllVideosLive();
 }
