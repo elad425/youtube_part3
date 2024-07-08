@@ -18,15 +18,11 @@ import android.widget.Toast;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.entities.LoginResponse;
-import com.example.youtube.entities.User;
 import com.example.youtube.viewmodels.LoginViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class LogIn extends AppCompatActivity {
 
@@ -78,7 +74,6 @@ public class LogIn extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 clearErrors();
             }
-
             @Override
             public void afterTextChanged(Editable s) {}
         };

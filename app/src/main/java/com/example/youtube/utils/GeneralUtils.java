@@ -1,13 +1,8 @@
 package com.example.youtube.utils;
 
-import android.content.Context;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,7 +88,6 @@ public class GeneralUtils {
                 return String.valueOf(number);
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             return "Invalid number";
         }
     }
@@ -116,7 +110,7 @@ public class GeneralUtils {
         if (index != -1 && index < input.length() - 1) {
             return input.substring(index + 1);
         } else {
-            return ""; // Return an empty string if backslash is not found or is at the end
+            return "";
         }
     }
 
@@ -138,25 +132,19 @@ public class GeneralUtils {
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
 
-        // Generate the first two characters
         for (int i = 0; i < 2; i++) {
-            sb.append(random.nextInt(6)); // Generates a number between 0 and 5
+            sb.append(random.nextInt(6));
         }
-
-        // Add the colon
         sb.append(":");
-
-        // Generate the last two characters
         for (int i = 0; i < 2; i++) {
-            sb.append(random.nextInt(6)); // Generates a number between 0 and 5
+            sb.append(random.nextInt(6));
         }
-
         return sb.toString();
     }
 
     public static String extractTextAfterLastSlash(String input) {
         if (input == null || !input.contains("/")) {
-            return input; // Return the input if it's null or doesn't contain a slash
+            return input;
         }
 
         int lastSlashIndex = input.lastIndexOf('/');

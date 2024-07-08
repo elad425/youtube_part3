@@ -1,12 +1,12 @@
 package com.example.youtube.api;
 
-
 import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.youtube.Daos.imgDao;
+import com.example.youtube.R;
 import com.example.youtube.entities.Image;
 import com.example.youtube.utils.GeneralUtils;
 import java.io.File;
@@ -25,12 +25,10 @@ public class MediaApi {
     Retrofit retrofit;
     static mediaWebServiceApi mediaWebServiceApi;
     private final imgDao dao;
-    private final Context context;
 
     public MediaApi(imgDao imgDao, Context context) {
         dao = imgDao;
-        this.context = context;
-        retrofit = new Retrofit.Builder().baseUrl("http://192.168.43.30:5000/")
+        retrofit = new Retrofit.Builder().baseUrl(context.getString(R.string.baseUrl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         mediaWebServiceApi = retrofit.create(mediaWebServiceApi.class);
     }
@@ -83,7 +81,7 @@ public class MediaApi {
                 if (response.isSuccessful()) {
                     ResponseBody body = response.body();
                     if (body != null) {
-                        byte[] videoBytes = null;
+                        byte[] videoBytes;
                         try {
                             videoBytes = body.bytes();
                         } catch (IOException e) {

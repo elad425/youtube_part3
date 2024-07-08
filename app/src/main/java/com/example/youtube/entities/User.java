@@ -38,9 +38,7 @@ public class User {
         this.password = password;
     }
 
-    public String getIcon() {
-        return icon;
-    }
+    public String getIcon() {return icon;}
 
     public void setIcon(String icon) {
         this.icon = icon;

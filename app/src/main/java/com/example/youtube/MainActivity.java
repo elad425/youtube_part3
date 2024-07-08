@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         loginViewModel.getLoginSuccessful().observe(this, isSuccessful -> {
             if (isSuccessful) {
                 userId = UserSession.getInstance().getUser();
-            } else {
-                // Handle failed token validation if needed
             }
         });
     }

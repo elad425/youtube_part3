@@ -29,7 +29,7 @@ public class MediaRepository {
         db = AppDatabase.getInstance(application);
         this.app = application;
         video = new MutableLiveData<>();
-        api = new MediaApi(db.imgDao(),application.getApplicationContext());
+        api = new MediaApi(db.imgDao(), application.getApplicationContext());
     }
 
     public Bitmap getImage(String id){
