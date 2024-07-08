@@ -17,7 +17,7 @@ import java.util.Objects;
 public class ProfilePageViewModel extends AndroidViewModel {
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserLoggedIn = new MutableLiveData<>();
-    private MediaRepository mediaRepository;
+    private final MediaRepository mediaRepository;
 
     public ProfilePageViewModel(@NonNull Application application) {
         super(application);
@@ -51,7 +51,7 @@ public class ProfilePageViewModel extends AndroidViewModel {
         currentUser.setValue(null);
     }
 
-    public Bitmap getBitmap(User user) {
+    public Bitmap getBitmap() {
         return mediaRepository.getImage(Objects.requireNonNull(currentUser.getValue()).getIcon());
     }
 

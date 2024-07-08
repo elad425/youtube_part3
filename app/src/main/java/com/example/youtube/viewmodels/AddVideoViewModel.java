@@ -10,8 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.youtube.entities.Video;
 import com.example.youtube.repositories.VideoRepository;
 
-import java.util.List;
-
 public class AddVideoViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;
     private final MutableLiveData<Boolean> videoAddedSuccessfully = new MutableLiveData<>();
@@ -28,8 +26,5 @@ public class AddVideoViewModel extends AndroidViewModel {
     public void addVideo(Video newVideo) {
         videoRepository.insertVideo(newVideo);
         videoAddedSuccessfully.setValue(true);
-    }
-    public List<Video> getVideos(){
-        return videoRepository.getAllVideos();
     }
 }

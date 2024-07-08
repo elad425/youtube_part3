@@ -1,7 +1,6 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
-import android.graphics.Bitmap;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,8 +11,6 @@ import com.example.youtube.entities.Video;
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
 import java.util.List;
-
-
 
 public class VideoRepository {
     private final AppDatabase db;

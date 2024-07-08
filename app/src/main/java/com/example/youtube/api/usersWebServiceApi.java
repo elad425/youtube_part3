@@ -1,10 +1,7 @@
 package com.example.youtube.api;
 
 import com.example.youtube.entities.User;
-
 import java.util.List;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -18,7 +15,7 @@ public interface usersWebServiceApi {
     Call<List<User>> getUsers();
     @GET("api/users/{id}")
     Call<User> getUserById(@Path("id") String id);
-    @POST("api//users")
+    @POST("api/users")
     Call<Void> createUser(@Body User user);
     @DELETE("api/users//{id}")
     Call<Void> deleteUser(@Path("id") String id);

@@ -42,6 +42,7 @@ public class MediaRepository {
 
     public void initImages(){
         List<Video> videos = db.videoDao().getAllVideos();
+        db.imgDao().clear();
         for(Video v : videos){
             api.getProfileImage(v.getUserDetails().getIcon());
             api.getThumbnail(v.getThumbnail());
@@ -65,7 +66,7 @@ public class MediaRepository {
         });
     }
 
-    public File byteArrayToFile(String fileName) throws IOException {
+    public File byteArrayToFile() throws IOException {
         File temp = File.createTempFile("temp", ".mp4",app.getExternalFilesDir(Environment.DIRECTORY_MOVIES));
         try (FileOutputStream fos = new FileOutputStream(temp)) {
             fos.write(video.getValue());
@@ -76,6 +77,10 @@ public class MediaRepository {
 
     public LiveData<byte[]> getVideoLive(){
         return video;
+    }
+
+    public void uploadProfileImg(String path){
+        api.uploadImageToServer(path);
     }
 
 }

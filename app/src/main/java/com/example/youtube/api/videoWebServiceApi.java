@@ -5,7 +5,6 @@ import com.example.youtube.entities.Video;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -21,9 +20,11 @@ public interface videoWebServiceApi {
     Call<Void> createVideo(@Body Video video);
     @DELETE("api/videos//{id}")
     Call<Void> deleteVideo(@Path("id") String id);
-    @PUT("api/videos//{id}")
-    Call<Void> updateVideo(@Path("id") String id ,@Body Video video);
+    @PUT("api/users/{id}/videos/{pid}")
+    Call<Void> updateVideo(@Path("id") String id, @Path("pid") String pid  ,@Body Video video);
     @GET("api/videos/comment/{id}")
     Call<List<Comment>> getCommentById(@Path("id") String id);
+    @POST("api/comment")
+    Call<Void> newComment(@Body Comment comment);
 
 }

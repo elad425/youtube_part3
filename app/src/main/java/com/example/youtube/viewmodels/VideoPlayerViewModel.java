@@ -5,7 +5,6 @@ import static com.example.youtube.utils.GeneralUtils.getTheDate;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.view.View;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;

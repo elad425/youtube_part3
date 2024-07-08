@@ -11,7 +11,6 @@ import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;

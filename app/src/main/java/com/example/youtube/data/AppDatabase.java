@@ -11,10 +11,8 @@ import com.example.youtube.Daos.imgDao;
 import com.example.youtube.Daos.videoDao;
 import com.example.youtube.entities.Image;
 import com.example.youtube.entities.Video;
-import com.example.youtube.utils.imageConverter;
 import com.example.youtube.utils.userConverters;
 import com.example.youtube.utils.videoConverters;
-
 
 @Database(entities = {Video.class, Image.class}, version = 1)
 @TypeConverters({videoConverters.class, userConverters.class})

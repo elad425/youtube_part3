@@ -51,7 +51,7 @@ public class VideoApi {
     }
 
     public void updateVideo(String videoId, Video updatedvideo) {
-        Call<Void> call = videoWebServiceApi.updateVideo(videoId,updatedvideo);
+        Call<Void> call = videoWebServiceApi.updateVideo(updatedvideo.getUserDetails().get_id(),videoId,updatedvideo);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

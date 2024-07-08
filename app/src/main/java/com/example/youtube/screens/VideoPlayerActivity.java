@@ -114,6 +114,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (videosComments && profilePic && videoFile) {
             hideLoadingIndicator();
             setupUI();
+        }else {
+            showLoadingIndicator();
         }
     }
 
@@ -159,9 +161,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
         viewModel.getCurrentVideo().observe(this, currentVideo -> {
             if (currentVideo != null) {
 
-                File videoFile = null;
+                File videoFile;
                 try {
-                    videoFile = viewModel.getMediaRepository().byteArrayToFile(currentVideo.getVideo_src());
+                    videoFile = viewModel.getMediaRepository().byteArrayToFile();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

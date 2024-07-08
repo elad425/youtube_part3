@@ -1,20 +1,19 @@
 package com.example.youtube.api;
 
+
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.example.youtube.Daos.imgDao;
 import com.example.youtube.entities.Image;
-import com.example.youtube.entities.User;
 import com.example.youtube.utils.GeneralUtils;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +39,7 @@ public class MediaApi {
         Call<ResponseBody> call = mediaWebServiceApi.getProfileImage(GeneralUtils.getStringAfterBackslash(path));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 try {
                     assert response.body() != null;
                     Image i = new Image(response.body().bytes(),path);
@@ -49,10 +48,8 @@ public class MediaApi {
                     throw new RuntimeException(e);
                 }
             }
-
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
             }
         });
     }
@@ -62,7 +59,7 @@ public class MediaApi {
         Call<ResponseBody> call = mediaWebServiceApi.getThumbnail(temp);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 try {
                     assert response.body() != null;
                     Image i = new Image(response.body().bytes(),path);
@@ -73,17 +70,16 @@ public class MediaApi {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
             }
         });
     }
 
     public void downloadVideo(String videoId, final MediaApi.ApiCallback<byte[]> callback) {
-
         Call<ResponseBody> call = mediaWebServiceApi.downloadVideo(GeneralUtils.extractTextAfterLastSlash(videoId));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     ResponseBody body = response.body();
                     if (body != null) {
@@ -106,9 +102,24 @@ public class MediaApi {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 // Handle network error
                 Log.e("API", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void uploadImageToServer(String imagePath) {
+        File file = new File(imagePath);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        Call<ResponseBody> call = mediaWebServiceApi.uploadProfileImage(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+            }
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
             }
         });
     }

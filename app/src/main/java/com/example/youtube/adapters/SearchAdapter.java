@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtube.R;
 import com.example.youtube.entities.Video;
 import com.example.youtube.screens.VideoPlayerActivity;
-import com.example.youtube.utils.GeneralUtils;
 
 import java.util.List;
 

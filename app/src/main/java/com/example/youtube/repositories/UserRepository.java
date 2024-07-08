@@ -3,9 +3,7 @@ package com.example.youtube.repositories;
 import android.app.Application;
 import com.example.youtube.entities.User;
 import com.example.youtube.api.UserApi;
-
 import java.util.List;
-
 
 public class UserRepository {
     private final UserApi api;

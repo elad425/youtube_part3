@@ -75,7 +75,7 @@ public class ProfilePage extends AppCompatActivity {
 
             username.setText(currentUser.getUsername());
             userEmail.setText(currentUser.getEmail());
-            userPic.setImageBitmap(viewModel.getBitmap(currentUser));
+            userPic.setImageBitmap(viewModel.getBitmap());
         }
     }
 

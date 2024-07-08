@@ -96,15 +96,6 @@ public class GeneralUtils {
         }
     }
 
-    public static User getUserById(List<User> users, String id){
-        for (User u : users){
-            if(u.get_id().equals(id)){
-                return u;
-            }
-        }
-        return null;
-    }
-
     public static List<Video> removeVideo(List<Video> videos, Video video){
         List<Video> temp = new ArrayList<>();
         if (video == null){
@@ -116,24 +107,6 @@ public class GeneralUtils {
             }
         }
         return temp;
-    }
-
-    public static String getVideoDuration(Uri videoUri, Context context) throws IOException {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(context, videoUri);
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            assert time != null;
-            long timeInMilliSec = Long.parseLong(time);
-            long minutes = (timeInMilliSec / 1000) / 60;
-            long seconds = (timeInMilliSec / 1000) % 60;
-            return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "0:00";
-        } finally {
-            retriever.release();
-        }
     }
 
     public static String getStringAfterBackslash(String input) {
