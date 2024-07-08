@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
+import com.example.youtube.entities.User;
 import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.SignUpViewModel;
 import com.google.android.material.textfield.TextInputEditText;
@@ -83,6 +83,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void login() {
         resetFields();
+        finish();
         Intent intent = new Intent(SignUpActivity.this, LogIn.class);
         startActivity(intent);
     }
@@ -128,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        List<user> users = viewModel.getUsers().getValue();
+        List<User> users = viewModel.getUsers().getValue();
         if(GeneralUtils.isUserExist(users,email)){
             emailEditText.setError("this email is already exists");
             return;
@@ -156,7 +157,7 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Please upload an image", Toast.LENGTH_SHORT).show();
             return;
         }
-        user newUser = new user(username, email, password, imageUri.toString(), "0");
+        User newUser = new User(username, email, password, imageUri.toString());
         viewModel.signUp(newUser);
     }
 

@@ -1,45 +1,60 @@
 package com.example.youtube.repositories;
 
 import android.app.Application;
-import android.content.Context;
-
-import com.example.youtube.data.AppDatabase;
-import com.example.youtube.entities.user;
-import com.example.youtube.utils.JsonUtils;
-
-import java.util.ArrayList;
+import com.example.youtube.entities.User;
+import com.example.youtube.api.UserApi;
 import java.util.List;
 
 public class UserRepository {
-    private final AppDatabase db;
+    private final UserApi api;
+
+    private List<User> users;
+
+    private User user;
 
     public UserRepository(Application application) {
-        db = AppDatabase.getInstance(application);
-        loadUsers(application.getApplicationContext());
+        api = new UserApi();
+        getUsers();
     }
 
-    public user getUserById(int userId) {
-        return db.userDao().getUserById(userId);
-    }
-
-    public List<user> getAllUsers() {
-        return db.userDao().getAllUsers();
-    }
-
-    public void insertUser(user newUser) {
-        db.userDao().insert(newUser);
-    }
-
-    public void updateUser(user newUser) {
-        db.userDao().update(newUser);
-    }
-
-    private void loadUsers(Context context){
-        if (db.userDao().getAllUsers().isEmpty()) {
-            ArrayList<user> tempUser = JsonUtils.loadUsersFromJson(context);
-            for (user u : tempUser) {
-                db.userDao().insert(u);
+    public User getUserById(String userId) {
+        api.getUserById(userId,new UserApi.ApiCallback<User>() {
+            @Override
+            public void onSuccess(User result) {
+                user = result;
             }
-        }
+
+            @Override
+            public void onError(String error) {
+            }
+        });
+        return user;
     }
+
+    public void getUsers() {
+        api.getUsers(new UserApi.ApiCallback<List<User>>() {
+            @Override
+            public void onSuccess(List<User> result) {
+                users = result;
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    public List<User> getAllUsers(){
+        return users;
+    }
+
+    public void insertUser(User newUser) {
+        api.createUser(newUser);
+    }
+
+    public void updateUser(User newUser) {
+        api.updateUser(newUser.get_id(), newUser);
+    }
+
 }

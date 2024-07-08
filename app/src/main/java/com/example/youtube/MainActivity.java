@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.adapters.VideoListAdapter;
 import com.example.youtube.data.UserSession;
+import com.example.youtube.entities.User;
 import com.example.youtube.screens.AddVideoActivity;
 import com.example.youtube.screens.LogIn;
 import com.example.youtube.screens.ProfilePage;
@@ -25,17 +26,24 @@ import com.example.youtube.screens.SearchVideo;
 import com.example.youtube.viewmodels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MainActivity extends AppCompatActivity {
-    private int userId;
+    private User userId;
     private MainViewModel videoViewModel;
     private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+        setupBottomNavigation();
 
         if (checkPermissions()) {
-            launchApp();
+            initializeData();
         } else {
             requestPermissions();
         }
@@ -48,21 +56,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeData() {
-        userId = UserSession.getInstance().getUserId();
+        showLoadingIndicator();
+        userId = UserSession.getInstance().getUser();
         videoViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        observeData();
+    }
+
+    private void observeData() {
+        AtomicBoolean videosLoaded = new AtomicBoolean(false);
+        AtomicBoolean imagesLoaded = new AtomicBoolean(false);
+
+        videoViewModel.getAllVideosLive().observe(this, videos -> {
+            if (!videos.isEmpty()) {
+                videosLoaded.set(true);
+                checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
+                videoViewModel.initImages();
+            }
+        });
+
+        videoViewModel.getAllImagesLive().observe(this, images -> {
+            if(!images.isEmpty()){
+                imagesLoaded.set(true);
+                checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
+            }
+        });
+    }
+
+    private void checkDataAndSetupUI(boolean videosLoaded, boolean imageLoader) {
+        if (videosLoaded && imageLoader) {
+            hideLoadingIndicator();
+            setupUI();
+        }
+    }
+
+    private void showLoadingIndicator() {
+        // Show loading indicator
+    }
+
+    private void hideLoadingIndicator() {
+        // Hide loading indicator
     }
 
     private void setupUI() {
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        VideoListAdapter videoAdapter = new VideoListAdapter(this,
-                null, videoViewModel.getAllUsers(),this);
-        lstVideos.setAdapter(videoAdapter);
+        VideoListAdapter videoListAdapter = new VideoListAdapter(
+                null ,this,videoViewModel.getMediaRepository(), this);
+        lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
-        videoViewModel.getAllVideos().observe(this, videoAdapter::setVideos);
+        videoViewModel.getAllVideosLive().observe(this, videoListAdapter::setVideos);
 
         ImageButton btnSearch = findViewById(R.id.search_button);
         btnSearch.setOnClickListener(v -> navigateToSearch());
@@ -105,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToAddVideo() {
-        if (userId != 0) {
+        if (userId != null) {
             startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
         } else {
             Toast.makeText(MainActivity.this, "Please log in to add a video", Toast.LENGTH_SHORT).show();
@@ -149,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             boolean imagesPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
             if (videoPermission && imagesPermission && cameraPermission) {
-                launchApp();
+                initializeData();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
@@ -157,19 +200,10 @@ public class MainActivity extends AppCompatActivity {
             boolean storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             boolean cameraPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             if (storagePermission && cameraPermission) {
-                launchApp();
+                initializeData();
             } else {
                 Toast.makeText(MainActivity.this, "this app need permissions, please go to setting and grant them", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-    public void launchApp(){
-        setContentView(R.layout.activity_main);
-        initializeData();
-        setupUI();
-        setupBottomNavigation();
-    }
-
-
 }

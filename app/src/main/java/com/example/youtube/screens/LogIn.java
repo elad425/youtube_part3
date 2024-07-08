@@ -88,6 +88,7 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void signUp() {
+        finish();
         Intent intent = new Intent(LogIn.this, SignUpActivity.class);
         resetFields();
         startActivity(intent);

@@ -1,191 +1,169 @@
-// VideoPlayerViewModel.java
 package com.example.youtube.viewmodels;
 
-import static com.example.youtube.utils.GeneralUtils.getTheDate;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.youtube.entities.comment;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
-import com.example.youtube.repositories.UserRepository;
+import com.example.youtube.entities.Comment;
+import com.example.youtube.entities.User;
+import com.example.youtube.entities.Video;
+import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class VideoPlayerViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;
-    private final UserRepository userRepository;
-    private final MutableLiveData<video> currentVideo = new MutableLiveData<>();
-    private final MutableLiveData<user> currentUser = new MutableLiveData<>();
-    private final MutableLiveData<user> currentCreator = new MutableLiveData<>();
+    private final MediaRepository mediaRepository;
+    private final MutableLiveData<Bitmap> bitmap = new MutableLiveData<>();
+    private final MutableLiveData<Video> currentVideo = new MutableLiveData<>();
+    private final MutableLiveData<User> currentUser = new MutableLiveData<>();
+    private final MutableLiveData<User> currentCreator = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLiked = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isDisliked = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> isSubscribed = new MutableLiveData<>(false);
-    private final MutableLiveData<ArrayList<comment>> commentList = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Boolean> isEditVideoVisible = new MutableLiveData<>(false);
+    private MutableLiveData<List<Comment>> commentList = new MutableLiveData<>(new ArrayList<>());
 
     public VideoPlayerViewModel(Application application) {
         super(application);
         videoRepository = new VideoRepository(application);
-        userRepository = new UserRepository(application);
+        mediaRepository = new MediaRepository(application);
     }
 
-    public List<user> getUsers(){
-        return userRepository.getAllUsers();
-    }
-
-    public LiveData<List<video>> getVideos(){
+    public LiveData<List<Video>> getVideos(){
         return videoRepository.getAllVideosLive();
     }
 
-    public void loadVideo(int videoId) {
-        video loadedVideo = videoRepository.getVideoById(videoId);
+    public LiveData<byte[]> getVideoLive(){return mediaRepository.getVideoLive();}
+
+    public MediaRepository getMediaRepository() {
+        return mediaRepository;
+    }
+
+    public void loadVideo(String videoId) {
+        Video loadedVideo = videoRepository.getVideoById(videoId);
         currentVideo.setValue(loadedVideo);
         if (loadedVideo != null) {
-            currentCreator.setValue(userRepository.getUserById(loadedVideo.getCreatorId()));
-            commentList.setValue(loadedVideo.getComments());
+            currentCreator.setValue(loadedVideo.getUserDetails());
+            commentList = videoRepository.getCommentByVideoId(
+                    Objects.requireNonNull(currentVideo.getValue()).get_id());
+            Bitmap b = mediaRepository.getImage(Objects.requireNonNull(currentVideo.getValue().getUserDetails().getIcon()));
+            bitmap.setValue(b);
         }
     }
 
-    public void loadUser(int userId) {
-        user loadedUser = userRepository.getUserById(userId);
-        currentUser.setValue(loadedUser);
-        if (loadedUser != null && currentVideo.getValue() != null) {
-            isLiked.setValue(loadedUser.isLiked(currentVideo.getValue()));
-            isDisliked.setValue(loadedUser.isDisLiked(currentVideo.getValue()));
-            isSubscribed.setValue(loadedUser.isSubs(currentCreator.getValue()));
+    public void loadUser(User user) {
+        currentUser.setValue(user);
+        if (user != null && currentVideo.getValue() != null) {
+            isLiked.setValue(currentVideo.getValue().isLiked(user.get_id()));
+            isDisliked.setValue(currentVideo.getValue().isDisLiked(user.get_id()));
+            if ((Objects.requireNonNull(getCurrentUser().getValue()).get_id().equals(
+                    Objects.requireNonNull(getCurrentVideo().getValue()).getUserDetails().get_id()))){
+                isEditVideoVisible.setValue(true);
+            }
         }
     }
 
     public void incrementViews() {
-        video video = currentVideo.getValue();
+        Video video = currentVideo.getValue();
         if (video != null) {
-            int views = Integer.parseInt(video.getViews()) + 1;
-            video.setViews(Integer.toString(views));
+            video.setViews(video.getViews() + 1);
             videoRepository.updateVideo(video);
             currentVideo.setValue(video);
         }
     }
 
     public void toggleLike() {
-        user user = currentUser.getValue();
-        video video = currentVideo.getValue();
+        User user = currentUser.getValue();
+        Video video = currentVideo.getValue();
         if (user != null && video != null) {
             if (Boolean.FALSE.equals(isLiked.getValue())) {
-                user.addToLiked(video);
-                user.removeFromDisLiked(video);
+                video.addToLiked(user.get_id());
+                video.removeFromDisliked(user.get_id());
                 isLiked.setValue(true);
                 isDisliked.setValue(false);
             } else {
-                user.removeFromLiked(video);
+                video.removeFromLiked(user.get_id());
                 isLiked.setValue(false);
             }
-            userRepository.updateUser(user);
+            videoRepository.updateVideo(video);
         }
     }
 
     public void toggleDislike() {
-        user user = currentUser.getValue();
-        video video = currentVideo.getValue();
+        User user = currentUser.getValue();
+        Video video = currentVideo.getValue();
         if (user != null && video != null) {
             if (Boolean.FALSE.equals(isDisliked.getValue())) {
-                user.addToDisLiked(video);
-                user.removeFromLiked(video);
+                video.addToDisliked(user.get_id());
+                video.removeFromLiked(user.get_id());
                 isDisliked.setValue(true);
                 isLiked.setValue(false);
             } else {
-                user.removeFromDisLiked(video);
+                video.removeFromDisliked(user.get_id());
                 isDisliked.setValue(false);
             }
-            userRepository.updateUser(user);
+            videoRepository.updateVideo(video);
         }
-    }
-
-    public int toggleSubscribe() {
-        user user = currentUser.getValue();
-        user creator = currentCreator.getValue();
-        if (user != null && creator != null) {
-            int subCount = Integer.parseInt(creator.getSubs_count());
-            if (Boolean.FALSE.equals(isSubscribed.getValue())) {
-                user.addToSubs(creator);
-                subCount++;
-                creator.setSubs_count(String.valueOf(subCount));
-                isSubscribed.setValue(true);
-            } else {
-                user.removeFromSubs(creator);
-                subCount--;
-                creator.setSubs_count(String.valueOf(subCount));
-                isSubscribed.setValue(false);
-            }
-            userRepository.updateUser(user);
-            userRepository.updateUser(creator);
-            currentCreator.setValue(creator);
-            return subCount;
-        }
-        return -1;
     }
 
     public void addComment(String commentText) {
-        user user = currentUser.getValue();
-        video video = currentVideo.getValue();
+        User user = currentUser.getValue();
+        Video video = currentVideo.getValue();
         if (user != null && video != null) {
-            comment newComment = new comment(commentText, user.getId(), getTheDate());
-            ArrayList<comment> updatedComments = commentList.getValue();
+            Comment newComment = new Comment(commentText, user, video.get_id());
+            List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null) {
+                videoRepository.addComment(newComment);
                 updatedComments.add(newComment);
-                video.setComments(updatedComments);
-                videoRepository.updateVideo(video);
                 commentList.setValue(updatedComments);
             }
         }
     }
 
     public void removeComment(int position) {
-        video video = currentVideo.getValue();
+        Video video = currentVideo.getValue();
         if (video != null) {
-            ArrayList<comment> updatedComments = commentList.getValue();
+            List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null && position < updatedComments.size()) {
+                videoRepository.deleteComment(updatedComments.get(position));
                 updatedComments.remove(position);
-                video.setComments(updatedComments);
-                videoRepository.updateVideo(video);
                 commentList.setValue(updatedComments);
             }
         }
     }
 
     public void editComment(int position, String editedCommentText) {
-        video video = currentVideo.getValue();
+        Video video = currentVideo.getValue();
         if (video != null) {
-            ArrayList<comment> updatedComments = commentList.getValue();
+            List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null && position < updatedComments.size()) {
-                comment editedComment = updatedComments.get(position);
-                editedComment.setComment(editedCommentText);
-                editedComment.setDate(getTheDate());
-                editedComment.setEdited(true);
-                video.setComments(updatedComments);
-                videoRepository.updateVideo(video);
+                Comment editedComment = updatedComments.get(position);
+                editedComment.setCommentMessage(editedCommentText);
+                videoRepository.updateComment(editedComment);
                 commentList.setValue(updatedComments);
             }
         }
     }
 
     public void updateVideoDetails(String newName, Uri newThumbnailUri, Uri newVideoUri) {
-        video video = currentVideo.getValue();
+        Video video = currentVideo.getValue();
         if (video != null) {
             if (!newName.isEmpty()) {
-                video.setVideo_name(newName);
+                video.setTitle(newName);
             }
             if (newThumbnailUri != null) {
                 video.setThumbnail(newThumbnailUri.toString());
             }
             if (newVideoUri != null) {
-                video.setVideo_path(newVideoUri.toString());
+                video.setVideo_src(newVideoUri.toString());
             }
             videoRepository.updateVideo(video);
             currentVideo.setValue(video);
@@ -193,18 +171,19 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     }
 
     public void deleteVideo() {
-        video video = currentVideo.getValue();
+        Video video = currentVideo.getValue();
         if (video != null) {
             videoRepository.deleteVideo(video);
         }
     }
 
     // Getters for LiveData
-    public LiveData<video> getCurrentVideo() { return currentVideo; }
-    public LiveData<user> getCurrentUser() { return currentUser; }
-    public LiveData<user> getCurrentCreator() { return currentCreator; }
+    public LiveData<Video> getCurrentVideo() { return currentVideo; }
+    public LiveData<User> getCurrentUser() { return currentUser; }
+    public LiveData<User> getCurrentCreator() { return currentCreator; }
     public LiveData<Boolean> isLiked() { return isLiked; }
     public LiveData<Boolean> isDisliked() { return isDisliked; }
-    public LiveData<Boolean> isSubscribed() { return isSubscribed; }
-    public LiveData<ArrayList<comment>> getCommentList() { return commentList; }
+    public LiveData<Boolean> isEditVideoVisible() { return isEditVideoVisible; }
+    public LiveData<List<Comment>> getCommentList() { return commentList; }
+    public MutableLiveData<Bitmap> getBitmap() {return bitmap;}
 }

@@ -1,5 +1,7 @@
 package com.example.youtube.adapters;
 
+import static com.example.youtube.utils.GeneralUtils.removeTrailingNewline;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -13,24 +15,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.R;
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.Video;
 import com.example.youtube.screens.VideoPlayerActivity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewHolder> {
-    private ArrayList<video> filteredVideoList;
+    private List<Video> filteredVideoList;
     private final Context context;
     private final Activity activity;
 
-    public SearchAdapter(ArrayList<video> filteredVideoList, Context context, Activity activity) {
+    public SearchAdapter(List<Video> filteredVideoList, Context context, Activity activity) {
         this.filteredVideoList = filteredVideoList;
         this.context = context;
         this.activity = activity;
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setFilteredList(ArrayList<video> filteredList){
+    public void setFilteredList(List<Video> filteredList){
         this.filteredVideoList = filteredList;
         notifyDataSetChanged();
     }
@@ -44,13 +46,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.VideoViewH
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        video video = filteredVideoList.get(position);
-        holder.searchResultTextView.setText(video.getVideo_name());
+        Video video = filteredVideoList.get(position);
+        holder.searchResultTextView.setText(removeTrailingNewline(video.getTitle()));
 
         holder.itemView.setOnClickListener(v -> {
-            video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
+            Video clickedVideoItem = filteredVideoList.get(holder.getAdapterPosition());
             Intent i = new Intent(context, VideoPlayerActivity.class);
-            i.putExtra("video_item", clickedVideoItem.getVideoId());
+            i.putExtra("video_item", clickedVideoItem.get_id());
             context.startActivity(i);
             activity.finish();
         });

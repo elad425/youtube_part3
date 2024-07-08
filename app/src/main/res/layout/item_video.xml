@@ -21,8 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/thumbnail1"
-                android:background="@android:color/transparent"
+                android:backgroundTint="@color/light_grey"
+                android:background="@color/light_grey"
                 android:contentDescription="@string/thumbnail" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_height="25dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/thumbnail1"
+                android:background="@color/light_grey"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/circle">
 

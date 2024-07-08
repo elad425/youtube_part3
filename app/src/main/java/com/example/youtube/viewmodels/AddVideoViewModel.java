@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.Video;
 import com.example.youtube.repositories.VideoRepository;
 
 public class AddVideoViewModel extends AndroidViewModel {
@@ -23,7 +23,7 @@ public class AddVideoViewModel extends AndroidViewModel {
         return videoAddedSuccessfully;
     }
 
-    public void addVideo(video newVideo) {
+    public void addVideo(Video newVideo) {
         videoRepository.insertVideo(newVideo);
         videoAddedSuccessfully.setValue(true);
     }

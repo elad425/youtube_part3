@@ -8,27 +8,33 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.Video;
 
 import java.util.List;
 
 @Dao
 public interface videoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(video video);
+    void insert(Video video);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertList(List<Video> video);
 
     @Update
-    void update(video video);
+    void update(Video video);
 
     @Delete
-    void delete(video video);
+    void delete(Video video);
 
-    @Query("SELECT * FROM videos WHERE videoId = :id")
-    video getVideoById(int id);
+    @Query("SELECT * FROM video WHERE _id = :id")
+    Video getVideoById(String id);
 
-    @Query("SELECT * FROM videos")
-    List<video> getAllVideos();
+    @Query("SELECT * FROM video")
+    List<Video> getAllVideos();
 
-    @Query("SELECT * FROM videos")
-    LiveData<List<video>> getAllVideosLive();
+    @Query("SELECT * FROM video")
+    LiveData<List<Video>> getAllVideosLive();
+
+    @Query("DELETE FROM video")
+    void clear();
 }

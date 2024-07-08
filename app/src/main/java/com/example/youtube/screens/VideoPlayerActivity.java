@@ -1,5 +1,7 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.removeTrailingNewline;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,22 +25,25 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.youtube.entities.Comment;
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.entities.User;
+import com.example.youtube.entities.Video;
 import com.example.youtube.data.UserSession;
 import com.example.youtube.adapters.CommentsAdapter;
 import com.example.youtube.adapters.VideoListAdapter;
-import com.example.youtube.entities.comment;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
 import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.VideoPlayerViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class VideoPlayerActivity extends AppCompatActivity {
 
@@ -48,23 +53,82 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private RecyclerView rvComments;
     private TextView tvComments;
     private ImageButton ivToggleComments;
-    private FloatingActionButton fabAddComment;
+    private ImageButton AddCommentBtn;
     private CommentsAdapter commentsAdapter;
     private Uri newThumbnailUri;
     private Uri newVideoUri;
     private EditText inputVideoName;
     private VideoPlayerViewModel viewModel;
+    private Boolean playing = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+
         viewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
-        viewModel.loadVideo(getIntent().getIntExtra("video_item", -1));
-        viewModel.loadUser(UserSession.getInstance().getUserId());
+        viewModel.loadVideo(getIntent().getStringExtra("video_item"));
+        viewModel.loadUser(UserSession.getInstance().getUser());
         viewModel.incrementViews();
 
+        viewModel.getMediaRepository().downloadVideo(Objects.requireNonNull(viewModel.getCurrentVideo().getValue()).getVideo_src());
+
+        observeData();
+    }
+
+    private void observeData() {
+        AtomicBoolean videosComments = new AtomicBoolean(false);
+        AtomicBoolean profilePic = new AtomicBoolean(false);
+        AtomicBoolean videoFile = new AtomicBoolean(false);
+        ImageButton btnEdit = findViewById(R.id.edit_video);
+
+        viewModel.getCommentList().observe(this, comments -> {
+            if (comments != null) {
+                videosComments.set(true);
+                checkDataAndSetupUI(profilePic.get(),videosComments.get(),videoFile.get());
+            }
+        });
+
+        viewModel.getBitmap().observe(this, bitmap -> {
+            if (bitmap != null) {
+                profilePic.set(true);
+                checkDataAndSetupUI(profilePic.get(),videosComments.get(),videoFile.get());
+            }
+        });
+
+        viewModel.getVideoLive().observe(this, video -> {
+            if (video != null) {
+                videoFile.set(true);
+                checkDataAndSetupUI(profilePic.get(),videosComments.get(),videoFile.get());
+            }
+        });
+
+        viewModel.isEditVideoVisible().observe(this,isVisible ->{
+            if(isVisible){btnEdit.setVisibility(View.VISIBLE);}
+        });
+    }
+
+    private void checkDataAndSetupUI(boolean videosComments, boolean profilePic, boolean videoFile) {
+        if (videosComments && profilePic && videoFile) {
+            hideLoadingIndicator();
+            setupUI();
+        }else {
+            showLoadingIndicator();
+        }
+    }
+
+    private void showLoadingIndicator() {
+        // Show loading indicator
+    }
+
+    private void hideLoadingIndicator() {
+        // Hide loading indicator
+    }
+
+    public void setupUI(){
         initializeUI();
         setupVideoView();
         handleCommentsSection();
@@ -77,17 +141,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         viewModel.getCurrentCreator().observe(this, this::updateCreatorInfo);
         viewModel.isLiked().observe(this, this::updateLikeButton);
         viewModel.isDisliked().observe(this, this::updateDislikeButton);
-        viewModel.isSubscribed().observe(this, this::updateSubscribeButton);
         viewModel.getCommentList().observe(this, this::updateComments);
     }
 
     private void initializeUI() {
-        Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
-
         RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        VideoListAdapter videoListAdapter = new VideoListAdapter(this,
-                viewModel.getCurrentVideo().getValue(),viewModel.getUsers(),this);
+        VideoListAdapter videoListAdapter = new VideoListAdapter(
+                viewModel.getCurrentVideo().getValue(),this,viewModel.getMediaRepository(), this);
         lstVideos.setAdapter(videoListAdapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -100,8 +160,16 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void setupVideoView() {
         final VideoView videoView = findViewById(R.id.tv_video_view);
         viewModel.getCurrentVideo().observe(this, currentVideo -> {
-            if (currentVideo != null) {
-                videoView.setVideoURI(Uri.parse(currentVideo.getVideo_path()));
+            if (currentVideo != null && playing) {
+                playing = false;
+                File videoFile;
+                try {
+                    videoFile = viewModel.getMediaRepository().byteArrayToFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                videoView.setVideoPath(videoFile.getAbsolutePath());
                 MediaController mediaController = new MediaController(this);
                 mediaController.setAnchorView(videoView);
                 videoView.setMediaController(mediaController);
@@ -110,35 +178,25 @@ public class VideoPlayerActivity extends AppCompatActivity {
         });
     }
 
-    private void updateVideoInfo(video currentVideo) {
+    private void updateVideoInfo(Video currentVideo) {
         if (currentVideo != null) {
             TextView tvVideoName = findViewById(R.id.tv_video_name);
             TextView tvVideoViews = findViewById(R.id.tv_video_views);
             TextView tvPublishDate = findViewById(R.id.tv_publish_date);
 
-            String formatViews = GeneralUtils.getViews(currentVideo.getViews()) + " views";
-            tvVideoName.setText(currentVideo.getVideo_name());
+            String formatViews = GeneralUtils.getViews(Integer.toString(currentVideo.getViews())) + " views";
+            tvVideoName.setText(removeTrailingNewline(currentVideo.getTitle()));
             tvVideoViews.setText(formatViews);
-            tvPublishDate.setText(GeneralUtils.timeAgo(currentVideo.getDate_of_release()));
+            tvPublishDate.setText(GeneralUtils.timeAgo(currentVideo.getDate()));
         }
     }
 
-    private void updateCreatorInfo(user currentCreator) {
+    private void updateCreatorInfo(User currentCreator) {
         if (currentCreator != null) {
             TextView tvCreator = findViewById(R.id.tv_creator);
-            TextView creatorSubCount = findViewById(R.id.tv_creator_subs);
             ShapeableImageView creatorPic = findViewById(R.id.creator_pic);
-
-            tvCreator.setText(currentCreator.getName());
-            creatorSubCount.setText(GeneralUtils.getViews(currentCreator.getSubs_count()));
-
-            String creatorPicPath = currentCreator.getProfile_pic();
-            int creatorPicId = getResources().getIdentifier(creatorPicPath, "drawable", getPackageName());
-            if (creatorPicId != 0) {
-                creatorPic.setImageResource(creatorPicId);
-            } else {
-                creatorPic.setImageURI(Uri.parse(creatorPicPath));
-            }
+            creatorPic.setImageBitmap(viewModel.getBitmap().getValue());
+            tvCreator.setText(currentCreator.getUsername());
         }
     }
 
@@ -147,12 +205,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         tvComments = findViewById(R.id.tv_comments);
         rvComments = findViewById(R.id.rv_comments);
         ivToggleComments = findViewById(R.id.iv_toggle_comments);
-        fabAddComment = findViewById(R.id.fab_add_comment);
-        int userId;
+        AddCommentBtn = findViewById(R.id.iv_add_comments);
+        String userId;
         if (viewModel.getCurrentUser().getValue() == null){
-            userId = 0;
+            userId = null;
         } else {
-            userId = viewModel.getCurrentUser().getValue().getId();
+            userId = viewModel.getCurrentUser().getValue().get_id();
         }
 
         ivToggleComments.setOnClickListener(v -> toggleComments());
@@ -160,7 +218,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         commentsAdapter = new CommentsAdapter(new ArrayList<>(), this,
-                userId, viewModel.getUsers());
+                userId,viewModel.getMediaRepository());
         rvComments.setAdapter(commentsAdapter);
 
         viewModel.getCommentList().observe(this, comments -> {
@@ -168,7 +226,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             tvComments.setText(String.format("Comments (%d)", comments.size()));
         });
 
-        fabAddComment.setOnClickListener(v -> {
+        AddCommentBtn.setOnClickListener(v -> {
             if (viewModel.getCurrentUser().getValue() == null) {
                 Toast.makeText(this, "Please login to add a comment", Toast.LENGTH_SHORT).show();
                 goToLogIn();
@@ -178,7 +236,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         });
     }
 
-    private void updateComments(ArrayList<comment> comments) {
+    private void updateComments(List<Comment> comments) {
         commentsAdapter.updateComments(comments);
         tvComments.setText(String.format(Locale.US, "Comments (%d)", comments.size()));
     }
@@ -186,11 +244,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void toggleComments() {
         if (areCommentsVisible) {
             rvComments.setVisibility(View.GONE);
-            fabAddComment.setVisibility(View.GONE);
+            AddCommentBtn.setVisibility(View.GONE);
             ivToggleComments.setImageResource(R.drawable.ic_arrow_down);
         } else {
             rvComments.setVisibility(View.VISIBLE);
-            fabAddComment.setVisibility(View.VISIBLE);
+            AddCommentBtn.setVisibility(View.VISIBLE);
             ivToggleComments.setImageResource(R.drawable.ic_arrow_up);
         }
         areCommentsVisible = !areCommentsVisible;
@@ -201,22 +259,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         ImageButton btnLike = findViewById(R.id.tv_btn_like);
         ImageButton btnDislike = findViewById(R.id.tv_btn_dislike);
         ImageButton btnEdit = findViewById(R.id.edit_video);
-        Button btnSubscribe = findViewById(R.id.btn_subscribe);
-
-        viewModel.getCurrentUser().observe(this, currentUser ->
-                viewModel.getCurrentCreator().observe(this, currentCreator -> {
-            if (currentUser == null || currentCreator == null || currentCreator.getId() != currentUser.getId()) {
-                btnEdit.setVisibility(View.GONE);
-            }
-            if (currentUser != null && currentCreator != null && currentCreator.getId() == currentUser.getId()) {
-                btnSubscribe.setVisibility(View.GONE);
-            }
-        }));
 
         btnShare.setOnClickListener(v -> shareVideo());
         btnLike.setOnClickListener(v -> handleLikeAction());
         btnDislike.setOnClickListener(v -> handleDislikeAction());
-        btnSubscribe.setOnClickListener(v -> handleSubscribeAction());
         btnEdit.setOnClickListener(this::showEditVideoOptions);
     }
 
@@ -228,19 +274,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void updateDislikeButton(boolean isDisliked) {
         ImageButton btnDislike = findViewById(R.id.tv_btn_dislike);
         btnDislike.setImageResource(isDisliked ? R.drawable.ic_dislike_fill : R.drawable.ic_dislike);
-    }
-
-    private void updateSubscribeButton(boolean isSubscribed) {
-        Button btnSubscribe = findViewById(R.id.btn_subscribe);
-        if (isSubscribed) {
-            btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.text_color));
-            btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.system_color));
-            btnSubscribe.setText(R.string.unsubscribe);
-        } else {
-            btnSubscribe.setBackgroundColor(ContextCompat.getColor(this, R.color.red));
-            btnSubscribe.setTextColor(ContextCompat.getColor(this, R.color.white));
-            btnSubscribe.setText(R.string.subscribe);
-        }
     }
 
     private void showAddCommentDialog() {
@@ -269,7 +302,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         builder.setTitle("Edit comment");
 
         final EditText input = new EditText(this);
-        input.setText(Objects.requireNonNull(viewModel.getCommentList().getValue()).get(position).getComment());
+        input.setText(Objects.requireNonNull(viewModel.getCommentList().getValue()).get(position).getCommentMessage());
         builder.setView(input);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
@@ -283,6 +316,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showEditVideoOptions(View v) {
+
         PopupMenu popup = new PopupMenu(v.getContext(), v);
         popup.getMenuInflater().inflate(R.menu.video_options_menu, popup.getMenu());
 
@@ -321,7 +355,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         Button btnSelectThumbnail = view.findViewById(R.id.btn_select_thumbnail);
         Button btnSelectVideo = view.findViewById(R.id.btn_select_video);
 
-        inputVideoName.setText(Objects.requireNonNull(viewModel.getCurrentVideo().getValue()).getVideo_name());
+        inputVideoName.setText(removeTrailingNewline(Objects.requireNonNull(viewModel.getCurrentVideo().getValue()).getTitle()));
 
         btnSelectThumbnail.setOnClickListener(v -> pickMedia(PICK_VIDEO_THUMBNAIL));
         btnSelectVideo.setOnClickListener(v -> pickMedia(PICK_VIDEO_FILE));
@@ -361,12 +395,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void shareVideo() {
-        video currentVideo = viewModel.getCurrentVideo().getValue();
+        Video currentVideo = viewModel.getCurrentVideo().getValue();
         if (currentVideo != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this video");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, currentVideo.getVideo_path());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, currentVideo.getVideo_src());
             startActivity(Intent.createChooser(shareIntent, "Share Video"));
         }
     }
@@ -388,20 +422,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
 
         viewModel.toggleDislike();
-    }
-
-    private void handleSubscribeAction() {
-        if (viewModel.getCurrentUser().getValue() == null) {
-            Toast.makeText(this, "Please login to subscribe", Toast.LENGTH_SHORT).show();
-            goToLogIn();
-            return;
-        }
-
-        int newSubCount = viewModel.toggleSubscribe();
-        if (newSubCount != -1) {
-            TextView creatorSubCount = findViewById(R.id.tv_creator_subs);
-            creatorSubCount.setText(GeneralUtils.getViews(String.valueOf(newSubCount)));
-        }
     }
 
     private void goToLogIn() {

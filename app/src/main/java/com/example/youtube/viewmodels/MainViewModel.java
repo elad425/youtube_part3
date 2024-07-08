@@ -5,28 +5,35 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
-import com.example.youtube.repositories.UserRepository;
+import com.example.youtube.entities.Image;
+import com.example.youtube.entities.Video;
+import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
-    private final LiveData<List<video>> allVideos;
-    private final List<user> allUsers;
+    private final VideoRepository videoRepository;
+    private final MediaRepository mediaRepository;
 
     public MainViewModel(Application application) {
         super(application);
-        VideoRepository videoRepository = new VideoRepository(application);
-        UserRepository userRepository = new UserRepository(application);
-        allVideos = videoRepository.getAllVideosLive();
-        allUsers = userRepository.getAllUsers();
+        videoRepository = new VideoRepository(application);
+        mediaRepository = new MediaRepository(application);
     }
 
-    public LiveData<List<video>> getAllVideos() {
-        return allVideos;
+    public LiveData<List<Video>> getAllVideosLive() {
+        return videoRepository.getAllVideosLive();
     }
 
-    public List<user> getAllUsers(){ return allUsers;}
+    public MediaRepository getMediaRepository(){ return mediaRepository;}
+
+    public void initImages(){
+        mediaRepository.initImages();
+    }
+
+    public LiveData<List<Image>> getAllImagesLive(){
+        return mediaRepository.getAllImagesLive();
+    }
+
 }

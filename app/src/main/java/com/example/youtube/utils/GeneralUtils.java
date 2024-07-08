@@ -4,8 +4,8 @@ import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.User;
+import com.example.youtube.entities.Video;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static boolean isUserExist(List<user> users, String email){
+    public static boolean isUserExist(List<User> users, String email){
         if (users == null){
             return false;
         }
@@ -33,14 +35,22 @@ public class GeneralUtils {
     }
 
     public static String timeAgo(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         Date givenDate;
 
+        if (dateString == null){
+            return "just now";
+        }
+
         try {
-            givenDate = dateFormat.parse(dateString);
+            givenDate = dateFormat1.parse(dateString);
         } catch (ParseException e) {
-            e.printStackTrace();
-            return "Invalid date format";
+            try {
+                givenDate = dateFormat2.parse(dateString);
+            } catch (ParseException t){
+                return "invalid date";
+            }
         }
 
         Date currentDate = new Date();
@@ -67,23 +77,7 @@ public class GeneralUtils {
             return days + " days ago";
         }
 
-        long hours = TimeUnit.MILLISECONDS.toHours(diffInMillis);
-        if (hours > 0) {
-            return hours + " hours ago";
-        }
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-        if (minutes > 0) {
-            return minutes + " minutes ago";
-        }
-
-        return "Just now";
-    }
-
-    public static String getTheDate(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
-        Date currentDate = new Date();
-        return dateFormat.format(currentDate);
+        return "today";
     }
 
     public static String getViews(String numberStr) {
@@ -104,43 +98,75 @@ public class GeneralUtils {
         }
     }
 
-    public static user getUserById(List<user> users, int id){
-        for (user u : users){
-            if(u.getId() == id){
-                return u;
-            }
-        }
-        return null;
-    }
-
-    public static List<video> removeVideo(List<video> videos, video video){
-        List<video> temp = new ArrayList<>();
+    public static List<Video> removeVideo(List<Video> videos, Video video){
+        List<Video> temp = new ArrayList<>();
         if (video == null){
             return videos;
         }
-        for (video v : videos){
-            if (v.getVideoId() != video.getVideoId()){
+        for (Video v : videos){
+            if (!Objects.equals(v.get_id(), video.get_id())){
                 temp.add(v);
             }
         }
         return temp;
     }
 
-    public static String getVideoDuration(Uri videoUri, Context context) throws IOException {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(context, videoUri);
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            assert time != null;
-            long timeInMilliSec = Long.parseLong(time);
-            long minutes = (timeInMilliSec / 1000) / 60;
-            long seconds = (timeInMilliSec / 1000) % 60;
-            return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "0:00";
-        } finally {
-            retriever.release();
+    public static String getStringAfterBackslash(String input) {
+        int index = input.lastIndexOf('\\');
+        if (index != -1 && index < input.length() - 1) {
+            return input.substring(index + 1);
+        } else {
+            return ""; // Return an empty string if backslash is not found or is at the end
         }
+    }
+
+    public static boolean isUserExist(ArrayList<User> users, String email){
+        if (users == null){
+            return false;
+        }
+        int position = 0;
+        while(position!= users.size()){
+            if (users.get(position).getEmail().equals(email)){
+                return true;
+            }
+            position += 1;
+        }
+        return false;
+    }
+
+    public static String generateRandomString() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        // Generate the first two characters
+        for (int i = 0; i < 2; i++) {
+            sb.append(random.nextInt(6)); // Generates a number between 0 and 5
+        }
+
+        // Add the colon
+        sb.append(":");
+
+        // Generate the last two characters
+        for (int i = 0; i < 2; i++) {
+            sb.append(random.nextInt(6)); // Generates a number between 0 and 5
+        }
+
+        return sb.toString();
+    }
+
+    public static String extractTextAfterLastSlash(String input) {
+        if (input == null || !input.contains("/")) {
+            return input; // Return the input if it's null or doesn't contain a slash
+        }
+
+        int lastSlashIndex = input.lastIndexOf('/');
+        return input.substring(lastSlashIndex + 1);
+    }
+
+    public static String removeTrailingNewline(String str) {
+        if (str != null && str.endsWith("\n")) {
+            return str.substring(0, str.length() - 1);
+        }
+        return str;
     }
 }

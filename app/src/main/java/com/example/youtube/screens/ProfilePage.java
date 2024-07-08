@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.widget.Toast;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
+import com.example.youtube.entities.User;
 import com.example.youtube.viewmodels.ProfilePageViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -68,21 +67,15 @@ public class ProfilePage extends AppCompatActivity {
         viewModel.getCurrentUser().observe(this, this::displayUserInfo);
     }
 
-    private void displayUserInfo(user currentUser) {
+    private void displayUserInfo(User currentUser) {
         if (currentUser != null) {
             TextView username = findViewById(R.id.username);
             TextView userEmail = findViewById(R.id.user_email);
             ShapeableImageView userPic = findViewById(R.id.user_pic);
 
-            username.setText(currentUser.getName());
+            username.setText(currentUser.getUsername());
             userEmail.setText(currentUser.getEmail());
-            String profilePic = currentUser.getProfile_pic();
-            int profilePicId = getResources().getIdentifier(profilePic, "drawable", getPackageName());
-            if (profilePicId != 0) {
-                userPic.setImageResource(profilePicId);
-            } else {
-                userPic.setImageURI(Uri.parse(profilePic));
-            }
+            userPic.setImageBitmap(viewModel.getBitmap());
         }
     }
 
@@ -147,11 +140,13 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void navigateToHome() {
+        finish();
         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
         startActivity(intent);
     }
 
     private void navigateToAddVideo() {
+        finish();
         viewModel.isUserLoggedIn().observe(this, isLoggedIn -> {
             if (isLoggedIn) {
                 Intent intent = new Intent(ProfilePage.this, AddVideoActivity.class);

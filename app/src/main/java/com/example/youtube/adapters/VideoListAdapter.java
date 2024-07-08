@@ -1,12 +1,14 @@
 package com.example.youtube.adapters;
 
-import static com.example.youtube.utils.GeneralUtils.getUserById;
+import static com.example.youtube.utils.GeneralUtils.generateRandomString;
+import static com.example.youtube.utils.GeneralUtils.removeTrailingNewline;
 import static com.example.youtube.utils.GeneralUtils.removeVideo;
+import static com.example.youtube.utils.GeneralUtils.timeAgo;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtube.R;
-import com.example.youtube.entities.user;
-import com.example.youtube.entities.video;
+import com.example.youtube.entities.Video;
+import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.screens.VideoPlayerActivity;
 import com.example.youtube.utils.GeneralUtils;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -27,21 +29,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
-    private final Context context;
-    private List<video> videos;
-    private final List<user> users;
-    private final video currentVideo;
+    private List<Video> videos;
+    private final Video currentVideo;
     private final Activity activity;
     private final Boolean isMain;
+    private final MediaRepository repo;
+    private final Context context;
 
 
-    public VideoListAdapter(Context context, video currentVideo, List<user> users, Activity activity) {
-        this.context = context;
-        this.users = users;
+    public VideoListAdapter(Video currentVideo, Activity activity, MediaRepository repo, Context context) {
         this.currentVideo = currentVideo;
         this.videos = new ArrayList<>();
         this.activity = activity;
         isMain = currentVideo == null;
+        this.repo = repo;
+        this.context = context;
     }
 
     @NonNull
@@ -53,37 +55,22 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        video currentVideo = videos.get(position);
-        user creator = getUserById(users, currentVideo.getCreatorId());
-        String formatViews = GeneralUtils.getViews(currentVideo.getViews()) + " views";
-        holder.video_name.setText(currentVideo.getVideo_name());
-        assert creator != null;
-        holder.creator.setText(creator.getName());
+        Video currentVideo = videos.get(position);
+        String formatViews = GeneralUtils.getViews(Integer.toString(currentVideo.getViews())) + " views";
+        holder.video_name.setText(removeTrailingNewline(currentVideo.getTitle()));
+        holder.creator.setText(currentVideo.getUserDetails().getUsername());
         holder.views.setText(formatViews);
-        holder.publish_date.setText(GeneralUtils.timeAgo(currentVideo.getDate_of_release()));
-        holder.video_length.setText(currentVideo.getVideo_length());
+        holder.publish_date.setText(timeAgo(currentVideo.getDate()));
+        holder.video_length.setText(generateRandomString());
 
-        // Load thumbnail
-        String thumbnailName = currentVideo.getThumbnail();
-        int thumbnailId = context.getResources().getIdentifier(thumbnailName, "drawable", context.getPackageName());
-        if (thumbnailId != 0) {
-            holder.thumbnail.setImageResource(thumbnailId);
-        } else {
-            holder.thumbnail.setImageURI(Uri.parse(thumbnailName));
-        }
+        holder.thumbnail.setImageBitmap(repo.getImage(currentVideo.getThumbnail()));
+        Bitmap b = repo.getImage(currentVideo.getUserDetails().getIcon());
+        holder.creator_pic.setImageBitmap(b);
 
-        // Load creator picture
-        String creatorPic = creator.getProfile_pic();
-        int creatorPicId = context.getResources().getIdentifier(creatorPic, "drawable", context.getPackageName());
-        if (creatorPicId != 0) {
-            holder.creator_pic.setImageResource(creatorPicId);
-        } else {
-            holder.creator_pic.setImageURI(Uri.parse(creatorPic));
-        }
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, VideoPlayerActivity.class);
-            intent.putExtra("video_item", currentVideo.getVideoId());
+            intent.putExtra("video_item", currentVideo.get_id());
             context.startActivity(intent);
             if (!isMain){
                 activity.finish();
@@ -96,7 +83,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return videos.size();
     }
 
-    public void setVideos(List<video> videos) {
+    public void setVideos(List<Video> videos) {
         this.videos.clear();
         this.videos.addAll(videos);
         this.videos = removeVideo(this.videos,currentVideo);
