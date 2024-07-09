@@ -5,6 +5,9 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.youtube.R;
+import com.example.youtube.data.UserSession;
+import com.example.youtube.entities.EmailCheckRequest;
+import com.example.youtube.entities.EmailCheckResponse;
 import com.example.youtube.entities.LoginRequest;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
@@ -73,13 +76,34 @@ public class UserApi {
     }
 
     public void updateUser(String userId, User updatedUser) {
-        Call<Void> call = usersWebServiceApi.updateUser(userId,updatedUser);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = usersWebServiceApi.updateUser(userId,updatedUser,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+        });
+    }
+
+    public void checkEmailExists(String email, final ApiCallback<Boolean> callback) {
+        EmailCheckRequest emailCheckRequest = new EmailCheckRequest(email);
+        Call<EmailCheckResponse> call = usersWebServiceApi.checkEmailExists(emailCheckRequest);
+        call.enqueue(new Callback<EmailCheckResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<EmailCheckResponse> call, @NonNull Response<EmailCheckResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body().isExists());
+                } else {
+                    callback.onSuccess(false);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<EmailCheckResponse> call, @NonNull Throwable t) {
+                callback.onError(t.getMessage());
+            }
         });
     }
     public void login(String email, String password, final ApiCallback<LoginResponse> callback) {

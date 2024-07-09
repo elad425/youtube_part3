@@ -1,7 +1,5 @@
 package com.example.youtube.entities;
 
-import android.util.Log;
-
 public class LoginResponse {
     private String token;
     private User user;

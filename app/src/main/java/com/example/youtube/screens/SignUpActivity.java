@@ -16,13 +16,12 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.R;
+import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.User;
-import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.SignUpViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.List;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -105,6 +104,8 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+
+
     private void signUp() {
         String username = Objects.requireNonNull(usernameEditText.getEditText()).getText().toString().trim();
         String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
@@ -129,11 +130,6 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        List<User> users = viewModel.getUsers().getValue();
-        if(GeneralUtils.isUserExist(users,email)){
-            emailEditText.setError("this email is already exists");
-            return;
-        }
 
         if (username.isEmpty()||email.isEmpty()||password.isEmpty()||confirmPassword.isEmpty()){
             return;
@@ -157,8 +153,33 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Please upload an image", Toast.LENGTH_SHORT).show();
             return;
         }
-        User newUser = new User(username, email, password, imageUri.toString());
-        viewModel.signUp(newUser);
+
+        viewModel.checkEmailExists(email, new UserApi.ApiCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean exists) {
+                if (exists) {
+                    emailEditText.setError("This email already exists");
+                } else {
+                    viewModel.uploadImageToServer(imageUri, new UserApi.ApiCallback<String>() {
+                        @Override
+                        public void onSuccess(String imageUrl) {
+                            User newUser = new User(username, email, password, imageUrl);
+                            viewModel.signUp(newUser);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Toast.makeText(SignUpActivity.this, "Error uploading image: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(SignUpActivity.this, "Error checking email: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void clearErrorOnTyping(TextInputLayout textInputLayout) {

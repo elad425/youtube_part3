@@ -1,8 +1,15 @@
 package com.example.youtube.utils;
 
-import com.example.youtube.entities.User;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
+
 import com.example.youtube.entities.Video;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,18 +22,54 @@ import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static boolean isUserExist(List<User> users, String email){
-        if (users == null){
-            return false;
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
         }
-        int position = 0;
-        while(position!= users.size()){
-            if (users.get(position).getEmail().equals(email)){
-                return true;
+        return byteBuffer.toByteArray();
+    }
+
+    public static String getFileName(Context context, Uri uri) {
+        String result = null;
+        if (Objects.equals(uri.getScheme(), "content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
             }
-            position += 1;
         }
-        return false;
+        if (result == null) {
+            result = uri.getPath();
+            assert result != null;
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    public static String getFileExtension(Context context, Uri uri) {
+        String extension = null;
+        try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                extension = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                if (extension != null) {
+                    int dotIndex = extension.lastIndexOf('.');
+                    if (dotIndex != -1) {
+                        extension = extension.substring(dotIndex + 1);
+                    } else {
+                        extension = "";
+                    }
+                }
+            }
+        }
+        return extension;
     }
 
     public static String timeAgo(String dateString) {
@@ -112,20 +155,6 @@ public class GeneralUtils {
         } else {
             return "";
         }
-    }
-
-    public static boolean isUserExist(ArrayList<User> users, String email){
-        if (users == null){
-            return false;
-        }
-        int position = 0;
-        while(position!= users.size()){
-            if (users.get(position).getEmail().equals(email)){
-                return true;
-            }
-            position += 1;
-        }
-        return false;
     }
 
     public static String generateRandomString() {

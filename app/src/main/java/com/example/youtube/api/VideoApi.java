@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.youtube.R;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.Comment;
 import com.example.youtube.Daos.videoDao;
 import com.example.youtube.entities.Video;
@@ -41,8 +42,26 @@ public class VideoApi {
         });
     }
 
+    public void getVideoById(String id, final ApiCallback<Video> callback){
+        Call<Video> call = videoWebServiceApi.getVideoById(id);
+        call.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Failed to get image: " + response.message());
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
+            }
+        });
+    }
+
     public void createVideo(Video newvideo) {
-        Call<Void> call = videoWebServiceApi.createVideo(newvideo);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.createVideo(newvideo,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -54,7 +73,8 @@ public class VideoApi {
     }
 
     public void updateVideo(String videoId, Video updatedvideo) {
-        Call<Void> call = videoWebServiceApi.updateVideo(updatedvideo.getUserDetails().get_id(),videoId,updatedvideo);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.updateVideo(updatedvideo.getUserDetails().get_id(),videoId,updatedvideo,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -66,7 +86,8 @@ public class VideoApi {
     }
 
     public void deleteVideo(String videoId) {
-        Call<Void> call = videoWebServiceApi.deleteVideo(videoId);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.deleteVideo(videoId,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -95,7 +116,8 @@ public class VideoApi {
     }
 
     public void createComment(Comment comment) {
-        Call<Void> call = videoWebServiceApi.createComment(comment);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.createComment(comment,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -107,7 +129,8 @@ public class VideoApi {
     }
 
     public void deleteComment(String commentId) {
-        Call<Void> call = videoWebServiceApi.deleteComment(commentId);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.deleteComment(commentId,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -119,7 +142,8 @@ public class VideoApi {
     }
 
     public void updateComment(Comment comment) {
-        Call<Void> call = videoWebServiceApi.updateVideo(comment.get_id(),comment);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = videoWebServiceApi.updateVideo(comment.get_id(),comment,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

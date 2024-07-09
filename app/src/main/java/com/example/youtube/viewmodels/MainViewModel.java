@@ -29,7 +29,7 @@ public class MainViewModel extends AndroidViewModel {
     public MediaRepository getMediaRepository(){ return mediaRepository;}
 
     public void initImages(){
-        mediaRepository.initImages();
+        mediaRepository.initVideoMedia();
     }
 
     public LiveData<List<Image>> getAllImagesLive(){
