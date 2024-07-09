@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.entities.Comment;
+import com.example.youtube.entities.Comment2;
+import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 
 import com.example.youtube.api.VideoApi;
@@ -18,6 +20,7 @@ public class VideoRepository {
 
     private final LiveData<List<Video>> videos;
     private final MutableLiveData<List<Comment>> comments;
+    private final MutableLiveData<Comment> addedComment;
 
     public VideoRepository(Application application) {
         db = AppDatabase.getInstance(application);
@@ -25,6 +28,7 @@ public class VideoRepository {
         videoApi.getVideos();
         videos = db.videoDao().getAllVideosLive();
         comments = new MutableLiveData<>();
+        addedComment = new MutableLiveData<>();
     }
 
     public void insertVideo(Video newVideo) {
@@ -68,9 +72,21 @@ public class VideoRepository {
         return comments;
     }
 
-    public void addComment(Comment comment){
-        videoApi.createComment(comment);
+    public void addComment(Comment comment, User user){
+        videoApi.createComment(comment, new VideoApi.ApiCallback<Comment2>() {
+            @Override
+            public void onSuccess(Comment2 result) {
+                Comment comment1 = result.commentFormatConvert(result,user);
+                addedComment.setValue(comment1);
+            }
+
+            @Override
+            public void onError(String error) {
+            }
+        });
     }
+
+    public MutableLiveData<Comment> getAddedComment() {return addedComment;}
 
     public void deleteComment(Comment comment){
         videoApi.deleteComment(comment.get_id());

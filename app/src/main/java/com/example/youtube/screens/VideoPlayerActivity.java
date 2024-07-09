@@ -85,6 +85,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
         AtomicBoolean videoFile = new AtomicBoolean(false);
         ImageButton btnEdit = findViewById(R.id.edit_video);
 
+        viewModel.getAddedComment().observe(this, comment -> {
+            if (comment != null){
+                List<Comment> updatedComments = viewModel.getCommentList().getValue();
+                assert updatedComments != null;
+                updatedComments.add(comment);
+                viewModel.getCommentList().setValue(updatedComments);
+            }
+        });
+
         viewModel.getCommentList().observe(this, comments -> {
             if (comments != null) {
                 videosComments.set(true);

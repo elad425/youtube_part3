@@ -30,11 +30,13 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isDisliked = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isEditVideoVisible = new MutableLiveData<>(false);
     private MutableLiveData<List<Comment>> commentList = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Comment> addedComment;
 
     public VideoPlayerViewModel(Application application) {
         super(application);
         videoRepository = new VideoRepository(application);
         mediaRepository = new MediaRepository(application);
+        addedComment = videoRepository.getAddedComment();
     }
 
     public LiveData<List<Video>> getVideos(){
@@ -123,12 +125,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         Video video = currentVideo.getValue();
         if (user != null && video != null) {
             Comment newComment = new Comment(commentText, user, video.get_id());
-            List<Comment> updatedComments = commentList.getValue();
-            if (updatedComments != null) {
-                videoRepository.addComment(newComment);
-                updatedComments.add(newComment);
-                commentList.setValue(updatedComments);
-            }
+            videoRepository.addComment(newComment, user);
         }
     }
 
@@ -188,6 +185,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     public LiveData<Boolean> isLiked() { return isLiked; }
     public LiveData<Boolean> isDisliked() { return isDisliked; }
     public LiveData<Boolean> isEditVideoVisible() { return isEditVideoVisible; }
-    public LiveData<List<Comment>> getCommentList() { return commentList; }
+    public MutableLiveData<List<Comment>> getCommentList() { return commentList; }
     public MutableLiveData<Bitmap> getBitmap() {return bitmap;}
+    public MutableLiveData<Comment> getAddedComment() {return addedComment;}
 }

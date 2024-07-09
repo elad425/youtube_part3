@@ -1,6 +1,7 @@
 package com.example.youtube.api;
 
 import com.example.youtube.entities.Comment;
+import com.example.youtube.entities.Comment2;
 import com.example.youtube.entities.Video;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface videoWebServiceApi {
     @GET("api/videos/comment/{id}")
     Call<List<Comment>> getCommentById(@Path("id") String id);
     @POST("api/videos/comment")
-    Call<Void> createComment(@Body Comment comment,@Header("Authorization") String token);
+    Call<Comment2> createComment(@Body Comment comment, @Header("Authorization") String token);
     @DELETE("api/videos/comment/{id}")
     Call<Void> deleteComment(@Path("id") String id,@Header("Authorization") String token);
     @PATCH("api/videos/comment/{id}")

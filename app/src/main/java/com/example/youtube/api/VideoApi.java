@@ -8,6 +8,7 @@ import com.example.youtube.R;
 import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.Comment;
 import com.example.youtube.Daos.videoDao;
+import com.example.youtube.entities.Comment2;
 import com.example.youtube.entities.Video;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class VideoApi {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onError("Failed to get image: " + response.message());
+                    callback.onError(response.message());
                 }
             }
             @Override
@@ -115,15 +116,20 @@ public class VideoApi {
         });
     }
 
-    public void createComment(Comment comment) {
+    public void createComment(Comment comment, final ApiCallback<Comment2> callback) {
         String token = "Bearer " + UserSession.getInstance().getToken();
-        Call<Void> call = videoWebServiceApi.createComment(comment,token);
-        call.enqueue(new Callback<Void>() {
+        Call<Comment2> call = videoWebServiceApi.createComment(comment,token);
+        call.enqueue(new Callback<Comment2>() {
             @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+            public void onResponse(@NonNull Call<Comment2> call, @NonNull Response<Comment2> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message());
+                }
             }
             @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Comment2> call, @NonNull Throwable t) {
             }
         });
     }
