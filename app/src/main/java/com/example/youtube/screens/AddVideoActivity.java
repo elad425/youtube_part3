@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
+import com.example.youtube.api.MediaApi;
+import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 import com.example.youtube.data.UserSession;
@@ -27,6 +29,7 @@ import com.example.youtube.viewmodels.AddVideoViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class AddVideoActivity extends AppCompatActivity {
 
@@ -96,6 +99,11 @@ public class AddVideoActivity extends AppCompatActivity {
                 Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
                 navigateToMainActivity();
                 finish();
+            }
+        });
+        viewModel.getUploadUrls().observe(this, urls -> {
+            if (urls != null && !urls.isEmpty()) {
+                uploadVideoData(urls);
             }
         });
     }
@@ -193,8 +201,15 @@ public class AddVideoActivity extends AppCompatActivity {
             Toast.makeText(this, "Please fill all fields and choose a video and a thumbnail", Toast.LENGTH_SHORT).show();
             return;
         }
+        viewModel.uploadVideoAndThumbnail(videoUri, thumbnailUri);
+    }
+
+    private void uploadVideoData(Map<String, String> urls) {
+        String videoUrl = urls.get("videoUrl");
+        String thumbnailUrl = urls.get("thumbnailUrl");
+        String videoName = videoNameEditText.getText().toString().trim();
         User user = UserSession.getInstance().getUser();
-        Video newVideo = new Video(videoName,"",videoUri.toString(), thumbnailUri.toString(),user);
+        Video newVideo = new Video(videoName, "", videoUrl, thumbnailUrl, user);
         viewModel.addVideo(newVideo);
     }
 }
