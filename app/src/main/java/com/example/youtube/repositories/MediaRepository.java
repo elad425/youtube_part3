@@ -49,14 +49,20 @@ public class MediaRepository {
     public void initVideoMedia(){
         List<Video> videos = db.videoDao().getAllVideos();
         for(Video v : videos){
-            api.getProfileImage(v.getUserDetails().getIcon());
-            api.getThumbnail(v.getThumbnail());
+            if (db.imgDao().getImageById(v.getThumbnail()) == null) {
+                api.getThumbnail(v.getThumbnail());
+            }
+            if (db.imgDao().getImageById(v.getUserDetails().getIcon()) == null){
+                api.getProfileImage(v.getUserDetails().getIcon());
+            }
         }
     }
 
     public void initCommentMedia(List<Comment> comments){
         for(Comment c : comments){
-            api.getProfileImage(c.getUser_id().getIcon());
+            if (db.imgDao().getImageById(c.getUser_id().getIcon()) == null) {
+                api.getProfileImage(c.getUser_id().getIcon());
+            }
         }
     }
 

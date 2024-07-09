@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.youtube.entities.Comment;
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
+import com.example.youtube.repositories.CommentRepository;
 import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
@@ -22,7 +23,8 @@ import java.util.Objects;
 public class VideoPlayerViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;
     private final MediaRepository mediaRepository;
-    private final MutableLiveData<Bitmap> bitmap = new MutableLiveData<>();
+    private final CommentRepository commentRepository;
+    private final MutableLiveData<Bitmap> UserProfilePic = new MutableLiveData<>();
     private final MutableLiveData<Video> currentVideo = new MutableLiveData<>();
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<User> currentCreator = new MutableLiveData<>();
@@ -30,11 +32,14 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isDisliked = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isEditVideoVisible = new MutableLiveData<>(false);
     private MutableLiveData<List<Comment>> commentList = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Comment> addedComment;
 
     public VideoPlayerViewModel(Application application) {
         super(application);
         videoRepository = new VideoRepository(application);
         mediaRepository = new MediaRepository(application);
+        commentRepository = new CommentRepository(application);
+        addedComment = commentRepository.getAddedComment();
     }
 
     public LiveData<List<Video>> getVideos(){
@@ -52,10 +57,10 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         currentVideo.setValue(loadedVideo);
         if (loadedVideo != null) {
             currentCreator.setValue(loadedVideo.getUserDetails());
-            commentList = videoRepository.getCommentByVideoId(
+            commentList = commentRepository.getCommentByVideoId(
                     Objects.requireNonNull(currentVideo.getValue()).get_id());
-            Bitmap b = mediaRepository.getImage(Objects.requireNonNull(currentVideo.getValue().getUserDetails().getIcon()));
-            bitmap.setValue(b);
+            UserProfilePic.setValue(mediaRepository.getImage(
+                    Objects.requireNonNull(currentVideo.getValue().getUserDetails().getIcon())));
         }
     }
 
@@ -123,12 +128,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         Video video = currentVideo.getValue();
         if (user != null && video != null) {
             Comment newComment = new Comment(commentText, user, video.get_id());
-            List<Comment> updatedComments = commentList.getValue();
-            if (updatedComments != null) {
-                videoRepository.addComment(newComment);
-                updatedComments.add(newComment);
-                commentList.setValue(updatedComments);
-            }
+            commentRepository.addComment(newComment, user);
         }
     }
 
@@ -137,7 +137,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         if (video != null) {
             List<Comment> updatedComments = commentList.getValue();
             if (updatedComments != null && position < updatedComments.size()) {
-                videoRepository.deleteComment(updatedComments.get(position));
+                commentRepository.deleteComment(updatedComments.get(position));
                 updatedComments.remove(position);
                 commentList.setValue(updatedComments);
             }
@@ -151,7 +151,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
             if (updatedComments != null && position < updatedComments.size()) {
                 Comment editedComment = updatedComments.get(position);
                 editedComment.setCommentMessage(editedCommentText);
-                videoRepository.updateComment(editedComment);
+                commentRepository.updateComment(editedComment);
                 commentList.setValue(updatedComments);
             }
         }
@@ -188,6 +188,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     public LiveData<Boolean> isLiked() { return isLiked; }
     public LiveData<Boolean> isDisliked() { return isDisliked; }
     public LiveData<Boolean> isEditVideoVisible() { return isEditVideoVisible; }
-    public LiveData<List<Comment>> getCommentList() { return commentList; }
-    public MutableLiveData<Bitmap> getBitmap() {return bitmap;}
+    public MutableLiveData<List<Comment>> getCommentList() { return commentList; }
+    public MutableLiveData<Bitmap> getUserProfilePic() {return UserProfilePic;}
+    public MutableLiveData<Comment> getAddedComment() {return addedComment;}
 }

@@ -13,6 +13,14 @@ public class Comment {
         this.video_id = video_id;
     }
 
+    public Comment(String _id, String commentMessage, String date , User user_id, String video_id){
+        this.commentMessage = commentMessage;
+        this.user_id = user_id;
+        this.video_id = video_id;
+        this._id = _id;
+        this.date = date;
+    }
+
     public String get_id() {
         return _id;
     }
