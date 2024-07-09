@@ -23,7 +23,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-
 public class LogIn extends AppCompatActivity {
 
     private TextInputLayout emailEditText, passwordEditText;
@@ -39,7 +38,6 @@ public class LogIn extends AppCompatActivity {
         setupUI();
         observeViewModel();
         checkSavedToken();
-
     }
 
     private void setupUI() {
@@ -52,10 +50,10 @@ public class LogIn extends AppCompatActivity {
         Button signUpButton = findViewById(R.id.login_to_signup_button);
 
         setupTextWatchers();
-
         loginButton.setOnClickListener(v -> login());
         signUpButton.setOnClickListener(v -> signUp());
     }
+
     private void checkSavedToken() {
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
@@ -65,6 +63,7 @@ public class LogIn extends AppCompatActivity {
             Log.d("LoginActivity", "No token found");
         }
     }
+
     private void setupTextWatchers() {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -77,7 +76,6 @@ public class LogIn extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         };
-
         Objects.requireNonNull(emailEditText.getEditText()).addTextChangedListener(textWatcher);
         Objects.requireNonNull(passwordEditText.getEditText()).addTextChangedListener(textWatcher);
     }
@@ -115,7 +113,6 @@ public class LogIn extends AppCompatActivity {
         if (!validateInput(email, password)) {
             return;
         }
-
         viewModel.login(email, password);
     }
 

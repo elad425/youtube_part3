@@ -111,16 +111,20 @@ public class SignUpActivity extends AppCompatActivity {
         String email = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
         String password = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
         String confirmPassword = Objects.requireNonNull(confirmPasswordEditText.getEditText()).getText().toString().trim();
+
         if (username.isEmpty()){
             usernameEditText.setError("You need to enter a username");
         }
+
         if (email.isEmpty()){
             emailEditText.setError("Please enter an email");
         }
+
         if (password.isEmpty()){
             passwordEditText.setError("Please enter a password");
 
         }
+
         if(confirmPassword.isEmpty()){
             confirmPasswordEditText.setError("You need to enter a password confirmation");
         }
@@ -130,10 +134,10 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-
         if (username.isEmpty()||email.isEmpty()||password.isEmpty()||confirmPassword.isEmpty()){
             return;
         }
+
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailEditText.setError("Please enter a valid email address");
             return;

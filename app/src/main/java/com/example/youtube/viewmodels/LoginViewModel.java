@@ -62,7 +62,6 @@ public class LoginViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String error) {
-                // Handle error
                 loginSuccessful.setValue(false);
             }
         });

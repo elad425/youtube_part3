@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.example.youtube.R;
 import com.example.youtube.data.UserSession;
-import com.example.youtube.entities.Comment;
 import com.example.youtube.Daos.videoDao;
 import com.example.youtube.entities.UserDetails;
 import com.example.youtube.entities.Video;
@@ -52,23 +51,6 @@ public class VideoApi {
             }
             @Override
             public void onFailure(@NonNull Call<List<Video>> call, @NonNull Throwable t) {}
-        });
-    }
-
-    public void getVideoById(String id, final ApiCallback<Video> callback){
-        Call<Video> call = videoWebServiceApi.getVideoById(id);
-        call.enqueue(new Callback<Video>() {
-            @Override
-            public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError("Failed to get image: " + response.message());
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
-            }
         });
     }
 
@@ -149,62 +131,6 @@ public class VideoApi {
     public void deleteVideo(String userId,String videoId) {
         String token = "Bearer " + UserSession.getInstance().getToken();
         Call<Void> call = videoWebServiceApi.deleteVideo(userId,videoId,token);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-            }
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-            }
-        });
-    }
-
-    public void getCommentsById(String id, final ApiCallback<List<Comment>> callback){
-        Call<List<Comment>> call = videoWebServiceApi.getCommentById(id);
-        call.enqueue(new Callback<List<Comment>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Comment>> call, @NonNull Response<List<Comment>> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError("Failed to get image: " + response.message());
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<List<Comment>> call, @NonNull Throwable t) {
-            }
-        });
-    }
-
-    public void createComment(Comment comment) {
-        String token = "Bearer " + UserSession.getInstance().getToken();
-        Call<Void> call = videoWebServiceApi.createComment(comment,token);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-            }
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-            }
-        });
-    }
-
-    public void deleteComment(String commentId) {
-        String token = "Bearer " + UserSession.getInstance().getToken();
-        Call<Void> call = videoWebServiceApi.deleteComment(commentId,token);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-            }
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-            }
-        });
-    }
-
-    public void updateComment(Comment comment) {
-        String token = "Bearer " + UserSession.getInstance().getToken();
-        Call<Void> call = videoWebServiceApi.updateVideo(comment.get_id(),comment,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

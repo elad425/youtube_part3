@@ -36,16 +36,17 @@ public class SignUpViewModel extends AndroidViewModel {
         userRepository.insertUser(newUser);
         signUpSuccessful.setValue(true);
     }
+
     public void checkEmailExists(String email, UserApi.ApiCallback<Boolean> callback) {
         userApi.checkEmailExists(email, callback);
     }
+
     public void uploadImageToServer(Uri imageUri, UserApi.ApiCallback<String> callback) {
         mediaRepository.uploadProfileImg(imageUri, new MediaApi.ApiCallback<String>() {
             @Override
             public void onSuccess(String imageUrl) {
                 callback.onSuccess(imageUrl);
             }
-
             @Override
             public void onError(String error) {
                 callback.onError(error);

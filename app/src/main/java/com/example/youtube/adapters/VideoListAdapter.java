@@ -41,7 +41,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         this.currentVideo = currentVideo;
         this.videos = new ArrayList<>();
         this.activity = activity;
-        isMain = currentVideo == null;
+        this.isMain = currentVideo == null;
         this.repo = repo;
         this.context = context;
     }

@@ -61,7 +61,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         return commentList.size();
     }
 
-    public void updateComments(List<Comment> newComments) {
+    public void setComments(List<Comment> newComments) {
         this.commentList = newComments;
         notifyDataSetChanged();
     }
