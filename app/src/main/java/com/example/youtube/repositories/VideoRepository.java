@@ -32,7 +32,6 @@ public class VideoRepository {
         videoApi = new VideoApi(db.videoDao(),application.getApplicationContext());
         videoApi.getVideos();
         videos = db.videoDao().getAllVideosLive();
-        comments = new MutableLiveData<>();
         context = application.getApplicationContext();
         mediaApi = new MediaApi(db.imgDao(), application.getApplicationContext());
 
