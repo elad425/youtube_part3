@@ -73,8 +73,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         viewModel.loadVideo(getIntent().getStringExtra("video_item"));
         viewModel.loadUser(UserSession.getInstance().getUser());
         viewModel.incrementViews();
-
-        viewModel.getMediaRepository().downloadVideo(Objects.requireNonNull(viewModel.getCurrentVideo().getValue()).getVideo_src());
+        viewModel.getMediaRepository().downloadVideo(
+                Objects.requireNonNull(viewModel.getCurrentVideo().getValue()).getVideo_src());
 
         observeData();
     }
@@ -101,7 +101,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getBitmap().observe(this, bitmap -> {
+        viewModel.getUserProfilePic().observe(this, bitmap -> {
             if (bitmap != null) {
                 profilePic.set(true);
                 checkDataAndSetupUI(profilePic.get(),videosComments.get(),videoFile.get());
@@ -204,7 +204,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (currentCreator != null) {
             TextView tvCreator = findViewById(R.id.tv_creator);
             ShapeableImageView creatorPic = findViewById(R.id.creator_pic);
-            creatorPic.setImageBitmap(viewModel.getBitmap().getValue());
+            creatorPic.setImageBitmap(viewModel.getUserProfilePic().getValue());
             tvCreator.setText(currentCreator.getUsername());
         }
     }
@@ -215,6 +215,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rv_comments);
         ivToggleComments = findViewById(R.id.iv_toggle_comments);
         AddCommentBtn = findViewById(R.id.iv_add_comments);
+
         String userId;
         if (viewModel.getCurrentUser().getValue() == null){
             userId = null;
@@ -231,7 +232,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         rvComments.setAdapter(commentsAdapter);
 
         viewModel.getCommentList().observe(this, comments -> {
-            commentsAdapter.updateComments(comments);
+            commentsAdapter.setComments(comments);
             viewModel.initCommentsMedia(comments);
             tvComments.setText(String.format("Comments (%d)", comments.size()));
         });
@@ -247,7 +248,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void updateComments(List<Comment> comments) {
-        commentsAdapter.updateComments(comments);
+        commentsAdapter.setComments(comments);
         tvComments.setText(String.format(Locale.US, "Comments (%d)", comments.size()));
     }
 
@@ -430,7 +431,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             goToLogIn();
             return;
         }
-
         viewModel.toggleDislike();
     }
 
