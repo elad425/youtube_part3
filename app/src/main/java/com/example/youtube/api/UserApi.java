@@ -6,11 +6,15 @@ import androidx.annotation.NonNull;
 
 import com.example.youtube.R;
 import com.example.youtube.data.UserSession;
+import com.example.youtube.entities.EmailCheckRequest;
+import com.example.youtube.entities.EmailCheckResponse;
 import com.example.youtube.entities.LoginRequest;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,6 +86,26 @@ public class UserApi {
             }
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+        });
+    }
+
+    public void checkEmailExists(String email, final ApiCallback<Boolean> callback) {
+        EmailCheckRequest emailCheckRequest = new EmailCheckRequest(email);
+        Call<EmailCheckResponse> call = usersWebServiceApi.checkEmailExists(emailCheckRequest);
+        call.enqueue(new Callback<EmailCheckResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<EmailCheckResponse> call, @NonNull Response<EmailCheckResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body().isExists());
+                } else {
+                    callback.onSuccess(false);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<EmailCheckResponse> call, @NonNull Throwable t) {
+                callback.onError(t.getMessage());
+            }
         });
     }
     public void login(String email, String password, final ApiCallback<LoginResponse> callback) {

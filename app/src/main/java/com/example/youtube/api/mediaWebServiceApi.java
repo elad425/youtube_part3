@@ -19,6 +19,7 @@ public interface mediaWebServiceApi {
 
     @GET("/Videos/{path}")
     Call<ResponseBody> downloadVideo(@Path("path") String path);
+
     @Multipart
     @POST("upload")
     Call<ResponseBody> uploadProfileImage(@Part MultipartBody.Part file);
