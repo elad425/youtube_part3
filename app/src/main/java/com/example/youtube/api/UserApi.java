@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.youtube.R;
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.LoginRequest;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
@@ -73,7 +74,8 @@ public class UserApi {
     }
 
     public void updateUser(String userId, User updatedUser) {
-        Call<Void> call = usersWebServiceApi.updateUser(userId,updatedUser);
+        String token = "Bearer " + UserSession.getInstance().getToken();
+        Call<Void> call = usersWebServiceApi.updateUser(userId,updatedUser,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {

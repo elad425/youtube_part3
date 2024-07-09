@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", null);
         if (token != null) {
-            Log.d("MainActivity", "Token found: " + token);
             loginViewModel.validateToken(token);
             observeTokenValidation();
         }

@@ -35,6 +35,7 @@ public class LoginViewModel extends AndroidViewModel {
                         .edit()
                         .putString("token", result.getToken())
                         .apply();
+                UserSession.getInstance().setToken(result.getToken());
                 loginSuccessful.setValue(true);
             }
 

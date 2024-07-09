@@ -46,8 +46,7 @@ public class ProfilePageViewModel extends AndroidViewModel {
     }
 
     public void logOut() {
-        UserSession.getInstance().setUser(null);
-
+        UserSession.getInstance().clearUserSession(getApplication());
         isUserLoggedIn.setValue(false);
         currentUser.setValue(null);
     }

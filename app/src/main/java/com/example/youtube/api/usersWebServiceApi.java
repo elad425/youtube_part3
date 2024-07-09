@@ -21,9 +21,9 @@ public interface usersWebServiceApi {
     @POST("api/users")
     Call<Void> createUser(@Body User user);
     @DELETE("api/users//{id}")
-    Call<Void> deleteUser(@Path("id") String id);
+    Call<Void> deleteUser(@Path("id") String id,@Header("Authorization") String token);
     @PUT("api/users//{id}")
-    Call<Void> updateUser(@Path("id") String id ,@Body User user);
+    Call<Void> updateUser(@Path("id") String id ,@Body User user,@Header("Authorization") String token);
     @POST("api/users/login")
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
     @GET("api/tokens")
