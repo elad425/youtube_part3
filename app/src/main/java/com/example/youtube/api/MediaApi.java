@@ -1,6 +1,7 @@
 package com.example.youtube.api;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,8 +10,14 @@ import com.example.youtube.Daos.imgDao;
 import com.example.youtube.R;
 import com.example.youtube.entities.Image;
 import com.example.youtube.utils.GeneralUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -107,19 +114,52 @@ public class MediaApi {
         });
     }
 
-    public void uploadImageToServer(String imagePath) {
-        File file = new File(imagePath);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-        Call<ResponseBody> call = mediaWebServiceApi.uploadProfileImage(body);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+    public void uploadImageToServer(Uri imageUri, Context context, final ApiCallback<String> callback) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            byte[] imageData = GeneralUtils.getBytes(inputStream);
+
+            String fileName = GeneralUtils.getFileName(context, imageUri);
+            String fileExtension = GeneralUtils.getFileExtension(context, imageUri);
+            if (fileExtension == null || fileExtension.isEmpty()) {
+                fileExtension = "jpg"; // default to jpg if no extension
             }
-            @Override
-            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+            if (!fileName.endsWith("." + fileExtension)) {
+                fileName += "." + fileExtension;
             }
-        });
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageData);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileName, requestFile);
+
+            Call<ResponseBody> call = mediaWebServiceApi.uploadProfileImage(body);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseBody = response.body().string();
+                            JSONObject jsonObject = new JSONObject(responseBody);
+                            String filePath = jsonObject.getString("path");
+                            callback.onSuccess(filePath);
+                        } catch (IOException e) {
+                            callback.onError("Failed to read response: " + e.getMessage());
+                        } catch (JSONException e) {
+                            callback.onError("Failed to parse response: " + e.getMessage());
+                        }
+                    } else {
+                        callback.onError("Failed to upload image: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                    callback.onError("Network error: " + t.getMessage());
+                }
+            });
+        } catch (IOException e) {
+            callback.onError("Failed to open input stream: " + e.getMessage());
+        }
     }
 
     public interface ApiCallback<T> {

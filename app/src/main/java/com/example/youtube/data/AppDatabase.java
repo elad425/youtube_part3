@@ -19,7 +19,7 @@ import com.example.youtube.utils.videoConverters;
 public abstract class AppDatabase extends RoomDatabase {
     static AppDatabase instance;
     public abstract videoDao videoDao();
-    public abstract imgDao imgDao();
+    public abstract  imgDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {

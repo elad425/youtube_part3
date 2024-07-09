@@ -1,11 +1,14 @@
 package com.example.youtube.viewmodels;
 
 import android.app.Application;
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.youtube.api.MediaApi;
 import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
@@ -41,12 +44,24 @@ public class SignUpViewModel extends AndroidViewModel {
     public LiveData<List<User>> getUsers(){return users;}
 
     public void signUp(User newUser) {
-        mediaRepository.uploadProfileImg(newUser.getIcon());
+        //mediaRepository.uploadProfileImg(newUser.getIcon());
         userRepository.insertUser(newUser);
         signUpSuccessful.setValue(true);
     }
     public void checkEmailExists(String email, UserApi.ApiCallback<Boolean> callback) {
         userApi.checkEmailExists(email, callback);
     }
+    public void uploadImageToServer(Uri imageUri, UserApi.ApiCallback<String> callback) {
+        mediaRepository.uploadProfileImg(imageUri, new MediaApi.ApiCallback<String>() {
+            @Override
+            public void onSuccess(String imageUrl) {
+                callback.onSuccess(imageUrl);
+            }
 
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
 }

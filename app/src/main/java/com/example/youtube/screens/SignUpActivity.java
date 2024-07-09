@@ -162,8 +162,18 @@ public class SignUpActivity extends AppCompatActivity {
                 if (exists) {
                     emailEditText.setError("This email already exists");
                 } else {
-                    User newUser = new User(username, email, password, imageUri.toString());
-                    viewModel.signUp(newUser);
+                    viewModel.uploadImageToServer(imageUri, new UserApi.ApiCallback<String>() {
+                        @Override
+                        public void onSuccess(String imageUrl) {
+                            User newUser = new User(username, email, password, imageUrl);
+                            viewModel.signUp(newUser);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Toast.makeText(SignUpActivity.this, "Error uploading image: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
 
