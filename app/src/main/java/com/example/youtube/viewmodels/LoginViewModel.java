@@ -55,6 +55,7 @@ public class LoginViewModel extends AndroidViewModel {
         userApi.validateToken(token, new UserApi.ApiCallback<User>() {
             @Override
             public void onSuccess(User result) {
+                UserSession.getInstance().setToken(token);
                 UserSession.getInstance().setUser(result);
                 loginSuccessful.setValue(true);
             }

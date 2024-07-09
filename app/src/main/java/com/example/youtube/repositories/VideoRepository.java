@@ -49,7 +49,7 @@ public class VideoRepository {
 
     public void deleteVideo(Video videoToDelete) {
         db.videoDao().delete(videoToDelete);
-        videoApi.deleteVideo(videoToDelete.get_id());
+        videoApi.deleteVideo(videoToDelete.getUserDetails().get_id(),videoToDelete.get_id());
     }
 
     public LiveData<List<Video>> getAllVideosLive() {

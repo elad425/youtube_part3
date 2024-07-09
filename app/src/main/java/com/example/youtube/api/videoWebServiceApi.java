@@ -31,8 +31,8 @@ public interface videoWebServiceApi {
     @Multipart
     @POST("upload")
     Call<ResponseBody> uploadVideo(@Part MultipartBody.Part file, @Header("Authorization") String token);
-    @DELETE("api/videos/{id}")
-    Call<Void> deleteVideo(@Path("id") String id,@Header("Authorization") String token);
+    @DELETE("api/users/{id}/videos/{pid}")
+    Call<Void> deleteVideo(@Path("id") String id, @Path("pid") String pid,@Header("Authorization") String token);
     @PUT("api/users/{id}/videos/{pid}")
     Call<Void> updateVideo(@Path("id") String id, @Path("pid") String pid  ,@Body Video video,@Header("Authorization") String token);
     @GET("api/videos/comment/{id}")

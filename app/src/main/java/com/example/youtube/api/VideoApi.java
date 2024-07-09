@@ -74,6 +74,7 @@ public class VideoApi {
 
     public void createVideo(Video newvideo) {
         //UserDetails userDetails = new UserDetails(newvideo.getUserDetails().getUsername(),newvideo.getUserDetails().getIcon());
+        
         String token = "Bearer " + UserSession.getInstance().getToken();
         Call<Void> call = videoWebServiceApi.createVideo(newvideo.getUserDetails().get_id(),newvideo,token);
         call.enqueue(new Callback<Void>() {
@@ -145,9 +146,9 @@ public class VideoApi {
         }
     }
 
-    public void deleteVideo(String videoId) {
+    public void deleteVideo(String userId,String videoId) {
         String token = "Bearer " + UserSession.getInstance().getToken();
-        Call<Void> call = videoWebServiceApi.deleteVideo(videoId,token);
+        Call<Void> call = videoWebServiceApi.deleteVideo(userId,videoId,token);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
