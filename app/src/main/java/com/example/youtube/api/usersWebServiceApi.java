@@ -22,7 +22,7 @@ public interface usersWebServiceApi {
     Call<User> getUserById(@Path("id") String id);
     @POST("api/users")
     Call<Void> createUser(@Body User user);
-    @DELETE("api/users//{id}")
+    @DELETE("api/users/{id}")
     Call<Void> deleteUser(@Path("id") String id,@Header("Authorization") String token);
     @PUT("api/users//{id}")
     Call<Void> updateUser(@Path("id") String id ,@Body User user,@Header("Authorization") String token);

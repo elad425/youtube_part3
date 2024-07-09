@@ -4,9 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
-import android.webkit.MimeTypeMap;
 
-import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 
 import java.io.ByteArrayOutputStream;
@@ -24,19 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class GeneralUtils {
 
-    public static boolean isUserExist(List<User> users, String email){
-        if (users == null){
-            return false;
-        }
-        int position = 0;
-        while(position!= users.size()){
-            if (users.get(position).getEmail().equals(email)){
-                return true;
-            }
-            position += 1;
-        }
-        return false;
-    }
     public static byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         int bufferSize = 1024;
@@ -51,7 +36,7 @@ public class GeneralUtils {
 
     public static String getFileName(Context context, Uri uri) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if (Objects.equals(uri.getScheme(), "content")) {
             try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
@@ -60,6 +45,7 @@ public class GeneralUtils {
         }
         if (result == null) {
             result = uri.getPath();
+            assert result != null;
             int cut = result.lastIndexOf('/');
             if (cut != -1) {
                 result = result.substring(cut + 1);
@@ -169,20 +155,6 @@ public class GeneralUtils {
         } else {
             return "";
         }
-    }
-
-    public static boolean isUserExist(ArrayList<User> users, String email){
-        if (users == null){
-            return false;
-        }
-        int position = 0;
-        while(position!= users.size()){
-            if (users.get(position).getEmail().equals(email)){
-                return true;
-            }
-            position += 1;
-        }
-        return false;
     }
 
     public static String generateRandomString() {

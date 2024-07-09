@@ -13,8 +13,6 @@ import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

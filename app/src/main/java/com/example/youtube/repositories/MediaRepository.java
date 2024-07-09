@@ -11,9 +11,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.api.MediaApi;
-import com.example.youtube.api.UserApi;
 import com.example.youtube.data.AppDatabase;
 import com.example.youtube.entities.Image;
+import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 
 import java.io.File;
@@ -47,11 +47,14 @@ public class MediaRepository {
 
     public void initImages(){
         List<Video> videos = db.videoDao().getAllVideos();
-        db.imgDao().clear();
         for(Video v : videos){
             api.getProfileImage(v.getUserDetails().getIcon());
             api.getThumbnail(v.getThumbnail());
         }
+    }
+
+    public void initUserProfilePic(User user){
+        api.getProfileImage(user.getIcon());
     }
 
     public LiveData<List<Image>> getAllImagesLive(){

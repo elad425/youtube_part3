@@ -12,14 +12,17 @@ import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
 import com.example.youtube.data.UserSession;
+import com.example.youtube.repositories.MediaRepository;
 
 public class LoginViewModel extends AndroidViewModel {
     private final UserApi userApi;
+    private final MediaRepository mediaRepository;
     private final MutableLiveData<Boolean> loginSuccessful = new MutableLiveData<>();
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
         userApi = new UserApi(application.getApplicationContext());
+        mediaRepository = new MediaRepository(application);
     }
 
     public LiveData<Boolean> getLoginSuccessful() {
@@ -30,12 +33,14 @@ public class LoginViewModel extends AndroidViewModel {
         userApi.login(email,password, new UserApi.ApiCallback<LoginResponse>() {
             @Override
             public void onSuccess(LoginResponse result) {
-                UserSession.getInstance().setUser(result.getUser());
+                User user = result.getUser();
+                UserSession.getInstance().setUser(user);
                 getApplication().getSharedPreferences("MyApp", Context.MODE_PRIVATE)
                         .edit()
                         .putString("token", result.getToken())
                         .apply();
                 UserSession.getInstance().setToken(result.getToken());
+                mediaRepository.initUserProfilePic(user);
                 loginSuccessful.setValue(true);
             }
 
@@ -45,6 +50,7 @@ public class LoginViewModel extends AndroidViewModel {
             }
         });
     }
+
     public void validateToken(String token) {
         userApi.validateToken(token, new UserApi.ApiCallback<User>() {
             @Override

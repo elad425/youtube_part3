@@ -18,12 +18,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.youtube.R;
 import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.User;
-import com.example.youtube.utils.GeneralUtils;
 import com.example.youtube.viewmodels.SignUpViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.List;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -182,8 +180,6 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(SignUpActivity.this, "Error checking email: " + error, Toast.LENGTH_SHORT).show();
             }
         });
-//        User newUser = new User(username, email, password, imageUri.toString());
-//        viewModel.signUp(newUser);
     }
 
     private void clearErrorOnTyping(TextInputLayout textInputLayout) {

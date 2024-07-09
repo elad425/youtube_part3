@@ -13,8 +13,6 @@ import com.example.youtube.utils.GeneralUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -117,6 +115,7 @@ public class MediaApi {
     public void uploadImageToServer(Uri imageUri, Context context, final ApiCallback<String> callback) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            assert inputStream != null;
             byte[] imageData = GeneralUtils.getBytes(inputStream);
 
             String fileName = GeneralUtils.getFileName(context, imageUri);
@@ -138,6 +137,7 @@ public class MediaApi {
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         try {
+                            assert response.body() != null;
                             String responseBody = response.body().string();
                             JSONObject jsonObject = new JSONObject(responseBody);
                             String filePath = jsonObject.getString("path");
