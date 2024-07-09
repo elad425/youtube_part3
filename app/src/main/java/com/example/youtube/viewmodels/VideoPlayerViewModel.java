@@ -71,6 +71,10 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         }
     }
 
+    public void initCommentsMedia(List<Comment> comments){
+        mediaRepository.initCommentMedia(comments);
+    }
+
     public void incrementViews() {
         Video video = currentVideo.getValue();
         if (video != null) {

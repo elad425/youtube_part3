@@ -42,6 +42,23 @@ public class VideoApi {
         });
     }
 
+    public void getVideoById(String id, final ApiCallback<Video> callback){
+        Call<Video> call = videoWebServiceApi.getVideoById(id);
+        call.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Failed to get image: " + response.message());
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
+            }
+        });
+    }
+
     public void createVideo(Video newvideo) {
         String token = "Bearer " + UserSession.getInstance().getToken();
         Call<Void> call = videoWebServiceApi.createVideo(newvideo,token);

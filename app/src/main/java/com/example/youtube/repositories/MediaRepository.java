@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.api.MediaApi;
 import com.example.youtube.data.AppDatabase;
+import com.example.youtube.entities.Comment;
 import com.example.youtube.entities.Image;
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
@@ -45,11 +46,17 @@ public class MediaRepository {
         return toBitmap(i.getImg());
     }
 
-    public void initImages(){
+    public void initVideoMedia(){
         List<Video> videos = db.videoDao().getAllVideos();
         for(Video v : videos){
             api.getProfileImage(v.getUserDetails().getIcon());
             api.getThumbnail(v.getThumbnail());
+        }
+    }
+
+    public void initCommentMedia(List<Comment> comments){
+        for(Comment c : comments){
+            api.getProfileImage(c.getUser_id().getIcon());
         }
     }
 

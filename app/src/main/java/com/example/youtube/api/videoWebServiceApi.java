@@ -18,6 +18,8 @@ import retrofit2.http.Path;
 public interface videoWebServiceApi {
     @GET("api/videos/")
     Call<List<Video>> getVideos();
+    @GET("api/videos/{id}")
+    Call<Video> getVideoById(@Path("id") String id);
     @POST("api/videos")
     Call<Void> createVideo(@Body Video video,@Header("Authorization") String token);
     @DELETE("api/videos/{id}")

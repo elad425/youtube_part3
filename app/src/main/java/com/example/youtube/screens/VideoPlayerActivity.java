@@ -223,6 +223,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         viewModel.getCommentList().observe(this, comments -> {
             commentsAdapter.updateComments(comments);
+            viewModel.initCommentsMedia(comments);
             tvComments.setText(String.format("Comments (%d)", comments.size()));
         });
 
