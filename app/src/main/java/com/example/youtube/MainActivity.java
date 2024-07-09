@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -111,11 +113,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLoadingIndicator() {
-        // Show loading indicator
+        ProgressBar loadingIndicator;
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        RecyclerView lstVideos = findViewById(R.id.lstVideos);
+        lstVideos.setVisibility(View.GONE);
     }
 
     private void hideLoadingIndicator() {
-        // Hide loading indicator
+        ProgressBar loadingIndicator;
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.GONE);
+        RecyclerView lstVideos = findViewById(R.id.lstVideos);
+        lstVideos.setVisibility(View.VISIBLE);
     }
 
     private void setupUI() {
