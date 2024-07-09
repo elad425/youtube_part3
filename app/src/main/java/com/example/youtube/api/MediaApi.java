@@ -57,9 +57,11 @@ public class MediaApi {
         });
     }
 
+
     public void getThumbnail(String path) {
+        String correctedPath = path.replace("\\", "/");
         String temp = GeneralUtils.extractTextAfterLastSlash(path);
-        Call<ResponseBody> call = mediaWebServiceApi.getThumbnail(temp);
+        Call<ResponseBody> call = mediaWebServiceApi.downloadFromPath(correctedPath);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -78,8 +80,10 @@ public class MediaApi {
         });
     }
 
-    public void downloadVideo(String videoId, final MediaApi.ApiCallback<byte[]> callback) {
-        Call<ResponseBody> call = mediaWebServiceApi.downloadVideo(GeneralUtils.extractTextAfterLastSlash(videoId));
+    public void downloadVideo(String path, final MediaApi.ApiCallback<byte[]> callback) {
+        String correctedPath = path.replace("\\", "/");
+
+        Call<ResponseBody> call = mediaWebServiceApi.downloadFromPath(correctedPath);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {

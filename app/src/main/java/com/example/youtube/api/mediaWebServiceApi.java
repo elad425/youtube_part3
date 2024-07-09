@@ -17,8 +17,17 @@ public interface mediaWebServiceApi {
     @GET("thumbnails/{path}")
     Call<ResponseBody> getThumbnail(@Path("path") String path);
 
-    @GET("/Videos/{path}")
+    @GET("uploads/{path}")
+    Call<ResponseBody> getThumbnailFromUpload(@Path("path") String path);
+
+    @GET("Videos/{path}")
     Call<ResponseBody> downloadVideo(@Path("path") String path);
+
+    @GET("uploads/{path}")
+    Call<ResponseBody> downloadVideoFromUpload(@Path("path") String path);
+
+    @GET("{path}")
+    Call<ResponseBody> downloadFromPath(@Path(value = "path", encoded = true) String path);
 
     @Multipart
     @POST("upload")
