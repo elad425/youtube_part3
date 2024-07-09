@@ -107,12 +107,7 @@ public class AddVideoActivity extends AppCompatActivity {
             }
         });
     }
-    private void uploadVideoData(String videoUrl) {
-        String videoName = videoNameEditText.getText().toString().trim();
-        User user = UserSession.getInstance().getUser();
-        Video newVideo = new Video(videoName, "", videoUrl, thumbnailUri.toString(), user);
-        viewModel.addVideo(newVideo);
-    }
+
     private void setupBottomNavigation() {
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {

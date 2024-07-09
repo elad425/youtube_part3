@@ -56,30 +56,52 @@ public class VideoRepository {
         return videos;
     }
     public void uploadVideoAndThumbnail(Uri videoUri, Uri thumbnailUri, VideoApi.ApiCallback<Map<String, String>> callback) {
-        videoApi.uploadVideo(videoUri,context, new VideoApi.ApiCallback<String>() {
-            @Override
-            public void onSuccess(String videoUrl) {
-                mediaApi.uploadImageToServer(thumbnailUri, context,new MediaApi.ApiCallback<String>() {
-                    @Override
-                    public void onSuccess(String thumbnailUrl) {
-                        Map<String, String> urls = new HashMap<>();
-                        urls.put("videoUrl", videoUrl);
-                        urls.put("thumbnailUrl", thumbnailUrl);
+        Map<String, String> urls = new HashMap<>();
+
+        if (videoUri != null) {
+            videoApi.uploadVideo(videoUri, context, new VideoApi.ApiCallback<String>() {
+                @Override
+                public void onSuccess(String videoUrl) {
+                    urls.put("videoUrl", videoUrl);
+                    if (thumbnailUri != null) {
+                        mediaApi.uploadImageToServer(thumbnailUri, context, new MediaApi.ApiCallback<String>() {
+                            @Override
+                            public void onSuccess(String thumbnailUrl) {
+                                urls.put("thumbnailUrl", thumbnailUrl);
+                                callback.onSuccess(urls);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                callback.onError(error);
+                            }
+                        });
+                    } else {
                         callback.onSuccess(urls);
                     }
+                }
 
-                    @Override
-                    public void onError(String error) {
-                        callback.onError(error);
-                    }
-                });
-            }
+                @Override
+                public void onError(String error) {
+                    callback.onError(error);
+                }
+            });
+        } else if (thumbnailUri != null) {
+            mediaApi.uploadImageToServer(thumbnailUri, context, new MediaApi.ApiCallback<String>() {
+                @Override
+                public void onSuccess(String thumbnailUrl) {
+                    urls.put("thumbnailUrl", thumbnailUrl);
+                    callback.onSuccess(urls);
+                }
 
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    callback.onError(error);
+                }
+            });
+        } else {
+            callback.onSuccess(urls); // No uploads needed, just return an empty map
+        }
     }
     public List<Video> getAllVideos() {
         return db.videoDao().getAllVideos();

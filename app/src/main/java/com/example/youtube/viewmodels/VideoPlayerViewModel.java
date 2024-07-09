@@ -4,11 +4,13 @@ package com.example.youtube.viewmodels;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.youtube.api.VideoApi;
 import com.example.youtube.entities.Comment;
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
@@ -17,6 +19,7 @@ import com.example.youtube.repositories.VideoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class VideoPlayerViewModel extends AndroidViewModel {
@@ -163,14 +166,33 @@ public class VideoPlayerViewModel extends AndroidViewModel {
             if (!newName.isEmpty()) {
                 video.setTitle(newName);
             }
-            if (newThumbnailUri != null) {
-                video.setThumbnail(newThumbnailUri.toString());
+
+            if (newThumbnailUri != null || newVideoUri != null) {
+                videoRepository.uploadVideoAndThumbnail(newVideoUri, newThumbnailUri, new VideoApi.ApiCallback<Map<String, String>>() {
+                    @Override
+                    public void onSuccess(Map<String, String> urls) {
+                        if (urls.containsKey("thumbnailUrl")) {
+                            video.setThumbnail(urls.get("thumbnailUrl"));
+                        }
+                        if (urls.containsKey("videoUrl")) {
+                            video.setVideo_src(urls.get("videoUrl"));
+                        }
+
+                        // Update the video details
+                        videoRepository.updateVideo(video);
+                        currentVideo.setValue(video);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e("API", "Failed to upload video or thumbnail: " + error);
+                    }
+                });
+            } else {
+                // Update the video details without uploading
+                videoRepository.updateVideo(video);
+                currentVideo.setValue(video);
             }
-            if (newVideoUri != null) {
-                video.setVideo_src(newVideoUri.toString());
-            }
-            videoRepository.updateVideo(video);
-            currentVideo.setValue(video);
         }
     }
 
