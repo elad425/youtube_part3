@@ -55,6 +55,10 @@ public class VideoRepository {
         videoApi.getVideos();
     }
 
+    public void clearVideos(){
+        db.videoDao().clear();
+    }
+
     public LiveData<List<Video>> getAllVideosLive() {
         return videos;
     }
