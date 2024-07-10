@@ -24,7 +24,7 @@
                 <VideoView
                     android:id="@+id/tv_video_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="240dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/video_player" />
 
@@ -68,6 +68,7 @@
                     android:layout_marginEnd="15dp"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/edit_video"
                     app:srcCompat="@drawable/ic_edit" />
@@ -257,20 +258,17 @@
                     android:background="@color/system_color"
                     android:visibility="gone" />
 
+                <ProgressBar
+                    android:id="@+id/loadingIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
             </FrameLayout>
 
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:visibility="gone"
-        android:contentDescription="@string/add_comment" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

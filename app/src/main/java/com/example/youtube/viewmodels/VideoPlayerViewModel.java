@@ -175,7 +175,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
                             video.setThumbnail(urls.get("thumbnailUrl"));
                         }
                         if (urls.containsKey("videoUrl")) {
-                            video.setVideo_src(urls.get("videoUrl"));
+                            video.setVideo_src(Objects.requireNonNull(urls.get("videoUrl")));
                         }
 
                         // Update the video details

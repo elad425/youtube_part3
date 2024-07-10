@@ -5,10 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.api.MediaApi;
-import com.example.youtube.entities.Comment;
 import com.example.youtube.entities.Video;
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
@@ -50,6 +48,11 @@ public class VideoRepository {
     public void deleteVideo(Video videoToDelete) {
         db.videoDao().delete(videoToDelete);
         videoApi.deleteVideo(videoToDelete.getUserDetails().get_id(),videoToDelete.get_id());
+    }
+
+    public void reloadVideos(){
+        db.videoDao().clear();
+        videoApi.getVideos();
     }
 
     public LiveData<List<Video>> getAllVideosLive() {

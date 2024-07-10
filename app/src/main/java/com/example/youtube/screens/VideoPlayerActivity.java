@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -130,11 +131,19 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showLoadingIndicator() {
-        // Show loading indicator
+        ProgressBar loadingIndicator;
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        RecyclerView lstVideos = findViewById(R.id.lstVideos);
+        lstVideos.setVisibility(View.GONE);
     }
 
     private void hideLoadingIndicator() {
-        // Hide loading indicator
+        ProgressBar loadingIndicator;
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.GONE);
+        RecyclerView lstVideos = findViewById(R.id.lstVideos);
+        lstVideos.setVisibility(View.VISIBLE);
     }
 
     public void setupUI(){

@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateBottomNavigationSelection();
+        videoViewModel.reload();
+        initializeData();
     }
 
     private void initializeData() {
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 videosLoaded.set(true);
                 checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
                 videoViewModel.initImages();
+            }else {
+                showLoadingIndicator();
             }
         });
 
