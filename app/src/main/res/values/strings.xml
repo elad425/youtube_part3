@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="baseUrl">http://192.168.68.113:5000/</string>
+
     <string name="app_name">YouTube</string>
     <string name="notification">notification</string>
     <string name="search">search</string>
@@ -86,5 +89,4 @@
     <string name="select_thumbnail">Select Thumbnail</string>
     <string name="select_video">Select Video</string>
     <string name="camera">camera</string>
-    <string name="baseUrl">http://192.168.68.113:5000/</string>
 </resources>

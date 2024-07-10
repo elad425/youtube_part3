@@ -171,15 +171,6 @@ public class GeneralUtils {
         return sb.toString();
     }
 
-    public static String extractTextAfterLastSlash(String input) {
-        if (input == null || !input.contains("/")) {
-            return input;
-        }
-
-        int lastSlashIndex = input.lastIndexOf('/');
-        return input.substring(lastSlashIndex + 1);
-    }
-
     public static String removeTrailingNewline(String str) {
         if (str != null && str.endsWith("\n")) {
             return str.substring(0, str.length() - 1);

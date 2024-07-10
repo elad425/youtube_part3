@@ -57,10 +57,8 @@ public class MediaApi {
         });
     }
 
-
     public void getThumbnail(String path) {
         String correctedPath = path.replace("\\", "/");
-        String temp = GeneralUtils.extractTextAfterLastSlash(path);
         Call<ResponseBody> call = mediaWebServiceApi.downloadFromPath(correctedPath);
         call.enqueue(new Callback<ResponseBody>() {
             @Override

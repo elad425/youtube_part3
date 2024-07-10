@@ -8,11 +8,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.youtube.api.MediaApi;
-import com.example.youtube.api.UserApi;
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.entities.Video;
-import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.Map;
@@ -38,6 +35,10 @@ public class AddVideoViewModel extends AndroidViewModel {
     public void addVideo(Video newVideo) {
         videoRepository.insertVideo(newVideo);
         videoAddedSuccessfully.setValue(true);
+    }
+
+    public void reloadVideos(){
+        videoRepository.reloadVideos();
     }
 
     public void uploadVideoAndThumbnail(Uri videoUri, Uri thumbnailUri) {

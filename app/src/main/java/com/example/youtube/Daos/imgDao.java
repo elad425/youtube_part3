@@ -2,7 +2,6 @@ package com.example.youtube.Daos;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,14 +19,8 @@ public interface imgDao {
     @Update
     void update(Image img);
 
-    @Delete
-    void delete(Image img);
-
     @Query("SELECT * FROM image WHERE path = :path")
     Image getImageById(String path);
-
-    @Query("DELETE FROM image")
-    void clear();
 
     @Query("SELECT * FROM image")
     LiveData<List<Image>> getAllImagesLive();

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.example.youtube.R;
 import com.example.youtube.data.UserSession;
 import com.example.youtube.Daos.videoDao;
-import com.example.youtube.entities.UserDetails;
 import com.example.youtube.entities.Video;
 import com.example.youtube.utils.GeneralUtils;
 
@@ -55,8 +54,6 @@ public class VideoApi {
     }
 
     public void createVideo(Video newvideo) {
-        //UserDetails userDetails = new UserDetails(newvideo.getUserDetails().getUsername(),newvideo.getUserDetails().getIcon());
-        
         String token = "Bearer " + UserSession.getInstance().getToken();
         Call<Void> call = videoWebServiceApi.createVideo(newvideo.getUserDetails().get_id(),newvideo,token);
         call.enqueue(new Callback<Void>() {
@@ -84,6 +81,7 @@ public class VideoApi {
     public void uploadVideo(Uri videoUri,Context context, final ApiCallback<String> callback) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(videoUri);
+            assert inputStream != null;
             byte[] videoData = GeneralUtils.getBytes(inputStream);
 
             String fileName = GeneralUtils.getFileName(context, videoUri);
@@ -106,6 +104,7 @@ public class VideoApi {
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         try {
+                            assert response.body() != null;
                             String responseBody = response.body().string();
                             JSONObject jsonObject = new JSONObject(responseBody);
                             String filePath = jsonObject.getString("path");

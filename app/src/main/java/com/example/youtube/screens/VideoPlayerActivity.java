@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -20,6 +21,7 @@ import android.widget.VideoView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -130,11 +132,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showLoadingIndicator() {
-        // Show loading indicator
+        ProgressBar loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        ConstraintLayout constraintLayout = findViewById(R.id.page);
+        constraintLayout.setVisibility(View.GONE);
     }
 
     private void hideLoadingIndicator() {
-        // Hide loading indicator
+        ProgressBar loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.GONE);
+        ConstraintLayout constraintLayout = findViewById(R.id.page);
+        constraintLayout.setVisibility(View.VISIBLE);
     }
 
     public void setupUI(){
@@ -388,6 +396,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void saveVideoChanges() {
         String newName = inputVideoName.getText().toString().trim();
         viewModel.updateVideoDetails(newName, newThumbnailUri, newVideoUri);
+        viewModel.reloadVideos();
+        Intent intent = new Intent(this, MainActivity.class);
+        this.startActivity(intent);
+        Toast.makeText(this, "Video edited successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override

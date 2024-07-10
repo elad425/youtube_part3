@@ -5,10 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.api.MediaApi;
-import com.example.youtube.entities.Comment;
 import com.example.youtube.entities.Video;
 import com.example.youtube.api.VideoApi;
 import com.example.youtube.data.AppDatabase;
@@ -52,9 +50,15 @@ public class VideoRepository {
         videoApi.deleteVideo(videoToDelete.getUserDetails().get_id(),videoToDelete.get_id());
     }
 
+    public void reloadVideos(){
+        db.videoDao().clear();
+        videoApi.getVideos();
+    }
+
     public LiveData<List<Video>> getAllVideosLive() {
         return videos;
     }
+
     public void uploadVideoAndThumbnail(Uri videoUri, Uri thumbnailUri, VideoApi.ApiCallback<Map<String, String>> callback) {
         Map<String, String> urls = new HashMap<>();
 
@@ -100,9 +104,10 @@ public class VideoRepository {
                 }
             });
         } else {
-            callback.onSuccess(urls); // No uploads needed, just return an empty map
+            callback.onSuccess(urls);
         }
     }
+
     public List<Video> getAllVideos() {
         return db.videoDao().getAllVideos();
     }

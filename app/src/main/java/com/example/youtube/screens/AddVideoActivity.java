@@ -20,8 +20,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.youtube.MainActivity;
 import com.example.youtube.R;
-import com.example.youtube.api.MediaApi;
-import com.example.youtube.api.UserApi;
 import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 import com.example.youtube.data.UserSession;
@@ -98,6 +96,7 @@ public class AddVideoActivity extends AppCompatActivity {
             if (success) {
                 Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
                 navigateToMainActivity();
+                viewModel.reloadVideos();
                 finish();
             }
         });
@@ -209,6 +208,7 @@ public class AddVideoActivity extends AppCompatActivity {
         String thumbnailUrl = urls.get("thumbnailUrl");
         String videoName = videoNameEditText.getText().toString().trim();
         User user = UserSession.getInstance().getUser();
+        assert videoUrl != null;
         Video newVideo = new Video(videoName, "", videoUrl, thumbnailUrl, user);
         viewModel.addVideo(newVideo);
     }

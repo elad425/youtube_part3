@@ -36,4 +36,8 @@ public class MainViewModel extends AndroidViewModel {
         return mediaRepository.getAllImagesLive();
     }
 
+    public void reload(){
+        videoRepository.reloadVideos();
+    }
+
 }
