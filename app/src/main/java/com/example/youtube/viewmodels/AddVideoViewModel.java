@@ -37,6 +37,10 @@ public class AddVideoViewModel extends AndroidViewModel {
         videoAddedSuccessfully.setValue(true);
     }
 
+    public void reloadVideos(){
+        videoRepository.reloadVideos();
+    }
+
     public void uploadVideoAndThumbnail(Uri videoUri, Uri thumbnailUri) {
         videoRepository.uploadVideoAndThumbnail(videoUri, thumbnailUri, new VideoApi.ApiCallback<Map<String, String>>() {
             @Override

@@ -10,4 +10,5 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="sign_up_text_Color">#000000</color>
     <color name="light_grey">#9B9B9B</color>
+    <color name="black">#000000</color>
 </resources>

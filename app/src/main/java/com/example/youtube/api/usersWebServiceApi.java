@@ -5,7 +5,6 @@ import com.example.youtube.entities.EmailCheckResponse;
 import com.example.youtube.entities.LoginRequest;
 import com.example.youtube.entities.LoginResponse;
 import com.example.youtube.entities.User;
-import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

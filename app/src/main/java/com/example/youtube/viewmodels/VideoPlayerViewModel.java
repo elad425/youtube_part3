@@ -178,7 +178,6 @@ public class VideoPlayerViewModel extends AndroidViewModel {
                             video.setVideo_src(Objects.requireNonNull(urls.get("videoUrl")));
                         }
 
-                        // Update the video details
                         videoRepository.updateVideo(video);
                         currentVideo.setValue(video);
                     }
@@ -189,7 +188,6 @@ public class VideoPlayerViewModel extends AndroidViewModel {
                     }
                 });
             } else {
-                // Update the video details without uploading
                 videoRepository.updateVideo(video);
                 currentVideo.setValue(video);
             }
@@ -203,7 +201,10 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         }
     }
 
-    // Getters for LiveData
+    public void reloadVideos(){
+        videoRepository.reloadVideos();
+    }
+
     public LiveData<Video> getCurrentVideo() { return currentVideo; }
     public LiveData<User> getCurrentUser() { return currentUser; }
     public LiveData<User> getCurrentCreator() { return currentCreator; }

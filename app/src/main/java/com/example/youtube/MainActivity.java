@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Boolean isSwipe = false;
+    private int receiveCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public void swipeToRefresh(){
         isSwipe = true;
         videoViewModel.reload();
+        receiveCounter = 0;
         initializeData();
     }
 
@@ -110,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         videoViewModel.getAllVideosLive().observe(this, videos -> {
             if (!videos.isEmpty()) {
                 videosLoaded.set(true);
+                receiveCounter += 1;
                 checkDataAndSetupUI(videosLoaded.get(), imagesLoaded.get());
                 videoViewModel.initImages();
             }else if(!isSwipe) {
@@ -126,8 +129,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkDataAndSetupUI(boolean videosLoaded, boolean imagesLoaded) {
-        if (videosLoaded && imagesLoaded) {
+        if (videosLoaded && imagesLoaded && receiveCounter != 1) {
             isSwipe = false;
+            receiveCounter = 0;
             swipeRefreshLayout.setRefreshing(false);
             hideLoadingIndicator();
             setupUI();

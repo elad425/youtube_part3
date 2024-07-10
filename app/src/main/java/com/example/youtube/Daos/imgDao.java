@@ -22,9 +22,6 @@ public interface imgDao {
     @Query("SELECT * FROM image WHERE path = :path")
     Image getImageById(String path);
 
-    @Query("DELETE FROM image")
-    void clear();
-
     @Query("SELECT * FROM image")
     LiveData<List<Image>> getAllImagesLive();
 }

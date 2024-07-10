@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import android.widget.VideoView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -131,19 +133,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showLoadingIndicator() {
-        ProgressBar loadingIndicator;
-        loadingIndicator = findViewById(R.id.loadingIndicator);
+        ProgressBar loadingIndicator = findViewById(R.id.loadingIndicator);
         loadingIndicator.setVisibility(View.VISIBLE);
-        RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        lstVideos.setVisibility(View.GONE);
+        ConstraintLayout constraintLayout = findViewById(R.id.page);
+        constraintLayout.setVisibility(View.GONE);
     }
 
     private void hideLoadingIndicator() {
-        ProgressBar loadingIndicator;
-        loadingIndicator = findViewById(R.id.loadingIndicator);
+        ProgressBar loadingIndicator = findViewById(R.id.loadingIndicator);
         loadingIndicator.setVisibility(View.GONE);
-        RecyclerView lstVideos = findViewById(R.id.lstVideos);
-        lstVideos.setVisibility(View.VISIBLE);
+        ConstraintLayout constraintLayout = findViewById(R.id.page);
+        constraintLayout.setVisibility(View.VISIBLE);
     }
 
     public void setupUI(){
@@ -397,6 +397,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void saveVideoChanges() {
         String newName = inputVideoName.getText().toString().trim();
         viewModel.updateVideoDetails(newName, newThumbnailUri, newVideoUri);
+        viewModel.reloadVideos();
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         Toast.makeText(this, "Video edited successfully", Toast.LENGTH_SHORT).show();

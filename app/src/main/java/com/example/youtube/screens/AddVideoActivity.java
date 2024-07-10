@@ -96,6 +96,7 @@ public class AddVideoActivity extends AppCompatActivity {
             if (success) {
                 Toast.makeText(this, "Video added successfully", Toast.LENGTH_SHORT).show();
                 navigateToMainActivity();
+                viewModel.reloadVideos();
                 finish();
             }
         });
