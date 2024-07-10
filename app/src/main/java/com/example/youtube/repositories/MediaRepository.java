@@ -102,8 +102,4 @@ public class MediaRepository {
         return video;
     }
 
-    public void clearMedia(){
-        db.imgDao().clear();
-    }
-
 }

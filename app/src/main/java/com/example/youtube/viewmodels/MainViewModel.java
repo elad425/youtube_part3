@@ -40,9 +40,4 @@ public class MainViewModel extends AndroidViewModel {
         videoRepository.reloadVideos();
     }
 
-    public void deleteData(){
-        videoRepository.clearVideos();
-        mediaRepository.clearMedia();
-    }
-
 }

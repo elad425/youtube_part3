@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void swipeToRefresh(){
         isSwipe = true;
-        videoViewModel.deleteData();
         videoViewModel.reload();
         initializeData();
     }

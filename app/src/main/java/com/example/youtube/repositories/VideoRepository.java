@@ -55,10 +55,6 @@ public class VideoRepository {
         videoApi.getVideos();
     }
 
-    public void clearVideos(){
-        db.videoDao().clear();
-    }
-
     public LiveData<List<Video>> getAllVideosLive() {
         return videos;
     }
@@ -108,7 +104,7 @@ public class VideoRepository {
                 }
             });
         } else {
-            callback.onSuccess(urls); // No uploads needed, just return an empty map
+            callback.onSuccess(urls);
         }
     }
 
