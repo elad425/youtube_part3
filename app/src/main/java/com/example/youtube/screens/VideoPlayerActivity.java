@@ -397,6 +397,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private void saveVideoChanges() {
         String newName = inputVideoName.getText().toString().trim();
         viewModel.updateVideoDetails(newName, newThumbnailUri, newVideoUri);
+        Intent intent = new Intent(this, MainActivity.class);
+        this.startActivity(intent);
+        Toast.makeText(this, "Video edited successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override

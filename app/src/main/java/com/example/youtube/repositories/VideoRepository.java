@@ -58,6 +58,7 @@ public class VideoRepository {
     public LiveData<List<Video>> getAllVideosLive() {
         return videos;
     }
+
     public void uploadVideoAndThumbnail(Uri videoUri, Uri thumbnailUri, VideoApi.ApiCallback<Map<String, String>> callback) {
         Map<String, String> urls = new HashMap<>();
 
@@ -106,6 +107,7 @@ public class VideoRepository {
             callback.onSuccess(urls); // No uploads needed, just return an empty map
         }
     }
+
     public List<Video> getAllVideos() {
         return db.videoDao().getAllVideos();
     }
