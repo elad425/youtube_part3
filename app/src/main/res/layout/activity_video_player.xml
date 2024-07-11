@@ -102,6 +102,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:textSize="14sp"
+                    android:text="@string/dot"
                     android:fontFamily="@font/poppins_light"
                     android:textColor="@android:color/darker_gray" />
 
