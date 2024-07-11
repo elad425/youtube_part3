@@ -1,6 +1,7 @@
 package com.example.youtube.viewmodels;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -9,19 +10,23 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.youtube.api.VideoApi;
+import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
+import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.Map;
 
 public class AddVideoViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;
+    private final MediaRepository mediaRepository;
     private final MutableLiveData<Boolean> videoAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Map<String, String>> uploadUrls = new MutableLiveData<>();
 
     public AddVideoViewModel(@NonNull Application application) {
         super(application);
         videoRepository = new VideoRepository(application);
+        mediaRepository = new MediaRepository(application);
     }
 
     public LiveData<Boolean> getVideoAddedSuccessfully() {
@@ -50,8 +55,11 @@ public class AddVideoViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String error) {
-                // Handle error
             }
         });
+    }
+
+    public Bitmap getBitmap(User user) {
+        return mediaRepository.getImage(user.getIcon());
     }
 }

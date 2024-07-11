@@ -1,11 +1,17 @@
 package com.example.youtube;
 
+import static com.example.youtube.utils.GeneralUtils.getCircularBitmap;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -101,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         loginViewModel.getLoginSuccessful().observe(this, isSuccessful -> {
             if (isSuccessful) {
                 userId = UserSession.getInstance().getUser();
+                setupBottomNavigation();
             }
         });
     }
@@ -173,6 +180,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNav = findViewById(R.id.bottom_navigation);
+        Menu menu = bottomNav.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.navigation_profile);
+        if (userId != null) {
+            bottomNav.setItemIconTintList(null);
+            Bitmap myBitmap = videoViewModel.getBitmap(userId);
+            Bitmap circularBitmap = getCircularBitmap(myBitmap);
+            BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
+            menuItem.setIcon(drawable);
+        } else{
+            menuItem.setIcon(R.drawable.ic_account);
+        }
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {

@@ -2,6 +2,15 @@ package com.example.youtube.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
@@ -176,5 +185,32 @@ public class GeneralUtils {
             return str.substring(0, str.length() - 1);
         }
         return str;
+    }
+
+    public static Bitmap getCircularBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int diameter = Math.min(width, height);
+
+        Bitmap outputBitmap = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(outputBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawCircle(diameter / 2f, diameter / 2f, diameter / 2f, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        float scale = Math.max((float) diameter / width, (float) diameter / height);
+        float dx = (diameter - width * scale) / 2f;
+        float dy = (diameter - height * scale) / 2f;
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(scale, scale);
+        matrix.postTranslate(dx, dy);
+        canvas.drawBitmap(bitmap, matrix, paint);
+
+        return outputBitmap;
     }
 }

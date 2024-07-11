@@ -1,16 +1,20 @@
 package com.example.youtube.viewmodels;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.youtube.data.UserSession;
 import com.example.youtube.entities.Image;
+import com.example.youtube.entities.User;
 import com.example.youtube.entities.Video;
 import com.example.youtube.repositories.MediaRepository;
 import com.example.youtube.repositories.VideoRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainViewModel extends AndroidViewModel {
     private final VideoRepository videoRepository;
@@ -38,6 +42,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void reload(){
         videoRepository.reloadVideos();
+    }
+
+    public Bitmap getBitmap(User user) {
+        return mediaRepository.getImage(user.getIcon());
     }
 
 }
