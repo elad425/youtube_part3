@@ -29,8 +29,6 @@ import com.example.youtube.viewmodels.ProfilePageViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.Objects;
-
 public class ProfilePage extends AppCompatActivity {
     private ProfilePageViewModel viewModel;
     private BottomNavigationView bottomNav;
@@ -67,7 +65,7 @@ public class ProfilePage extends AppCompatActivity {
                 btnLogIn.setOnClickListener(v -> onConfirmClick());
             } else {
                 displayGuestInfo(username, userEmail, userPic, btnLogIn);
-                setupBottomNavigation();
+                updateBottomNavigationSelection();
             }
         });
     }
@@ -127,17 +125,6 @@ public class ProfilePage extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNav = findViewById(R.id.bottom_navigation);
-        Menu menu = bottomNav.getMenu();
-        MenuItem menuItem = menu.findItem(R.id.navigation_profile);
-        if (Boolean.TRUE.equals(viewModel.isUserLoggedIn().getValue())) {
-            bottomNav.setItemIconTintList(null);
-            Bitmap myBitmap = viewModel.getBitmap();
-            Bitmap circularBitmap = getCircularBitmap(myBitmap);
-            BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
-            menuItem.setIcon(drawable);
-        } else{
-            menuItem.setIcon(R.drawable.ic_account);
-        }
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_home) {
@@ -156,6 +143,17 @@ public class ProfilePage extends AppCompatActivity {
     private void updateBottomNavigationSelection() {
         if (bottomNav != null) {
             bottomNav.setSelectedItemId(R.id.navigation_profile);
+            Menu menu = bottomNav.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.navigation_profile);
+            if (Boolean.TRUE.equals(viewModel.isUserLoggedIn().getValue())) {
+                bottomNav.setItemIconTintList(null);
+                Bitmap myBitmap = viewModel.getBitmap();
+                Bitmap circularBitmap = getCircularBitmap(myBitmap);
+                BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
+                menuItem.setIcon(drawable);
+            } else{
+                menuItem.setIcon(R.drawable.ic_account);
+            }
         }
     }
 

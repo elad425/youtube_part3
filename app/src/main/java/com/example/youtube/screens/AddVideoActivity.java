@@ -115,18 +115,6 @@ public class AddVideoActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNav = findViewById(R.id.bottom_navigation);
-        Menu menu = bottomNav.getMenu();
-        MenuItem menuItem = menu.findItem(R.id.navigation_profile);
-        User user = UserSession.getInstance().getUser();
-        if (user != null) {
-            bottomNav.setItemIconTintList(null);
-            Bitmap myBitmap = viewModel.getBitmap(user);
-            Bitmap circularBitmap = getCircularBitmap(myBitmap);
-            BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
-            menuItem.setIcon(drawable);
-        } else{
-            menuItem.setIcon(R.drawable.ic_account);
-        }
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {
@@ -147,6 +135,18 @@ public class AddVideoActivity extends AppCompatActivity {
     private void updateBottomNavigationSelection() {
         if (bottomNav != null) {
             bottomNav.setSelectedItemId(R.id.navigation_add_video);
+            Menu menu = bottomNav.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.navigation_profile);
+            User user = UserSession.getInstance().getUser();
+            if (user != null) {
+                bottomNav.setItemIconTintList(null);
+                Bitmap myBitmap = viewModel.getBitmap(user);
+                Bitmap circularBitmap = getCircularBitmap(myBitmap);
+                BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
+                menuItem.setIcon(drawable);
+            } else{
+                menuItem.setIcon(R.drawable.ic_account);
+            }
         }
     }
 
