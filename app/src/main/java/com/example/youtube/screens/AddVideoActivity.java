@@ -1,9 +1,15 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.getCircularBitmap;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -129,6 +135,18 @@ public class AddVideoActivity extends AppCompatActivity {
     private void updateBottomNavigationSelection() {
         if (bottomNav != null) {
             bottomNav.setSelectedItemId(R.id.navigation_add_video);
+            Menu menu = bottomNav.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.navigation_profile);
+            User user = UserSession.getInstance().getUser();
+            if (user != null) {
+                bottomNav.setItemIconTintList(null);
+                Bitmap myBitmap = viewModel.getBitmap(user);
+                Bitmap circularBitmap = getCircularBitmap(myBitmap);
+                BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
+                menuItem.setIcon(drawable);
+            } else{
+                menuItem.setIcon(R.drawable.ic_account);
+            }
         }
     }
 

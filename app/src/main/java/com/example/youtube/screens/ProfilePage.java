@@ -1,13 +1,19 @@
 package com.example.youtube.screens;
 
+import static com.example.youtube.utils.GeneralUtils.getCircularBitmap;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -59,6 +65,7 @@ public class ProfilePage extends AppCompatActivity {
                 btnLogIn.setOnClickListener(v -> onConfirmClick());
             } else {
                 displayGuestInfo(username, userEmail, userPic, btnLogIn);
+                updateBottomNavigationSelection();
             }
         });
     }
@@ -136,6 +143,17 @@ public class ProfilePage extends AppCompatActivity {
     private void updateBottomNavigationSelection() {
         if (bottomNav != null) {
             bottomNav.setSelectedItemId(R.id.navigation_profile);
+            Menu menu = bottomNav.getMenu();
+            MenuItem menuItem = menu.findItem(R.id.navigation_profile);
+            if (Boolean.TRUE.equals(viewModel.isUserLoggedIn().getValue())) {
+                bottomNav.setItemIconTintList(null);
+                Bitmap myBitmap = viewModel.getBitmap();
+                Bitmap circularBitmap = getCircularBitmap(myBitmap);
+                BitmapDrawable drawable = new BitmapDrawable(getResources(), circularBitmap);
+                menuItem.setIcon(drawable);
+            } else{
+                menuItem.setIcon(R.drawable.ic_account);
+            }
         }
     }
 
@@ -160,6 +178,7 @@ public class ProfilePage extends AppCompatActivity {
 
     public void onConfirmClick() {
         viewModel.logOut();
+
         Toast.makeText(this, "You logged out", Toast.LENGTH_SHORT).show();
     }
 
