@@ -29,3 +29,13 @@ for the app to run these permissions must to be granted.
 ## server
 
 How to run our server:
+1.Navigate the the server folder using cd server/backend
+2.Use npm start to start the server
+
+## mongo file integration
+How to upload our already exisitng data into your mongo database:
+
+1.Navigate to server and open file importData.js
+2.replace const uri = "" with your mongo connection uri
+3.change const db = client.db('test') to the name of your database
+4.run importData.js using --  node importData.js  --  (in the server folder)
