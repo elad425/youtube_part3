@@ -31,8 +31,12 @@ for the app to run these permissions must to be granted.
 How to run our server:
 
   1.Navigate the the server folder using cd server/backend
+
+  2.create a file called .env with the following fields: MONGO_URI: (the mongodb connection uri) PORT: (we used 5000) ACCESS_TOKEN_SECRET: (token for jwt , we used a random 64 hex             refer to ##Token to generate one)
   
-  2.Use npm start to start the server
+  3.Use npm start to start the server
+
+  
 
 ## mongo file integration
 How to upload our already exisitng data into your mongo database:
@@ -44,3 +48,8 @@ How to upload our already exisitng data into your mongo database:
   3.change const db = client.db('test') to the name of your database
   
   4.run importData.js using --  node importData.js  --  (in the server folder)
+
+## Token 
+How to create a random token:
+
+  1.open a new terminal and insert the following node require('crypto').randomBytes(64).toString('hex') then change the ACCESS_TOKEN_SECRET with the result
