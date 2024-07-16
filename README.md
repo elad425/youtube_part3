@@ -3,7 +3,7 @@
 How to run our app:
 1. install android studio
 2. clone the repository
-3. go to the res -> values -> string.xml and change the baseUrl to your IP
+3. go to the res -> values -> strings.xml and change the baseUrl to the IP of your server
 4. run the server (see the server section for how to run it)
 5. connect your android device
 6. click run and open the app
