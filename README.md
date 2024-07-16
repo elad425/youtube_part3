@@ -1,4 +1,4 @@
-# YouTube App + server
+# YouTube android App + server
 
 How to run our app:
 1. install android studio
