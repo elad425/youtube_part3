@@ -3,7 +3,7 @@
 How to run our app:
 1. install android studio
 2. clone the repository
-3. go to the res -> values -> strings.xml and change the baseUrl to the IP of your server
+3. go to the res -> values -> strings.xml and change the baseUrl to the IP of your machine
 4. run the server (see the server section for how to run it)
 5. connect your android device
 6. click run and open the app
@@ -45,11 +45,11 @@ How to upload our already exisitng data into your mongo database:
 
   1. Navigate to server and open file importData.js
   
-  2. replace const uri = "" with your mongo connection uri
+  2. replace the "..." in `const uri = "..."` with your mongo connection uri
   
-  3. change const db = client.db('test') to the name of your database
+  3. change "test" in `const db = client.db('test')` to the name of your database
   
-  4. run importData.js using --  node importData.js  --  (in the server folder)
+  4. run importData.js using  `node importData.js`  (in the server folder)
 
 ## Token 
 How to create a random token:
