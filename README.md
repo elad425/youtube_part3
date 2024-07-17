@@ -32,7 +32,7 @@ How to run our server:
 
   1. Navigate the the server folder using `cd server/backend`
 
-  2. create a file called .env with the following fields: MONGO_URI: (the mongodb connection uri) PORT: (we used 5000) ACCESS_TOKEN_SECRET: (token for jwt , we used a random 64 hex             refer to ##Token to generate one)
+  2. create a file called .env with the following fields: MONGO_URI: (the mongodb connection uri) PORT: (we used 5000) ACCESS_TOKEN_SECRET: (token for jwt , we used a random 64 hex             refer to [Token](#Token) to generate one)
 
   3. install the npm package using `npm i`
   
