@@ -54,4 +54,5 @@ How to upload our already exisitng data into your mongo database:
 ## Token 
 How to create a random token:
 
-  1. open a new terminal and insert the following: `node require('crypto').randomBytes(64).toString('hex')` then change the ACCESS_TOKEN_SECRET with the result
+  1. open a new terminal and insert the following: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+` then change the ACCESS_TOKEN_SECRET with the result
