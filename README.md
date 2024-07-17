@@ -11,7 +11,7 @@ How to run our app:
 
 workflow:
 First we converted the architecture of the application to the MVVM architecture, then we added support for ROOM in that the information about the videos and the user were saved locally on the device and then we connected the application to the server with the help of retrofit. And finally we fixed some bugs so that everything works together properly. 
-Regarding the work regarding the server, we divided the work between us that one worked to ensure that the information goes from the application to the server and is processed as required, and the other worked to ensure that the information from the server reaches the application and is used properly.
+Regarding the work on the server, we divided the work between us that one worked to ensure that the information goes from the application to the server and is processed as required, and the other worked to ensure that the information from the server reaches the application and is used properly.
 
 **important Note:**  this app doesnt support accsess to images and videos from google photos, so only use the default gallery app.
 
@@ -52,4 +52,4 @@ How to upload our already exisitng data into your mongo database:
 ## Token 
 How to create a random token:
 
-  1.open a new terminal and insert the following node require('crypto').randomBytes(64).toString('hex') then change the ACCESS_TOKEN_SECRET with the result
+  1.open a new terminal and insert the following:'' node require('crypto').randomBytes(64).toString('hex') '' then change the ACCESS_TOKEN_SECRET with the result
